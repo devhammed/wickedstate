@@ -2,7 +2,7 @@ import { compile } from '../core/dom';
 import { Context } from '../core/context';
 import { directive } from '../core/provider';
 
-directive('*repeat', () => {
+directive('*for', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {
@@ -30,9 +30,9 @@ directive('*repeat', () => {
 
         val?.forEach(function (val: any, index: number) {
           let ctx = context.$new() as Context & { $i: number };
-          let currentNode = el.cloneNode() as Element;
+          let currentNode = el.cloneNode(true) as Element;
 
-          currentNode.removeAttribute('*repeat');
+          currentNode.removeAttribute('*for');
 
           contexts.push(ctx);
 

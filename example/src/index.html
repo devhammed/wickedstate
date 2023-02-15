@@ -13,7 +13,9 @@
       <button *click="handleToggleCounting" *bind="toggleText"></button>
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
-          <li *repeat="name in names" *bind="name"></li>
+          <li *for="name in names">
+            <span *bind="name"></span>
+          </li>
         </ul>
         <input type="text" *model="newName" value="Test" />
         <button *click="handleAddName">Add</button>

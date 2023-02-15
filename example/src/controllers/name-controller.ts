@@ -4,7 +4,7 @@ import { NameContext } from '../contracts/name-context';
 controller('nameCtrl', function ($ctx: NameContext) {
   $ctx.newName = '';
 
-  $ctx.names = ['Hammed', 'Chicken Head Princess'];
+  $ctx.names = ['John', 'Jane', 'Joe', 'Jack', 'Jill'];
 
   $ctx.handleAddName = function () {
     if ($ctx.newName === '') {
@@ -12,6 +12,7 @@ controller('nameCtrl', function ($ctx: NameContext) {
     }
 
     $ctx.names.push($ctx.newName);
+
     $ctx.newName = '';
   };
 });

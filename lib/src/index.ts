@@ -3,10 +3,10 @@ import './services/timeout';
 import './services/interval';
 
 // Directives
+import './directives/for';
 import './directives/bind';
 import './directives/click';
 import './directives/model';
-import './directives/repeat';
 import './directives/controller';
 
 // Contracts
