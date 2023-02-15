@@ -6,8 +6,9 @@ directive('*for', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {
-      let contexts: Context[] = [];
-      let parts = ((typeof exp === 'function' ? exp() : exp) as string).split(
+      const contexts: Context[] = [];
+      const renderedElements: Element[] = [];
+      const parts = ((typeof exp === 'function' ? exp() : exp) as string).split(
         'in'
       );
 
@@ -15,22 +16,22 @@ directive('*for', () => {
         throw new Error('Invalid for expression');
       }
 
-      let itemName = parts[0].trim();
-      let collectionName = parts[1].trim();
-      let parentNode = el.parentNode;
+      const itemName = parts[0].trim();
+      const collectionName = parts[1].trim();
+      const parentNode = el.parentNode;
 
       function render(val: any[] | null) {
-        while (parentNode?.firstChild) {
-          parentNode?.removeChild(parentNode?.firstChild);
-        }
-
         contexts.forEach((s) => s.$destroy());
 
-        contexts = [];
+        renderedElements.forEach((el) => el.parentNode.removeChild(el));
+
+        contexts.length = 0;
+
+        renderedElements.length = 0;
 
         val?.forEach(function (val: any, index: number) {
-          let ctx = context.$new() as Context & { $i: number };
-          let currentNode = el.cloneNode(true) as Element;
+          const ctx = context.$new() as Context & { $i: number };
+          const currentNode = el.cloneNode(true) as Element;
 
           currentNode.removeAttribute('*for');
 
@@ -42,9 +43,13 @@ directive('*for', () => {
 
           compile(currentNode, ctx);
 
-          parentNode?.appendChild(currentNode);
+          parentNode.appendChild(currentNode);
+
+          renderedElements.push(currentNode);
         });
       }
+
+      parentNode.removeChild(el);
 
       context.$watch(collectionName, render);
 
