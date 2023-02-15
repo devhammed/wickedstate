@@ -18,10 +18,10 @@
           <li *for="name in names">
             <span *for="part in name">
               <span
-                *if="$i === 0"
+                *if="$index === 0"
                 *for="ch in part.split('')"
-                *bind="ch + '-'"></span>
-              <span *if="$i === 1" *bind="part"></span>
+                *bind="ch + ($last ? '' : '-')"></span>
+              <span *if="$index === 1" *bind="part"></span>
             </span>
           </li>
         </ul>

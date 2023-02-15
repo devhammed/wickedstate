@@ -34,7 +34,13 @@ directive('*for', () => {
         renderedElements.length = 0;
 
         items.forEach(function (item: any, index: number) {
-          const ctx = context.$new() as Context & { $i: number };
+          const ctx = context.$new() as Context & {
+            $index: number;
+            $last: boolean;
+            $first: boolean;
+            $odd: boolean;
+            $even: boolean;
+          };
           const currentNode = el.cloneNode(true) as Element;
 
           currentNode.removeAttribute('*for');
@@ -43,7 +49,15 @@ directive('*for', () => {
 
           ctx[itemName] = item;
 
-          ctx.$i = index;
+          ctx.$index = index;
+
+          ctx.$first = index === 0;
+
+          ctx.$odd = index % 2 === 0;
+
+          ctx.$even = index % 2 === 1;
+
+          ctx.$last = index === items.length - 1;
 
           compile(currentNode, ctx);
 
