@@ -1,4 +1,3 @@
-import { invoke } from './provider';
 import { clone } from '../utils/clone';
 import { isEqual } from '../utils/is-equal';
 import { getPaths } from '../utils/get-paths';
@@ -6,14 +5,14 @@ import { ContextWatcher } from '../contracts/context-watcher';
 import { ContextWatcherFn } from '../contracts/context-watcher-fn';
 
 export class Context {
-  public $$parent: Context | null;
+  public $parent: Context | null;
 
-  public $$children: Context[] = [];
+  public $children: Context[] = [];
 
-  public $$watchers: ContextWatcher<any>[] = [];
+  public $watchers: ContextWatcher<any>[] = [];
 
   constructor(parent: Context | null = null) {
-    this.$$parent = parent;
+    this.$parent = parent;
   }
 
   public $new(): Context {
@@ -21,13 +20,13 @@ export class Context {
 
     Object.setPrototypeOf(obj, this);
 
-    this.$$children.push(obj);
+    this.$children.push(obj);
 
     return obj;
   }
 
   public $watch<T>(exp: string, fn: ContextWatcherFn<T>): void {
-    this.$$watchers.push({
+    this.$watchers.push({
       exp,
       fn,
       lastValue: clone(this.$eval(exp)),
@@ -93,8 +92,8 @@ export class Context {
     do {
       dirty = false;
 
-      for (i = 0; i < this.$$watchers.length; i += 1) {
-        watcher = this.$$watchers[i];
+      for (i = 0; i < this.$watchers.length; i += 1) {
+        watcher = this.$watchers[i];
 
         current = this.$eval(watcher.exp);
 
@@ -106,19 +105,19 @@ export class Context {
       }
     } while (dirty);
 
-    for (i = 0; i < this.$$children.length; i += 1) {
-      this.$$children[i].$notify();
+    for (i = 0; i < this.$children.length; i += 1) {
+      this.$children[i].$notify();
     }
   }
 
   public $destroy(): void {
-    const parent = this.$$parent;
+    const parent = this.$parent;
 
     if (parent === null) {
       return;
     }
 
-    const children = parent.$$children;
+    const children = parent.$children;
 
     children.splice(children.indexOf(this), 1);
   }

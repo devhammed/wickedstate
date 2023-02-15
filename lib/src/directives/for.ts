@@ -22,7 +22,11 @@ directive('*for', () => {
       const collectionName = parts[1];
       const parentNode = el.parentNode;
 
-      function render(val: any[] | null) {
+      function render(items: any[] | null) {
+        if (Object.prototype.toString.call(items) !== '[object Array]') {
+          return;
+        }
+
         contexts.forEach((s) => s.$destroy());
 
         renderedElements.forEach((el) => el.parentNode.removeChild(el));
@@ -31,7 +35,7 @@ directive('*for', () => {
 
         renderedElements.length = 0;
 
-        val?.forEach(function (val: any, index: number) {
+        items.forEach(function (item: any, index: number) {
           const ctx = context.$new() as Context & { $i: number };
           const currentNode = el.cloneNode(true) as Element;
 
@@ -39,15 +43,15 @@ directive('*for', () => {
 
           contexts.push(ctx);
 
-          ctx[itemName] = val;
+          ctx[itemName] = item;
 
           ctx.$i = index;
-
-          compile(currentNode, ctx);
 
           parentNode.appendChild(currentNode);
 
           renderedElements.push(currentNode);
+
+          compile(currentNode, ctx);
         });
       }
 
