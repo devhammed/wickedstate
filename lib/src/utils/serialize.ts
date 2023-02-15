@@ -5,6 +5,11 @@ export function serialize(val: any) {
       return value.toString();
     }
 
+    // else if is NAN...
+    if (isNaN(value)) {
+      return null;
+    }
+
     // else default to json serialization...
     return value;
   });
