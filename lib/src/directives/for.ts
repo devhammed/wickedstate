@@ -6,18 +6,20 @@ directive('*for', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {
+      if (typeof exp !== 'string') {
+        throw new Error('for expression must be a string');
+      }
+
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
-      const parts = ((typeof exp === 'function' ? exp() : exp) as string).split(
-        'in'
-      );
+      const parts = exp.split('in').map((part) => part.trim());
 
       if (parts.length !== 2) {
         throw new Error('Invalid for expression');
       }
 
-      const itemName = parts[0].trim();
-      const collectionName = parts[1].trim();
+      const itemName = parts[0];
+      const collectionName = parts[1];
       const parentNode = el.parentNode;
 
       function render(val: any[] | null) {
