@@ -47,11 +47,11 @@ directive('*for', () => {
 
           ctx.$i = index;
 
+          compile(currentNode, ctx);
+
           parentNode.appendChild(currentNode);
 
           renderedElements.push(currentNode);
-
-          compile(currentNode, ctx);
         });
       }
 
