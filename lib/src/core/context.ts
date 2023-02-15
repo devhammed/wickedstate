@@ -25,12 +25,22 @@ export class Context {
     return obj;
   }
 
-  public $watch<T>(exp: string, fn: ContextWatcherFn<T>): void {
-    this.$watchers.push({
+  public $watch<T>(exp: string, fn: ContextWatcherFn<T>): () => void {
+    const watcher = {
       exp,
       fn,
       lastValue: clone(this.$eval(exp)),
-    });
+    };
+
+    this.$watchers.push(watcher);
+
+    return () => {
+      const index = this.$watchers.indexOf(watcher);
+
+      if (index >= 0) {
+        this.$watchers.splice(index, 1);
+      }
+    };
   }
 
   public $eval<T>(
