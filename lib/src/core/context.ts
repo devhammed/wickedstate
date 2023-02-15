@@ -9,7 +9,7 @@ export class Context {
 
   public $children: Context[] = [];
 
-  public $watchers: ContextWatcher<any>[] = [];
+  public $watchers: Array<ContextWatcher<any> | null> = [];
 
   constructor(parent: Context | null = null) {
     this.$parent = parent;
@@ -38,7 +38,7 @@ export class Context {
       const index = this.$watchers.indexOf(watcher);
 
       if (index >= 0) {
-        this.$watchers.splice(index, 1);
+        this.$watchers[index] = null;
       }
     };
   }
@@ -102,8 +102,14 @@ export class Context {
     do {
       dirty = false;
 
-      for (i = 0; i < this.$watchers.length; i += 1) {
+      for (i = 0; i < this.$watchers.length; i++) {
         watcher = this.$watchers[i];
+
+        if (watcher === null) {
+          this.$watchers.splice(i, 1);
+          i -= 1;
+          continue;
+        }
 
         current = this.$eval(watcher.exp);
 
@@ -115,7 +121,7 @@ export class Context {
       }
     } while (dirty);
 
-    for (i = 0; i < this.$children.length; i += 1) {
+    for (i = 0; i < this.$children.length; i++) {
       this.$children[i].$notify();
     }
   }
