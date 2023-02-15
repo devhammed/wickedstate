@@ -13,6 +13,7 @@
       <button
         @click="handleToggleCounting($event)"
         *bind="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
+
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
@@ -28,6 +29,7 @@
         <input type="text" *model="newName" value="Test" />
         <button @click="handleAddName()">Add</button>
       </div>
+
       <div *controller="secretCtrl" style="margin-top: 20px">
         <p *if="isShowing" *bind="'The current count is: ' + $parent.count"></p>
         <button @click="handleToggle()">Toggle Secret</button>
