@@ -5,13 +5,13 @@ directive('*controller', () => {
     newContext: true,
     apply: function (el, context, exp) {
       if (typeof exp !== 'string') {
-        return;
+        throw new Error('controller expression must be a string');
       }
 
       const ctrl = getController(exp);
 
       if (ctrl === null) {
-        return;
+        throw new Error(`controller "${exp}" not found`);
       }
 
       invoke(ctrl, { $context: context, $ctx: context, $el: el });
