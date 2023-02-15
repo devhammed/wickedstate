@@ -18,10 +18,10 @@
           <li *for="name in names">
             <span *for="part in name">
               <span
-                *if="$index === 0"
+                *if="$first"
                 *for="ch in part.split('')"
                 *bind="ch + ($last ? '' : '-')"></span>
-              <span *if="$index === 1" *bind="part"></span>
+              <span *if="$last" *bind="part"></span>
             </span>
           </li>
         </ul>
@@ -33,13 +33,6 @@
         <button @click="handleToggle()">Toggle Secret</button>
       </div>
     </div>
-    <script type="module">
-      import { bootstrap } from 'wicked.js';
-      import './controllers/main-controller';
-      import './controllers/name-controller';
-      import './controllers/secret-controller';
-
-      bootstrap();
-    </script>
+    <script type="module" src="./index.ts"></script>
   </body>
 </html>
