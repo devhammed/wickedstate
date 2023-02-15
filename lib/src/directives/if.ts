@@ -8,10 +8,6 @@ type Marker = Comment & {
 directive('*if', () => ({
   newContext: false,
   apply(el, context, exp) {
-    if (typeof exp !== 'string') {
-      throw new Error('if expression must be a string');
-    }
-
     const marker = document.createComment(` if: ${exp} `) as Marker;
     const endMarker = document.createComment(` endif: ${exp} `) as Marker;
     const show = () => {

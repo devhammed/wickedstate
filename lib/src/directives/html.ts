@@ -1,13 +1,13 @@
 import { directive } from '../core/provider';
 
-directive('*bind', () => {
+directive('*html', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {
-      el.textContent = context.$eval<string>(exp);
+      el.innerHTML = context.$eval<string>(exp);
 
       context.$watch<string>(exp, function (val) {
-        el.textContent = val;
+        el.innerHTML = val;
       });
     },
   };

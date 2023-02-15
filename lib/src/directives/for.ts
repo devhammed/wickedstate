@@ -6,13 +6,9 @@ directive('*for', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {
-      if (typeof exp !== 'string') {
-        throw new Error('for expression must be a string');
-      }
-
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
-      const parts = exp.split('in').map((part) => part.trim());
+      const parts = exp.split('in').map((p) => p.trim());
 
       if (parts.length !== 2) {
         throw new Error('Invalid for expression');

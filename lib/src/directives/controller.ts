@@ -4,10 +4,6 @@ directive('*controller', () => {
   return {
     newContext: true,
     apply: function (el, context, exp) {
-      if (typeof exp !== 'string') {
-        throw new Error('controller expression must be a string');
-      }
-
       const ctrl = getController(exp);
 
       if (ctrl === null) {
