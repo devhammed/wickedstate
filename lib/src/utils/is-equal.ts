@@ -1,3 +1,5 @@
+import { serialize } from './serialize';
+
 export function isEqual(a: any, b: any): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
+  return serialize(a) === serialize(b);
 }
