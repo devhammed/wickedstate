@@ -1,6 +1,6 @@
 import { directive } from '../core/provider';
 
-directive('*click', () => {
+directive('@click', () => {
   return {
     newContext: false,
     apply: function (el, context, exp) {

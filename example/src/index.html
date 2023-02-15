@@ -9,8 +9,8 @@
   <body>
     <div *controller="mainCtrl">
       <h1 *bind="count"></h1>
-      <button *click="handleClick">Click Me</button>
-      <button *click="handleToggleCounting" *bind="toggleText"></button>
+      <button @click="handleClick">Click Me</button>
+      <button @click="handleToggleCounting" *bind="toggleText"></button>
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
@@ -18,7 +18,7 @@
           </li>
         </ul>
         <input type="text" *model="newName" value="Test" />
-        <button *click="handleAddName">Add</button>
+        <button @click="handleAddName">Add</button>
       </div>
     </div>
     <script type="module">
