@@ -20,11 +20,17 @@
         <input type="text" *model="newName" value="Test" />
         <button @click="handleAddName">Add</button>
       </div>
+      <div *controller="secretCtrl" style="margin-top: 20px">
+        <p *if="isShowing">Hello World</p>
+
+        <button @click="handleToggle">Toggle Secret</button>
+      </div>
     </div>
     <script type="module">
       import { bootstrap } from 'wicked.js';
       import './controllers/main-controller';
       import './controllers/name-controller';
+      import './controllers/secret-controller';
 
       bootstrap();
     </script>
