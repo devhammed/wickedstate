@@ -3,6 +3,7 @@ import './services/timeout';
 import './services/interval';
 
 // Directives
+import './directives/if';
 import './directives/for';
 import './directives/bind';
 import './directives/click';
