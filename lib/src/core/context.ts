@@ -1,9 +1,9 @@
 import { invoke } from './provider';
 import { clone } from '../utils/clone';
 import { isEqual } from '../utils/is-equal';
+import { getPaths } from '../utils/get-paths';
 import { ContextWatcher } from '../contracts/context-watcher';
 import { ContextWatcherFn } from '../contracts/context-watcher-fn';
-import { ContextExpression } from '../contracts/context-expression';
 
 export class Context {
   public $$parent: Context | null;
@@ -26,7 +26,7 @@ export class Context {
     return obj;
   }
 
-  public $watch<T>(exp: ContextExpression, fn: ContextWatcherFn<T>): void {
+  public $watch<T>(exp: string, fn: ContextWatcherFn<T>): void {
     this.$$watchers.push({
       exp,
       fn,
@@ -35,39 +35,53 @@ export class Context {
   }
 
   public $eval<T>(
-    exp: ContextExpression,
+    exp: string,
     locals: Record<string, any> = {} as const
   ): T | null {
-    const fnContext = { $context: this, $ctx: this, ...locals };
+    return new Function(
+      'ctx',
+      'locals',
+      `return (function eval() {
+        // Declare context variables
+        ${Object.keys(this)
+          .map((k) => `var ${k};`)
+          .join('\n')}
 
-    if (typeof exp === 'function') {
-      return invoke(exp, fnContext);
-    }
+        // Declare local variables
+        ${Object.keys(locals)
+          .map((k) => `var ${k};`)
+          .join('\n')}
 
-    let value: any = this.$get(exp);
+        // Assign context variables
+        ${Object.keys(this)
+          .map((k) => `${k} = ctx['${k}'];`)
+          .join('\n')}
 
-    return typeof value === 'function' ? invoke(value, fnContext) : value;
+        // Assign local variables
+        ${Object.keys(locals)
+          .map((k) => `${k} = locals['${k}'];`)
+          .join('\n')}
+
+        // Evaluate expression
+        return ${exp};
+      });`
+    )(this, locals)();
   }
 
   public $get<T>(path: string): T | null {
-    return path
-      .replace(/\[(\w+)\]/g, '.$1')
-      .replace(/^\./, '')
-      .split('.')
-      .reduce((p, c) => (p && p[c]) ?? null, this as any);
+    return getPaths(path).reduce(
+      (acc, currentKey) => (acc && acc[currentKey]) ?? null,
+      this as any
+    );
   }
 
   public $set<T>(path: string, value: T): T {
-    return path
-      .replace(/\[(\w+)\]/g, '.$1')
-      .replace(/^\./, '')
-      .split('.')
-      .reduce(
-        (acc, part, index) =>
-          (acc[part] =
-            path.split('.').length === ++index ? value : acc[part] ?? {}),
-        this as any
-      );
+    return getPaths(path).reduce(
+      (acc, part, index) =>
+        (acc[part] =
+          path.split('.').length === ++index ? value : acc[part] ?? {}),
+      this as any
+    );
   }
 
   public $notify(): void {
