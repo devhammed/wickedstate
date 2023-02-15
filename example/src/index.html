@@ -10,7 +10,9 @@
     <div *controller="mainCtrl">
       <h1 *bind="count"></h1>
       <button @click="handleClick($event)">Click Me</button>
-      <button @click="handleToggleCounting($event)" *bind="toggleText"></button>
+      <button
+        @click="handleToggleCounting($event)"
+        *bind="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
@@ -22,7 +24,6 @@
       </div>
       <div *controller="secretCtrl" style="margin-top: 20px">
         <p *if="isShowing">Hello World</p>
-
         <button @click="handleToggle()">Toggle Secret</button>
       </div>
     </div>
