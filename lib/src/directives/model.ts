@@ -3,6 +3,7 @@ import { directive } from '../core/provider';
 directive('*model', () => {
   return {
     newContext: false,
+    isTemplate: false,
     apply(el, context, exp) {
       const isCheckboxOrRadio =
         el instanceof HTMLInputElement &&

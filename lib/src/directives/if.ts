@@ -1,58 +1,75 @@
 import { compile } from '../core/dom';
+import { Context } from '../core/context';
 import { directive } from '../core/provider';
 
 type Marker = Comment & {
-  $$currentIfElement: Element | null;
+  $$currentIfElement: IfElement | null;
 };
 
-directive('*if', () => ({
-  newContext: false,
-  apply(el, context, exp) {
-    const marker = document.createComment(` if: ${exp} `) as Marker;
-    const endMarker = document.createComment(` endif: ${exp} `) as Marker;
-    const show = () => {
-      if (!marker.$$currentIfElement && !endMarker.$$currentIfElement) {
-        const clone = el.cloneNode(true) as Element;
+type IfElement = Element & {
+  $$context: Context | null;
+};
 
-        clone.removeAttribute('*if');
+directive('*if', () => {
+  return {
+    newContext: false,
+    isTemplate: true,
+    apply(el, context, exp) {
+      const marker = document.createComment(` if: ${exp} `) as Marker;
+      const endMarker = document.createComment(` endif: ${exp} `) as Marker;
+      const show = () => {
+        if (!marker.$$currentIfElement && !endMarker.$$currentIfElement) {
+          const clone = el.cloneNode(true) as IfElement;
 
-        marker.$$currentIfElement = clone;
+          clone.removeAttribute('*if');
 
-        endMarker.$$currentIfElement = clone;
+          clone.$$context = context.$new();
 
-        marker.parentNode.insertBefore(clone, endMarker);
+          marker.$$currentIfElement = clone;
 
-        compile(clone, context);
-      }
-    };
-    const hide = () => {
-      if (
-        marker.$$currentIfElement &&
-        endMarker.$$currentIfElement &&
-        marker.$$currentIfElement === endMarker.$$currentIfElement
-      ) {
-        marker.parentNode.removeChild(endMarker.$$currentIfElement);
-        marker.$$currentIfElement = null;
-        endMarker.$$currentIfElement = null;
-      }
-    };
+          endMarker.$$currentIfElement = clone;
 
-    el.parentNode.replaceChild(marker, el);
+          marker.parentNode.insertBefore(clone, endMarker);
 
-    marker.parentNode.insertBefore(endMarker, marker.nextSibling);
+          compile(clone, clone.$$context);
+        }
+      };
+      const hide = () => {
+        if (
+          marker.$$currentIfElement &&
+          endMarker.$$currentIfElement &&
+          marker.$$currentIfElement === endMarker.$$currentIfElement &&
+          marker.$$currentIfElement.$$context ===
+            endMarker.$$currentIfElement.$$context
+        ) {
+          console.log(marker.$$currentIfElement.$$context);
+          marker.$$currentIfElement.$$context.$destroy();
+          endMarker.$$currentIfElement.$$context = null;
+          marker.parentNode.removeChild(endMarker.$$currentIfElement);
+          marker.$$currentIfElement = null;
+          endMarker.$$currentIfElement = null;
+        }
+      };
 
-    if (context.$eval<boolean>(exp)) {
-      show();
-    } else {
-      hide();
-    }
+      el.parentNode.replaceChild(marker, el);
 
-    context.$watch<boolean>(exp, (value) => {
-      if (value) {
+      marker.parentNode.insertBefore(endMarker, marker.nextSibling);
+
+      if (context.$eval<boolean>(exp)) {
         show();
       } else {
         hide();
       }
-    });
-  },
-}));
+
+      context.$watch<boolean>(exp, (value) => {
+        if (value) {
+          show();
+        } else {
+          hide();
+        }
+      });
+
+      return false;
+    },
+  };
+});

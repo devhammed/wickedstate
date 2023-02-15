@@ -5,6 +5,7 @@ import { directive } from '../core/provider';
 directive('*for', () => {
   return {
     newContext: false,
+    isTemplate: true,
     apply: function (el, context, exp) {
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
@@ -16,7 +17,8 @@ directive('*for', () => {
 
       const itemName = parts[0];
       const collectionName = parts[1];
-      const parentNode = el.parentNode;
+      const marker = document.createComment(` *for: ${exp} `);
+      const endMarker = document.createComment(` *endfor: ${exp} `);
 
       function render(items: any[] | null) {
         if (Object.prototype.toString.call(items) !== '[object Array]') {
@@ -45,13 +47,15 @@ directive('*for', () => {
 
           compile(currentNode, ctx);
 
-          parentNode.appendChild(currentNode);
+          marker.parentNode.insertBefore(currentNode, endMarker);
 
           renderedElements.push(currentNode);
         });
       }
 
-      parentNode.removeChild(el);
+      el.parentNode.replaceChild(marker, el);
+
+      marker.parentNode.insertBefore(endMarker, marker.nextSibling);
 
       context.$watch(collectionName, render);
 

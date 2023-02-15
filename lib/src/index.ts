@@ -5,7 +5,7 @@ import './services/interval';
 // Directives
 import './directives/if';
 import './directives/for';
-import './directives/text';
+import './directives/bind';
 import './directives/html';
 import './directives/click';
 import './directives/model';

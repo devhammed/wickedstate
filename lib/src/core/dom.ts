@@ -23,6 +23,8 @@ function getElDirectives(el: Element): CompiledDirective[] {
   return result;
 }
 
+export const STOP_COMPILING_ERROR = new Error('Stop compiling.');
+
 export function bootstrap() {
   const root = document.documentElement ?? document.children[0];
 
@@ -35,27 +37,42 @@ export function bootstrap() {
 
 export function compile(el: Element, context: Context) {
   let directive: Directive;
-  let contextCreated: boolean;
+  let keepCompiling: boolean = true;
+  let contextCreated: boolean = false;
   let compiledDirectives: CompiledDirective[] = getElDirectives(el);
 
-  compiledDirectives.forEach(function (compiledDirective) {
-    const providedDir = getDirective(compiledDirective.name);
+  try {
+    compiledDirectives.forEach(function (compiledDirective) {
+      const providedDir = getDirective(compiledDirective.name);
 
-    if (providedDir === null) {
-      return;
+      if (providedDir === null) {
+        return;
+      }
+
+      directive = providedDir;
+
+      if (directive.newContext && !contextCreated) {
+        context = context.$new();
+        contextCreated = true;
+      }
+
+      directive.apply(el, context, compiledDirective.value);
+
+      if (directive.isTemplate) {
+        throw STOP_COMPILING_ERROR;
+      }
+    });
+  } catch (e) {
+    if (e === STOP_COMPILING_ERROR) {
+      keepCompiling = false;
+    } else {
+      throw e;
     }
+  }
 
-    directive = providedDir;
-
-    if (directive.newContext && !contextCreated) {
-      context = context.$new();
-      contextCreated = true;
-    }
-
-    directive.apply(el, context, compiledDirective.value);
-  });
-
-  [].slice
-    .call(el.children)
-    .forEach((child: Element) => compile(child, context));
+  if (keepCompiling) {
+    [].slice
+      .call(el.children)
+      .forEach((child: Element) => compile(child, context));
+  }
 }

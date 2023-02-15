@@ -8,22 +8,28 @@
   </head>
   <body>
     <div *controller="mainCtrl">
-      <h1 *text="count"></h1>
+      <h1 *bind="count"></h1>
       <button @click="handleClick($event)">Click Me</button>
       <button
         @click="handleToggleCounting($event)"
-        *text="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
+        *bind="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
-            <span *text="name"></span>
+            <span *for="part in name">
+              <span
+                *if="$i === 0"
+                *for="ch in part.split('')"
+                *bind="ch + '-'"></span>
+              <span *if="$i === 1" *bind="part"></span>
+            </span>
           </li>
         </ul>
         <input type="text" *model="newName" value="Test" />
         <button @click="handleAddName()">Add</button>
       </div>
       <div *controller="secretCtrl" style="margin-top: 20px">
-        <p *if="isShowing" *text="'The current count is: ' + $parent.count"></p>
+        <p *if="isShowing" *bind="'The current count is: ' + $parent.count"></p>
         <button @click="handleToggle()">Toggle Secret</button>
       </div>
     </div>

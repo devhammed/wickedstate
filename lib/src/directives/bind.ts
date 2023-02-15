@@ -1,8 +1,9 @@
 import { directive } from '../core/provider';
 
-directive('*text', () => {
+directive('*bind', () => {
   return {
     newContext: false,
+    isTemplate: false,
     apply: function (el, context, exp) {
       el.textContent = context.$eval<string>(exp);
 
