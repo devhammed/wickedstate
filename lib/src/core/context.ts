@@ -47,34 +47,32 @@ export class Context {
     exp: string,
     locals: Record<string, any> = {} as const
   ): T | null {
+    const env: Record<string, any> = {};
+
+    for (const key in this) {
+      env[key] = this[key];
+    }
+
+    for (const key in locals) {
+      env[key] = locals[key];
+    }
+
     return new Function(
-      'ctx',
-      'locals',
-      `return (function eval() {
-        // Declare context variables
-        ${Object.keys(this)
-          .map((k) => `var ${k};`)
-          .join('\n')}
+      'env',
+      `
+        function eval() {
+          // Declare env variables
+          ${Object.keys(env)
+            .map((k) => `var ${k} = env.${k};`)
+            .join('\n')}
 
-        // Declare local variables
-        ${Object.keys(locals)
-          .map((k) => `var ${k};`)
-          .join('\n')}
+          // Evaluate expression
+          return ${exp};
+        }
 
-        // Assign context variables
-        ${Object.keys(this)
-          .map((k) => `${k} = ctx['${k}'];`)
-          .join('\n')}
-
-        // Assign local variables
-        ${Object.keys(locals)
-          .map((k) => `${k} = locals['${k}'];`)
-          .join('\n')}
-
-        // Evaluate expression
-        return ${exp};
-      });`
-    )(this, locals)();
+        return eval();
+      `
+    )(env);
   }
 
   public $get<T>(path: string): T | null {
