@@ -4,8 +4,8 @@ import { directive } from '../core/provider';
 
 directive('*for', () => {
   return {
-    newContext: false,
     isTemplate: true,
+    newContext: false,
     apply: function (el, context, exp) {
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
@@ -17,8 +17,8 @@ directive('*for', () => {
 
       const itemName = parts[0];
       const collectionName = parts[1];
-      const marker = document.createComment(` *for: ${exp} `);
-      const endMarker = document.createComment(` *endfor: ${exp} `);
+      const marker = document.createComment(` wickedFor: ${exp} `);
+      const endMarker = document.createComment(` wickedEndFor: ${exp} `);
 
       function render(items: any[] | null) {
         if (Object.prototype.toString.call(items) !== '[object Array]') {

@@ -12,11 +12,13 @@ type IfElement = Element & {
 
 directive('*if', () => {
   return {
-    newContext: false,
     isTemplate: true,
+    newContext: false,
     apply(el, context, exp) {
-      const marker = document.createComment(` if: ${exp} `) as Marker;
-      const endMarker = document.createComment(` endif: ${exp} `) as Marker;
+      const marker = document.createComment(` wickedIf: ${exp} `) as Marker;
+      const endMarker = document.createComment(
+        ` wickedEndIf: ${exp} `
+      ) as Marker;
       const show = () => {
         if (!marker.$$currentIfElement && !endMarker.$$currentIfElement) {
           const clone = el.cloneNode(true) as IfElement;
