@@ -1,5 +1,5 @@
-import { clone } from '../utils/clone';
-import { isEqual } from '../utils/is-equal';
+import clone from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
 import { getPaths } from '../utils/get-paths';
 import { ContextWatcher } from '../contracts/context-watcher';
 import { ContextWatcherFn } from '../contracts/context-watcher-fn';
