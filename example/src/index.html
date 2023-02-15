@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wicked Example</title>
+  </head>
+  <body>
+    <div *controller="mainCtrl">
+      <h1 *bind="count"></h1>
+      <button *click="handleClick">Click Me</button>
+      <button *click="handleToggleCounting" *bind="toggleText"></button>
+      <div *controller="nameCtrl" style="margin-top: 20px">
+        <ul>
+          <li *repeat="name in names" *bind="name"></li>
+        </ul>
+        <input type="text" *model="newName" value="Test" />
+        <button *click="handleAddName">Add</button>
+      </div>
+    </div>
+    <script type="module">
+      import { bootstrap } from 'wicked.js';
+      import './controllers/main-controller';
+      import './controllers/name-controller';
+
+      bootstrap();
+    </script>
+  </body>
+</html>
