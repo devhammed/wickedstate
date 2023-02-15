@@ -37,8 +37,7 @@ export function bootstrap() {
 
 export function compile(el: Element, context: Context) {
   let directive: Directive;
-  let keepCompiling: boolean = true;
-  let contextCreated: boolean = false;
+  let contextCreated: boolean;
   let compiledDirectives: CompiledDirective[] = getElDirectives(el);
 
   try {
@@ -62,17 +61,13 @@ export function compile(el: Element, context: Context) {
         throw STOP_COMPILING_ERROR;
       }
     });
-  } catch (e) {
-    if (e === STOP_COMPILING_ERROR) {
-      keepCompiling = false;
-    } else {
-      throw e;
-    }
-  }
 
-  if (keepCompiling) {
     [].slice
       .call(el.children)
       .forEach((child: Element) => compile(child, context));
+  } catch (e) {
+    if (e !== STOP_COMPILING_ERROR) {
+      throw e;
+    }
   }
 }

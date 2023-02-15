@@ -43,8 +43,6 @@ directive('*for', () => {
           };
           const currentNode = el.cloneNode(true) as Element;
 
-          currentNode.removeAttribute('*for');
-
           contexts.push(ctx);
 
           ctx[itemName] = item;
@@ -66,6 +64,8 @@ directive('*for', () => {
           renderedElements.push(currentNode);
         });
       }
+
+      el.removeAttribute('*for');
 
       el.parentNode.replaceChild(marker, el);
 
