@@ -17,7 +17,7 @@ import { CompiledDirective } from '../contracts/compiled-directive';
 export class App {
   private $rootContext: Context;
 
-  private $stopCompilingError: Error;
+  private $stopCompilingSignal: Error;
 
   private $cache: Record<string, any>;
 
@@ -28,7 +28,7 @@ export class App {
 
     this.$rootContext = new Context(this);
 
-    this.$stopCompilingError = new Error('Stop compiling.');
+    this.$stopCompilingSignal = new Error('Stop compiling.');
 
     this.$cache = {
       $app: this,
@@ -129,7 +129,7 @@ export class App {
         });
 
         if (directive.isTemplate) {
-          throw this.$stopCompilingError;
+          throw this.$stopCompilingSignal;
         }
       });
 
@@ -137,7 +137,7 @@ export class App {
         .call(el.children)
         .forEach((child: Element) => this.compile(child, context));
     } catch (e) {
-      if (e !== this.$stopCompilingError) {
+      if (e !== this.$stopCompilingSignal) {
         throw e;
       }
     }
