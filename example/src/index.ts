@@ -13,6 +13,7 @@ new App()
         {
           as: Number,
           name: 'count',
+          isRequired: true,
         },
       ],
       template: `<h1 *bind="count"></h1>`,
@@ -23,6 +24,7 @@ new App()
       props: [
         {
           name: 'name',
+          isRequired: true,
         },
       ],
       template: `
