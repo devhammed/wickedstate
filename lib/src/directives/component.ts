@@ -49,8 +49,6 @@ export function componentDirective(): Directive {
           componentContext[name] = typeof as === 'function' ? as(value) : value;
         });
 
-        console.log(componentContext);
-
         if (isFirstTime) {
           compile(templateRoot, componentContext);
         }
