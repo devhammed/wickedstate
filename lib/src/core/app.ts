@@ -110,13 +110,7 @@ export class App {
 
     try {
       compiledDirectives.forEach((compiledDirective) => {
-        const providedDir = this.getDirective(compiledDirective.name);
-
-        if (providedDir === null) {
-          return;
-        }
-
-        directive = providedDir;
+        directive = compiledDirective.directive;
 
         if (directive.newContext && !contextCreated) {
           context = context.$new();
@@ -148,18 +142,20 @@ export class App {
     const attrs = el.attributes;
     const result: CompiledDirective[] = [];
 
-    for (let i = 0; i < attrs.length; i += 1) {
-      const name = attrs[i].name;
-      const value = attrs[i].value;
-      const providedDir = this.getDirective(name);
+    for (let i = 0; i < attrs.length; i++) {
+      const { name, value } = attrs[i];
+      const directive = this.getDirective(name);
 
-      if (providedDir !== null) {
+      if (directive !== null) {
         result.push({
           name,
           value,
+          directive,
         });
       }
     }
+
+    result.sort((a, b) => a.directive.priority - b.directive.priority);
 
     return result;
   }

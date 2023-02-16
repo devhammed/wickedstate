@@ -11,6 +11,7 @@ type IfElement = Element & {
 
 export function ifDirective(): Directive {
   return {
+    priority: 999,
     isTemplate: true,
     newContext: false,
     apply({ el, context, exp }) {

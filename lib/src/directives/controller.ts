@@ -2,6 +2,7 @@ import { Directive } from '../contracts/directive';
 
 export function controllerDirective(): Directive {
   return {
+    priority: 10,
     newContext: true,
     isTemplate: false,
     apply: function ({ el, context, exp }) {

@@ -3,6 +3,7 @@ import { Directive } from '../contracts/directive';
 
 export function forDirective(): Directive {
   return {
+    priority: 99,
     isTemplate: true,
     newContext: false,
     apply: function ({ el, context, exp }) {
