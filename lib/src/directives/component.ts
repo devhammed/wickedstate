@@ -34,7 +34,7 @@ export function componentDirective(): Directive {
         componentContext.$parent.$refs[ref.value] = templateRoot;
       }
 
-      function render(isFirstTime) {
+      function render(isFirstTime: boolean) {
         component.props.forEach(({ as, name, isRequired }) => {
           const exprValue = el.attributes[`$${name}`]?.value;
 
