@@ -34,7 +34,7 @@ export function componentDirective(): Directive {
         componentContext.$parent.$refs[ref.value] = templateRoot;
       }
 
-      function render(isFirstTime: boolean = false) {
+      function render(isFirstTime) {
         component.props.forEach(({ as, name, isRequired }) => {
           const exprValue = el.attributes[`$${name}`]?.value;
 
@@ -48,6 +48,8 @@ export function componentDirective(): Directive {
 
           componentContext[name] = typeof as === 'function' ? as(value) : value;
         });
+
+        console.log(componentContext);
 
         if (isFirstTime) {
           compile(templateRoot, componentContext);
@@ -69,7 +71,9 @@ export function componentDirective(): Directive {
           return;
         }
 
-        componentContext.$parent.$watch(exprValue, render);
+        componentContext.$parent.$watch(exprValue, () => {
+          render(false);
+        });
       });
     },
   };
