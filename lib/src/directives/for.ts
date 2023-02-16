@@ -59,11 +59,11 @@ export function forDirective(): Directive {
 
           ctx.$last = index === items.length - 1;
 
-          compile(currentNode, ctx);
-
           marker.parentNode.insertBefore(currentNode, endMarker);
 
           renderedElements.push(currentNode);
+
+          compile(currentNode, ctx);
         });
       }
 

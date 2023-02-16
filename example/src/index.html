@@ -8,7 +8,10 @@
   </head>
   <body>
     <div *controller="mainCtrl">
-      <h1 #ref="header" *bind="count"></h1>
+      <template
+        #ref="header"
+        #component="counterHeader"
+        $count="count"></template>
       <button @click="handleClick($event)">Click Me</button>
       <button
         @click="handleToggleCounting($event)"
@@ -17,13 +20,7 @@
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
-            <span *for="part in name">
-              <span
-                *if="$first"
-                *for="ch in part.split('')"
-                *bind="ch + ($last ? '' : '-')"></span>
-              <span *if="$last" *bind="part"></span>
-            </span>
+            <template #component="userItem" $name="name"></template>
           </li>
         </ul>
         <input type="text" *model="newName" value="Test" />

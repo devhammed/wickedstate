@@ -3,6 +3,7 @@ import { annotate } from '../utils/annotate';
 import { ifDirective } from '../directives/if';
 import { refDirective } from '../directives/ref';
 import { forDirective } from '../directives/for';
+import { Component } from '../contracts/component';
 import { bindDirective } from '../directives/bind';
 import { Directive } from '../contracts/directive';
 import { htmlDirective } from '../directives/html';
@@ -10,8 +11,10 @@ import { modelDirective } from '../directives/model';
 import { timeoutService } from '../services/timeout';
 import { intervalService } from '../services/interval';
 import { makeEventDirective } from '../directives/event';
+import { componentDirective } from '../directives/component';
 import { controllerDirective } from '../directives/controller';
 import { makeDirectiveName } from '../utils/make-directive-name';
+import { makeComponentName } from '../utils/make-component-name';
 import { makeControllerName } from '../utils/make-controller-name';
 import { CompiledDirective } from '../contracts/compiled-directive';
 
@@ -55,6 +58,12 @@ export class App {
     return this;
   }
 
+  component(name: string, fn: () => Component): this {
+    this.$providers[makeComponentName(name)] = fn;
+
+    return this;
+  }
+
   service(name: string, fn: Function): this {
     this.$providers[name] = fn;
 
@@ -81,6 +90,10 @@ export class App {
 
   getController(name: string, locals?: Record<string, any>): Function | null {
     return this.get<Function>(makeControllerName(name), locals);
+  }
+
+  getComponent(name: string, locals?: Record<string, any>): Component | null {
+    return this.get<Component>(makeComponentName(name), locals);
   }
 
   invoke<T>(fn: Function, locals?: Record<string, any> | null): T {
@@ -167,6 +180,7 @@ export class App {
 
     // Register Referencing Directives
     this.directive('#ref', refDirective);
+    this.directive('#component', componentDirective);
 
     // Register Event Directives
     ['click', 'change', 'focus'].forEach((eventName) =>
