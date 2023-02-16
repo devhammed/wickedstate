@@ -1,4 +1,4 @@
-import { ContextWatcherFn } from './context-watcher-fn';
+export type ContextWatcherFn<T> = (value: T | null) => void;
 
 export interface ContextWatcher<T> {
   exp: string;

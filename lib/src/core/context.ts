@@ -1,8 +1,7 @@
 import clone from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { getPaths } from '../utils/get-paths';
-import { ContextWatcher } from '../contracts/context-watcher';
-import { ContextWatcherFn } from '../contracts/context-watcher-fn';
+import { ContextWatcher, ContextWatcherFn } from '../contracts/context-watcher';
 
 export class Context {
   public $parent: Context | null;
