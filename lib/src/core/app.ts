@@ -155,7 +155,7 @@ export class App {
       }
     }
 
-    result.sort((a, b) => a.directive.priority - b.directive.priority);
+    result.sort((a, b) => b.directive.priority - a.directive.priority);
 
     return result;
   }
