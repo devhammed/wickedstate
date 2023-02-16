@@ -11,7 +11,7 @@ new App()
     return {
       props: [
         {
-          type: Number,
+          as: Number,
           name: 'count',
         },
       ],
@@ -23,7 +23,6 @@ new App()
       props: [
         {
           name: 'name',
-          type: (val: string[]) => val,
         },
       ],
       template: `

@@ -46,19 +46,12 @@ export function componentDirective(): Directive {
           throw new Error(`template for component "${exp}" not found`);
         }
 
-        const props = [];
-
-        for (let i = 0; i < component.props.length; i++) {
-          const { type, name } = component.props[i];
+        component.props.forEach(({ as, name }) => {
           const value = componentContext.$parent.$eval(
             el.attributes[`$${name}`]?.value ?? undefined
           );
 
-          props.push({ name, value: type(value) });
-        }
-
-        props.forEach(({ name, value }) => {
-          componentContext[name] = value;
+          componentContext[name] = typeof as === 'function' ? as(value) : value;
         });
 
         const ref = el.attributes['#ref'];
