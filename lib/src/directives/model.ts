@@ -1,10 +1,10 @@
-import { directive } from '../core/provider';
+import { Directive } from '../contracts/directive';
 
-directive('*model', () => {
+export function modelDirective(): Directive {
   return {
     newContext: false,
     isTemplate: false,
-    apply(el, context, exp) {
+    apply({ el, context, exp }) {
       const isCheckboxOrRadio =
         el instanceof HTMLInputElement &&
         ['checkbox', 'radio'].indexOf(el.type) > -1;
@@ -70,4 +70,4 @@ directive('*model', () => {
       context.$watch(exp, setElValue);
     },
   };
-});
+}

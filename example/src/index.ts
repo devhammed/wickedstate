@@ -1,6 +1,10 @@
-import { bootstrap } from 'wicked.js';
-import './controllers/main-controller';
-import './controllers/name-controller';
-import './controllers/secret-controller';
+import { App } from 'wicked.js';
+import { MainController } from './controllers/main-controller';
+import { NameController } from './controllers/name-controller';
+import { SecretController } from './controllers/secret-controller';
 
-bootstrap();
+new App()
+  .controller('mainCtrl', MainController)
+  .controller('nameCtrl', NameController)
+  .controller('secretCtrl', SecretController)
+  .start();

@@ -1,7 +1,7 @@
-import { controller, IntervalService } from 'wicked.js';
+import { IntervalService } from 'wicked.js';
 import { MainContext } from '../contracts/main-context';
 
-controller('mainCtrl', function ($ctx: MainContext, interval: IntervalService) {
+export function MainController($ctx: MainContext, interval: IntervalService) {
   $ctx.count = 0;
 
   $ctx.interval = null;
@@ -23,4 +23,4 @@ controller('mainCtrl', function ($ctx: MainContext, interval: IntervalService) {
       $ctx.interval = null;
     }
   };
-});
+}

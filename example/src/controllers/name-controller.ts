@@ -1,7 +1,6 @@
-import { controller } from 'wicked.js';
 import { NameContext } from '../contracts/name-context';
 
-controller('nameCtrl', function ($ctx: NameContext) {
+export function NameController($ctx: NameContext) {
   $ctx.newName = '';
 
   $ctx.names = [
@@ -27,4 +26,4 @@ controller('nameCtrl', function ($ctx: NameContext) {
 
     $ctx.newName = '';
   };
-});
+}

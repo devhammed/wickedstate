@@ -1,6 +1,5 @@
-import { compile } from '../core/dom';
 import { Context } from '../core/context';
-import { directive } from '../core/provider';
+import { Directive } from '../contracts/directive';
 
 type Marker = Comment & {
   $$currentIfElement: IfElement | null;
@@ -10,11 +9,13 @@ type IfElement = Element & {
   $$context: Context | null;
 };
 
-directive('*if', () => {
+export function ifDirective(): Directive {
   return {
     isTemplate: true,
     newContext: false,
-    apply(el, context, exp) {
+    apply({ el, context, exp }) {
+      const compile =
+        context.$app.get<(el: Element, context: Context) => void>('$compile');
       const marker = document.createComment(` wickedIf: ${exp} `) as Marker;
       const endMarker = document.createComment(
         ` wickedEndIf: ${exp} `
@@ -44,7 +45,6 @@ directive('*if', () => {
           marker.$$currentIfElement.$$context ===
             endMarker.$$currentIfElement.$$context
         ) {
-          console.log(marker.$$currentIfElement.$$context);
           marker.$$currentIfElement.$$context.$destroy();
           endMarker.$$currentIfElement.$$context = null;
           marker.parentNode.removeChild(endMarker.$$currentIfElement);
@@ -74,4 +74,4 @@ directive('*if', () => {
       return false;
     },
   };
-});
+}

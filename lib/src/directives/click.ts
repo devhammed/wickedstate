@@ -1,10 +1,10 @@
-import { directive } from '../core/provider';
+import { Directive } from '../contracts/directive';
 
-directive('@click', () => {
+export function clickDirective(): Directive {
   return {
     newContext: false,
     isTemplate: false,
-    apply: function (el, context, exp) {
+    apply: function ({ el, context, exp }) {
       el.addEventListener('click', function (e) {
         try {
           context.$eval(exp, { $event: e });
@@ -13,4 +13,4 @@ directive('@click', () => {
       });
     },
   };
-});
+}

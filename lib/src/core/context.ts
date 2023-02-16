@@ -1,21 +1,25 @@
+import { App } from './app';
 import clone from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { getPaths } from '../utils/get-paths';
 import { ContextWatcher, ContextWatcherFn } from '../contracts/context-watcher';
 
 export class Context {
+  public $app: App;
+
   public $parent: Context | null;
 
   public $children: Context[] = [];
 
   public $watchers: Array<ContextWatcher<any> | null> = [];
 
-  constructor(parent: Context | null = null) {
+  constructor(app: App, parent: Context | null = null) {
+    this.$app = app;
     this.$parent = parent;
   }
 
   public $new(): Context {
-    const obj = new Context(this);
+    const obj = new Context(this.$app, this);
 
     Object.setPrototypeOf(obj, this);
 

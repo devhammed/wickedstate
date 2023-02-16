@@ -1,12 +1,11 @@
 import { Context } from '../core/context';
-import { service } from '../core/provider';
 
 export interface TimeoutService {
   start(fn: Function, timeout?: number): number;
   clear(id: number): void;
 }
 
-service('timeout', function ($rootContext: Context): TimeoutService {
+export function timeoutService($rootContext: Context): TimeoutService {
   return {
     start(fn, timeout) {
       return setTimeout(function () {
@@ -14,9 +13,8 @@ service('timeout', function ($rootContext: Context): TimeoutService {
         $rootContext.$notify();
       }, timeout);
     },
-
     clear(id) {
       clearTimeout(id);
     },
   };
-});
+}

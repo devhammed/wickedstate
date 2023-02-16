@@ -1,10 +1,10 @@
-import { directive } from '../core/provider';
+import { Directive } from '../contracts/directive';
 
-directive('*html', () => {
+export function htmlDirective(): Directive {
   return {
     newContext: false,
     isTemplate: false,
-    apply: function (el, context, exp) {
+    apply: function ({ el, context, exp }) {
       el.innerHTML = context.$eval<string>(exp);
 
       context.$watch<string>(exp, function (val) {
@@ -14,4 +14,4 @@ directive('*html', () => {
       return true;
     },
   };
-});
+}

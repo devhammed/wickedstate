@@ -1,15 +1,16 @@
-import { compile } from '../core/dom';
 import { Context } from '../core/context';
-import { directive } from '../core/provider';
+import { Directive } from '../contracts/directive';
 
-directive('*for', () => {
+export function forDirective(): Directive {
   return {
     isTemplate: true,
     newContext: false,
-    apply: function (el, context, exp) {
+    apply: function ({ el, context, exp }) {
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
       const parts = exp.split('in').map((p) => p.trim());
+      const compile =
+        context.$app.get<(el: Element, context: Context) => void>('$compile');
 
       if (parts.length !== 2) {
         throw new Error('Invalid for expression');
@@ -76,4 +77,4 @@ directive('*for', () => {
       render(context.$eval(collectionName));
     },
   };
-});
+}
