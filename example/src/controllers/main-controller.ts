@@ -1,7 +1,7 @@
 import { IntervalService } from 'wicked.js';
 import { MainContext } from '../contracts/main-context';
 
-export function MainController($ctx: MainContext, interval: IntervalService) {
+export function MainController($ctx: MainContext, $interval: IntervalService) {
   $ctx.count = 0;
 
   $ctx.interval = null;
@@ -15,11 +15,11 @@ export function MainController($ctx: MainContext, interval: IntervalService) {
     $event.preventDefault();
 
     if ($ctx.interval === null) {
-      $ctx.interval = interval.start(() => {
+      $ctx.interval = $interval.start(() => {
         $ctx.count += 1;
       }, 1000);
     } else {
-      interval.clear($ctx.interval!);
+      $interval.clear($ctx.interval!);
       $ctx.interval = null;
     }
   };

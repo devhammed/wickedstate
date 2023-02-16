@@ -99,7 +99,7 @@ export class App {
       throw new Error('Root element not found');
     }
 
-    this.compile(root, this.get('$rootContext') as Context);
+    this.compile(root, this.get<Context>('$rootContext'));
   }
 
   private compile(el: Element, context: Context) {
@@ -174,7 +174,7 @@ export class App {
     this.directive('*controller', controllerDirective);
 
     // Register Services
-    this.service('timeout', timeoutService);
-    this.service('interval', intervalService);
+    this.service('$timeout', timeoutService);
+    this.service('$interval', intervalService);
   }
 }
