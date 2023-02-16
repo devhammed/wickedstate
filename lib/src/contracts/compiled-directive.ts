@@ -1,7 +1,6 @@
 import { Directive } from './directive';
 
 export interface CompiledDirective {
-  name: string;
-  value: string;
+  exp: string;
   directive: Directive;
 }

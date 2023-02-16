@@ -103,15 +103,12 @@ export class App {
     this.compile(root, this.get<Context>('$rootContext'));
   }
 
-  private compile(el: Element, context: Context) {
-    let directive: Directive;
-    let contextCreated: boolean;
-    let compiledDirectives: CompiledDirective[] = this.getElDirectives(el);
-
+  private compile(el: Element, context: Context): void {
     try {
-      compiledDirectives.forEach((compiledDirective) => {
-        directive = compiledDirective.directive;
+      let contextCreated = false;
+      let compiledDirectives = this.getElDirectives(el);
 
+      compiledDirectives.forEach(({ directive, exp }) => {
         if (directive.newContext && !contextCreated) {
           context = context.$new();
           contextCreated = true;
@@ -119,8 +116,8 @@ export class App {
 
         directive.apply({
           el,
+          exp,
           context,
-          exp: compiledDirective.value,
         });
 
         if (directive.isTemplate) {
@@ -143,13 +140,12 @@ export class App {
     const result: CompiledDirective[] = [];
 
     for (let i = 0; i < attrs.length; i++) {
-      const { name, value } = attrs[i];
+      const { name, value: exp } = attrs[i];
       const directive = this.getDirective(name);
 
       if (directive !== null) {
         result.push({
-          name,
-          value,
+          exp,
           directive,
         });
       }
