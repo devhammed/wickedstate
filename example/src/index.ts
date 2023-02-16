@@ -1,41 +1,14 @@
 import { App } from 'wicked.js';
+import { UserItem } from './components/user-item';
+import { CounterHeader } from './components/counter-header';
 import { MainController } from './controllers/main-controller';
 import { NameController } from './controllers/name-controller';
 import { SecretController } from './controllers/secret-controller';
 
 new App()
+  .component('userItem', UserItem)
+  .component('counterHeader', CounterHeader)
   .controller('mainCtrl', MainController)
   .controller('nameCtrl', NameController)
   .controller('secretCtrl', SecretController)
-  .component('counterHeader', () => {
-    return {
-      props: [
-        {
-          as: Number,
-          name: 'count',
-          isRequired: true,
-        },
-      ],
-      template: `<h1 *bind="count"></h1>`,
-    };
-  })
-  .component('userItem', () => {
-    return {
-      props: [
-        {
-          name: 'name',
-          isRequired: true,
-        },
-      ],
-      template: `
-        <span *for="part in name">
-          <span
-            *if="$first"
-            *for="ch in part.split('')"
-            *bind="ch + ($last ? '' : '-')"></span>
-          <span *if="$last" *bind="part"></span>
-        </span>
-      `,
-    };
-  })
   .start();
