@@ -24,6 +24,8 @@ export class App {
   private $providers: Record<string, Function>;
 
   constructor() {
+    this.$providers = {};
+
     this.$rootContext = new Context(this);
 
     this.$stopCompilingError = new Error('Stop compiling.');
@@ -34,8 +36,6 @@ export class App {
       $rootContext: this.$rootContext,
       $compile: this.compile.bind(this),
     };
-
-    this.$providers = {};
 
     this.registerAppBindings();
   }
