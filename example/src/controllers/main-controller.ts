@@ -9,6 +9,7 @@ export function MainController($ctx: MainContext, $interval: IntervalService) {
   $ctx.handleClick = function ($event) {
     $event.preventDefault();
     $ctx.count += 1;
+    console.log($ctx.$refs.header);
   };
 
   $ctx.handleToggleCounting = function ($event) {

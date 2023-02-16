@@ -1,14 +1,15 @@
 import { Context } from './context';
 import { annotate } from '../utils/annotate';
 import { ifDirective } from '../directives/if';
+import { refDirective } from '../directives/ref';
 import { forDirective } from '../directives/for';
 import { bindDirective } from '../directives/bind';
 import { Directive } from '../contracts/directive';
 import { htmlDirective } from '../directives/html';
 import { modelDirective } from '../directives/model';
-import { clickDirective } from '../directives/click';
 import { timeoutService } from '../services/timeout';
 import { intervalService } from '../services/interval';
+import { makeEventDirective } from '../directives/event';
 import { controllerDirective } from '../directives/controller';
 import { makeDirectiveName } from '../utils/make-directive-name';
 import { makeControllerName } from '../utils/make-controller-name';
@@ -164,14 +165,21 @@ export class App {
   }
 
   private registerAppBindings(): void {
-    // Register Directives
+    // Register Context Directives
     this.directive('*if', ifDirective);
     this.directive('*for', forDirective);
     this.directive('*bind', bindDirective);
     this.directive('*html', htmlDirective);
     this.directive('*model', modelDirective);
-    this.directive('@click', clickDirective);
     this.directive('*controller', controllerDirective);
+
+    // Register Referencing Directives
+    this.directive('#ref', refDirective);
+
+    // Register Event Directives
+    ['click', 'change', 'focus'].forEach((eventName) =>
+      this.directive(`@${eventName}`, makeEventDirective(eventName))
+    );
 
     // Register Services
     this.service('$timeout', timeoutService);

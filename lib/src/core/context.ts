@@ -11,6 +11,8 @@ export class Context {
 
   public $children: Context[] = [];
 
+  public $refs: Record<string, Element | null> = {};
+
   public $watchers: Array<ContextWatcher<any> | null> = [];
 
   constructor(app: App, parent: Context | null = null) {
