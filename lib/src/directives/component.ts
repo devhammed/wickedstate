@@ -1,10 +1,6 @@
 import { Context } from '../core/context';
 import { Directive } from '../contracts/directive';
 
-type ComponentMarker = Comment & {
-  $$templateRoot: Element | null;
-};
-
 export function componentDirective(): Directive {
   return {
     priority: 9999,
@@ -17,66 +13,63 @@ export function componentDirective(): Directive {
         throw new Error(`component "${exp}" not found`);
       }
 
+      const container = document.createElement('div');
+
+      container.innerHTML = component.template;
+
+      const templateRoot = container.children[0];
+
+      if (templateRoot === null) {
+        throw new Error(`template for component "${exp}" not found`);
+      }
+
       const compile =
         context.$app.get<(el: Element, context: Context) => void>('$compile');
       const componentContext = context.$new();
-      const marker = document.createComment(
-        ` wickedComponent: ${exp} `
-      ) as ComponentMarker;
-      const endMarker = document.createComment(
-        ` wickedEndComponent: ${exp} `
-      ) as ComponentMarker;
+      const marker = document.createComment(` wickedComponent: ${exp} `);
+      const endMarker = document.createComment(` wickedEndComponent: ${exp} `);
+      const ref = el.attributes['#ref'];
 
-      function render() {
-        if (
-          marker.$$templateRoot &&
-          endMarker.$$templateRoot &&
-          marker.$$templateRoot === endMarker.$$templateRoot
-        ) {
-          marker.parentNode.removeChild(endMarker.$$templateRoot);
-        }
+      if (ref) {
+        componentContext.$parent.$refs[ref.value] = templateRoot;
+      }
 
-        const container = document.createElement('div');
+      function render(isFirstTime: boolean = false) {
+        component.props.forEach(({ as, name, isRequired }) => {
+          const exprValue = el.attributes[`$${name}`]?.value;
 
-        container.innerHTML = component.template;
+          if (isRequired && typeof exprValue !== 'string') {
+            throw new Error(
+              `required attribute "${name}" for "${exp}" component not found`
+            );
+          }
 
-        const templateRoot = container.children[0];
-
-        if (templateRoot === null) {
-          throw new Error(`template for component "${exp}" not found`);
-        }
-
-        component.props.forEach(({ as, name }) => {
-          const value = componentContext.$parent.$eval(
-            el.attributes[`$${name}`]?.value ?? undefined
-          );
+          const value = componentContext.$parent.$eval(exprValue);
 
           componentContext[name] = typeof as === 'function' ? as(value) : value;
         });
 
-        const ref = el.attributes['#ref'];
-
-        if (ref) {
-          componentContext.$parent.$refs[ref.value] = templateRoot;
+        if (isFirstTime) {
+          compile(templateRoot, componentContext);
         }
-
-        marker.$$templateRoot = templateRoot;
-
-        endMarker.$$templateRoot = templateRoot;
-
-        marker.parentNode.insertBefore(templateRoot, endMarker);
-
-        compile(templateRoot, componentContext);
       }
 
       el.parentNode.replaceChild(marker, el);
 
       marker.parentNode.insertBefore(endMarker, marker.nextSibling);
 
-      render();
+      marker.parentNode.insertBefore(templateRoot, endMarker);
+
+      render(true);
 
       component.props.forEach(({ name }) => {
-        componentContext.$parent.$watch(name, render);
+        const exprValue = el.attributes[`$${name}`]?.value;
+
+        if (typeof exprValue !== 'string') {
+          return;
+        }
+
+        componentContext.$parent.$watch(exprValue, render);
       });
     },
   };
