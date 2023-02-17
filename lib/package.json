@@ -2,8 +2,8 @@
   "name": "wicked.js",
   "version": "1.0.0",
   "description": "",
+  "source": "index.ts",
   "main": "dist/index.js",
-  "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "parcel watch",
