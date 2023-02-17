@@ -160,6 +160,25 @@ export class App {
     }
   }
 
+  private selectorMatches(el: Element, selector: string): boolean {
+    var p: Element & {
+      msMatchesSelector?: (selectors: string) => boolean;
+      mozMatchesSelector?: (selectors: string) => boolean;
+      webkitMatchesSelector?: (selector: string) => boolean;
+    } = Element.prototype;
+
+    var f =
+      p.matches ||
+      p.webkitMatchesSelector ||
+      p.mozMatchesSelector ||
+      p.msMatchesSelector ||
+      function (s) {
+        return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
+      };
+
+    return f.call(el, selector);
+  }
+
   private getElDirectives(el: Element): CompiledDirective[] {
     const attrs = el.attributes;
     const result: CompiledDirective[] = [];
