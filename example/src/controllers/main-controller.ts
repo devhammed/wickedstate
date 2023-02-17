@@ -6,15 +6,12 @@ export function MainController($ctx: MainContext, $interval: IntervalService) {
 
   $ctx.interval = null;
 
-  $ctx.handleClick = function ($event) {
-    $event.preventDefault();
+  $ctx.handleClick = function () {
     $ctx.count += 1;
     console.log($ctx.$refs.header);
   };
 
-  $ctx.handleToggleCounting = function ($event) {
-    $event.preventDefault();
-
+  $ctx.handleToggleCounting = function () {
     if ($ctx.interval === null) {
       $ctx.interval = $interval.start(() => {
         $ctx.count += 1;

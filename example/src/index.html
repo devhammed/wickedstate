@@ -12,9 +12,9 @@
         #ref="header"
         #component="counterHeader"
         $count="count"></template>
-      <button @click="handleClick($event)">Click Me</button>
+      <button @:click.prevent="handleClick()">Click Me</button>
       <button
-        @click="handleToggleCounting($event)"
+        @:click.prevent="handleToggleCounting()"
         *bind="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
 
       <div *controller="nameCtrl" style="margin-top: 20px">
@@ -24,12 +24,12 @@
           </li>
         </ul>
         <input type="text" *model="newName" value="Test" />
-        <button @click="handleAddName()">Add</button>
+        <button @:click="handleAddName()">Add</button>
       </div>
 
       <div *controller="secretCtrl" style="margin-top: 20px">
         <p *if="isShowing" *bind="'The current count is: ' + $parent.count"></p>
-        <button @click="handleToggle()">Toggle Secret</button>
+        <button @:click="handleToggle()">Toggle Secret</button>
       </div>
     </div>
 

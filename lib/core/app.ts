@@ -6,15 +6,12 @@ import { Component } from '../contracts/component';
 import { bindDirective } from '../directives/bind';
 import { Directive } from '../contracts/directive';
 import { htmlDirective } from '../directives/html';
+import { eventDirective } from '../directives/event';
 import { modelDirective } from '../directives/model';
 import { timeoutService } from '../services/timeout';
 import { intervalService } from '../services/interval';
-import { makeEventDirective } from '../directives/event';
 import { componentDirective } from '../directives/component';
 import { controllerDirective } from '../directives/controller';
-import { makeDirectiveName } from '../utils/make-directive-name';
-import { makeComponentName } from '../utils/make-component-name';
-import { makeControllerName } from '../utils/make-controller-name';
 import { CompiledDirective } from '../contracts/compiled-directive';
 
 export class App {
@@ -25,6 +22,12 @@ export class App {
   private $cache: Record<string, any>;
 
   private $providers: Record<string, Function>;
+
+  private $CONTROLLER_PREFIX = 'Controller_';
+
+  private $COMPONENT_PREFIX = 'Component_';
+
+  private $DIRECTIVE_PREFIX = 'Directive_';
 
   constructor() {
     this.$providers = {};
@@ -44,13 +47,13 @@ export class App {
   }
 
   directive(name: string, fn: () => Directive): this {
-    this.$providers[makeDirectiveName(name)] = fn;
+    this.$providers[this.makeDirectiveName(name)] = fn;
 
     return this;
   }
 
   controller(name: string, fn: Function): this {
-    this.$providers[makeControllerName(name)] = function () {
+    this.$providers[this.makeControllerName(name)] = function () {
       return fn;
     };
 
@@ -58,7 +61,7 @@ export class App {
   }
 
   component(name: string, fn: () => Component): this {
-    this.$providers[makeComponentName(name)] = fn;
+    this.$providers[this.makeComponentName(name)] = fn;
 
     return this;
   }
@@ -84,15 +87,15 @@ export class App {
   }
 
   getDirective(name: string, locals?: Record<string, any>): Directive | null {
-    return this.get<Directive>(makeDirectiveName(name), locals);
+    return this.get<Directive>(this.makeDirectiveName(name), locals);
   }
 
   getController(name: string, locals?: Record<string, any>): Function | null {
-    return this.get<Function>(makeControllerName(name), locals);
+    return this.get<Function>(this.makeControllerName(name), locals);
   }
 
   getComponent(name: string, locals?: Record<string, any>): Component | null {
-    return this.get<Component>(makeComponentName(name), locals);
+    return this.get<Component>(this.makeComponentName(name), locals);
   }
 
   invoke<T>(fn: Function, locals?: Record<string, any> | null): T {
@@ -133,7 +136,7 @@ export class App {
       let contextCreated = false;
       let compiledDirectives = this.getElDirectives(el);
 
-      compiledDirectives.forEach(({ directive, exp }) => {
+      compiledDirectives.forEach(({ directive, exp, modifiers, arg }) => {
         if (directive.newContext && !contextCreated) {
           context = context.$new();
           contextCreated = true;
@@ -142,7 +145,9 @@ export class App {
         directive.apply({
           el,
           exp,
+          arg,
           context,
+          modifiers,
         });
 
         if (directive.isTemplate) {
@@ -160,37 +165,28 @@ export class App {
     }
   }
 
-  private selectorMatches(el: Element, selector: string): boolean {
-    var p: Element & {
-      msMatchesSelector?: (selectors: string) => boolean;
-      mozMatchesSelector?: (selectors: string) => boolean;
-      webkitMatchesSelector?: (selector: string) => boolean;
-    } = Element.prototype;
-
-    var f =
-      p.matches ||
-      p.webkitMatchesSelector ||
-      p.mozMatchesSelector ||
-      p.msMatchesSelector ||
-      function (s) {
-        return [].indexOf.call(document.querySelectorAll(s), this) !== -1;
-      };
-
-    return f.call(el, selector);
-  }
-
   private getElDirectives(el: Element): CompiledDirective[] {
     const attrs = el.attributes;
     const result: CompiledDirective[] = [];
 
     for (let i = 0; i < attrs.length; i++) {
       const { name, value: exp } = attrs[i];
-      const directive = this.getDirective(name);
+      const [_, directiveName, __, arg, modifiers] =
+        /^([\w\-@*#$]+)(\:([\w-]+))?((?:\.[\w-]+)+)?$/.exec(name) ?? [];
+      const directive = this.getDirective(directiveName);
 
       if (directive !== null) {
         result.push({
           exp,
+          arg,
           directive,
+          modifiers:
+            modifiers
+              ?.split('.')
+              .reduce(
+                (acc, item) => (item ? ((acc[item] = true), acc) : acc),
+                {}
+              ) ?? {},
         });
       }
     }
@@ -198,6 +194,18 @@ export class App {
     result.sort((a, b) => b.directive.priority - a.directive.priority);
 
     return result;
+  }
+
+  private makeComponentName(name: string): string {
+    return this.$COMPONENT_PREFIX + name;
+  }
+
+  private makeControllerName(name: string): string {
+    return this.$CONTROLLER_PREFIX + name;
+  }
+
+  private makeDirectiveName(name: string): string {
+    return this.$DIRECTIVE_PREFIX + name;
   }
 
   private registerAppBindings(): void {
@@ -214,9 +222,7 @@ export class App {
     this.directive('#component', componentDirective);
 
     // Register Event Directives
-    ['click', 'change', 'focus'].forEach((eventName) =>
-      this.directive(`@${eventName}`, makeEventDirective(eventName))
-    );
+    this.directive(`@`, eventDirective);
 
     // Register Services
     this.service('$timeout', timeoutService);
