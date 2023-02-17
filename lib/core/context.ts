@@ -1,7 +1,6 @@
 import { App } from './app';
 import clone from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import { getPaths } from '../utils/get-paths';
 import { ContextWatcher, ContextWatcherFn } from '../contracts/context-watcher';
 
 export class Context {
@@ -81,14 +80,14 @@ export class Context {
   }
 
   public $get<T>(path: string): T | null {
-    return getPaths(path).reduce(
+    return this.getPaths(path).reduce(
       (acc, currentKey) => (acc && acc[currentKey]) ?? null,
       this as any
     );
   }
 
   public $set<T>(path: string, value: T): T {
-    return getPaths(path).reduce(
+    return this.getPaths(path).reduce(
       (acc, part, index) =>
         (acc[part] =
           path.split('.').length === ++index ? value : acc[part] ?? {}),
@@ -139,5 +138,12 @@ export class Context {
     const children = parent.$children;
 
     children.splice(children.indexOf(this), 1);
+  }
+
+  private getPaths(path: string) {
+    return path
+      .replace(/\[(\w+)\]/g, '.$1')
+      .replace(/^\./, '')
+      .split('.');
   }
 }

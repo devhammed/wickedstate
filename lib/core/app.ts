@@ -1,5 +1,4 @@
 import { Context } from './context';
-import { annotate } from '../utils/annotate';
 import { ifDirective } from '../directives/if';
 import { refDirective } from '../directives/ref';
 import { forDirective } from '../directives/for';
@@ -99,7 +98,7 @@ export class App {
   invoke<T>(fn: Function, locals?: Record<string, any> | null): T {
     const normalizedLocals = locals ?? {};
 
-    const deps = annotate(fn).map(
+    const deps = this.annotate(fn).map(
       (s) => normalizedLocals[s] ?? this.get(s, normalizedLocals)
     );
 
@@ -114,6 +113,19 @@ export class App {
     }
 
     this.compile(root, this.get<Context>('$rootContext'));
+  }
+
+  private annotate(fn: Function): string[] {
+    const res = fn
+      .toString()
+      .replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm, '')
+      .match(/\((.*?)\)/);
+
+    if (res && res[1]) {
+      return res[1].split(',').map((d) => d.trim());
+    }
+
+    return [];
   }
 
   private compile(el: Element, context: Context): void {
