@@ -20,7 +20,9 @@
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
           <li *for="name in names">
-            <template #component="userItem" $name="name"></template>
+            <template
+              #component="userItem"
+              $name="name.map(function (e) { return e.toUpperCase() })"></template>
           </li>
         </ul>
         <input type="text" *model="newName" value="Test" />
