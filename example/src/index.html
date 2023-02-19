@@ -13,9 +13,9 @@
         #component="counterHeader"
         $count="count"></template>
       <button @:click.prevent="handleClick()">Click Me</button>
-      <button
-        @:click.prevent="handleToggleCounting()"
-        *bind="interval !== null ? 'Stop Counting' : 'Start Counting'"></button>
+      <button @:click.prevent="handleToggleCounting()">
+        {{ interval !== null ? 'Stop Counting' : 'Start Counting' }}
+      </button>
 
       <div *controller="nameCtrl" style="margin-top: 20px">
         <ul>
@@ -28,7 +28,7 @@
       </div>
 
       <div *controller="secretCtrl" style="margin-top: 20px">
-        <p *if="isShowing" *bind="'The current count is: ' + $parent.count"></p>
+        <p *if="isShowing">The current count is: {{ $parent.count}}</p>
         <button @:click="handleToggle()">Toggle Secret</button>
       </div>
     </div>

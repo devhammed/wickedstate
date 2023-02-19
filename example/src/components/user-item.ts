@@ -12,9 +12,8 @@ export function UserItem(): Component {
       <span *for="part in name">
         <span
           *if="$first"
-          *for="ch in part.split('')"
-          *bind="ch + ($last ? '' : '-')"></span>
-        <span *if="$last" *bind="part"></span>
+          *for="ch in part.split('')">{{ ch + ($last ? '' : '-') }}</span>
+        <span *if="$last">{{ part }}</span>
       </span>
     `,
   };
