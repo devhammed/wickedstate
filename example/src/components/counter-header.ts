@@ -9,6 +9,6 @@ export function CounterHeader(): Component {
         isRequired: true,
       },
     ],
-    template: `<h1 *bind="count"></h1>`,
+    template: `<h1>Count: {{ count }}, Doubled: {{count * 2}}</h1>`,
   };
 }

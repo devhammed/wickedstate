@@ -29,6 +29,8 @@ export class App {
 
   private $DIRECTIVE_PREFIX = 'Directive_';
 
+  private $TEMPLATE_EXPR_REGEX = /{{ *?(.*?) *?}}/g;
+
   constructor() {
     this.$providers = {};
 
@@ -133,9 +135,11 @@ export class App {
 
   private compile(el: Element, context: Context): void {
     try {
+      // Setup variables...
       let contextCreated = false;
       let compiledDirectives = this.getElDirectives(el);
 
+      // Then, apply directives...
       compiledDirectives.forEach(({ directive, exp, modifiers, arg }) => {
         if (directive.newContext && !contextCreated) {
           context = context.$new();
@@ -155,6 +159,41 @@ export class App {
         }
       });
 
+      // Then, evaluate template string...
+      let elChildNodes = el.childNodes;
+
+      for (let i = 0, n = elChildNodes.length; i < n; i++) {
+        const textNode = elChildNodes[i] as ChildNode & {
+          $$template: string;
+        };
+
+        if (textNode.nodeType !== Node.TEXT_NODE) {
+          continue;
+        }
+
+        const exprs = [];
+
+        textNode.$$template = textNode.nodeValue;
+
+        textNode.nodeValue = textNode.$$template.replace(
+          this.$TEMPLATE_EXPR_REGEX,
+          (_, exp) => {
+            exprs.push(exp.trim());
+            return context.$eval(exp);
+          }
+        );
+
+        exprs.forEach((expr) => {
+          context.$watch(expr, () => {
+            textNode.nodeValue = textNode.$$template.replace(
+              this.$TEMPLATE_EXPR_REGEX,
+              (_, exp) => context.$eval(exp)
+            );
+          });
+        });
+      }
+
+      // And then, traverse children.
       [].slice
         .call(el.children)
         .forEach((child: Element) => this.compile(child, context));
