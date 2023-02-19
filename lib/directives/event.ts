@@ -12,7 +12,7 @@ export function eventDirective(): Directive {
         );
       }
 
-      el.addEventListener(eventName, function (e) {
+      el.addEventListener(eventName, function eventListener(e) {
         if (modifiers.prevent) {
           e.preventDefault();
         }
@@ -29,6 +29,10 @@ export function eventDirective(): Directive {
           context.$eval(exp, { $event: e });
           context.$notify();
         } catch {}
+
+        if (modifiers.once) {
+          el.removeEventListener(eventName, eventListener);
+        }
       });
     },
   };
