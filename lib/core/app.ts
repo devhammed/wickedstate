@@ -171,26 +171,27 @@ export class App {
 
         const exprs = [];
 
+        const updateNodeValue = (isFirstTime: boolean) => {
+          textNode.nodeValue = textNode.$$template.replace(
+            this.$TEMPLATE_EXPR_REGEX,
+            (_, exp) => {
+              const normalizedExp = exp.trim();
+
+              if (isFirstTime) {
+                exprs.push(normalizedExp);
+              }
+
+              return context.$eval(normalizedExp);
+            }
+          );
+        };
+
         textNode.$$template = textNode.nodeValue;
 
-        textNode.nodeValue = textNode.$$template.replace(
-          this.$TEMPLATE_EXPR_REGEX,
-          (_, exp) => {
-            const normalizedExp = exp.trim();
-
-            exprs.push(normalizedExp);
-
-            return context.$eval(normalizedExp);
-          }
-        );
+        updateNodeValue(true);
 
         exprs.forEach((expr) => {
-          context.$watch(expr, () => {
-            textNode.nodeValue = textNode.$$template.replace(
-              this.$TEMPLATE_EXPR_REGEX,
-              (_, exp) => context.$eval(exp)
-            );
-          });
+          context.$watch(expr, () => updateNodeValue(false));
         });
       }
 
