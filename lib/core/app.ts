@@ -160,10 +160,8 @@ export class App {
       });
 
       // Then, evaluate template string...
-      let elChildNodes = el.childNodes;
-
-      for (let i = 0, n = elChildNodes.length; i < n; i++) {
-        const textNode = elChildNodes[i] as ChildNode & {
+      for (let i = 0, nodes = el.childNodes, len = nodes.length; i < len; i++) {
+        const textNode = nodes[i] as ChildNode & {
           $$template: string;
         };
 
@@ -178,8 +176,11 @@ export class App {
         textNode.nodeValue = textNode.$$template.replace(
           this.$TEMPLATE_EXPR_REGEX,
           (_, exp) => {
-            exprs.push(exp.trim());
-            return context.$eval(exp);
+            const normalizedExp = exp.trim();
+
+            exprs.push(normalizedExp);
+
+            return context.$eval(normalizedExp);
           }
         );
 
