@@ -30,7 +30,7 @@
       </div>
 
       <div *controller="secretCtrl" style="margin-top: 20px">
-        <p *if="isShowing">The current count is: {{ $parent.count}}</p>
+        <p *if="isShowing">The current count is: {{ $parent.count }}</p>
         <button @:click="handleToggle()">Toggle Secret</button>
       </div>
     </div>
