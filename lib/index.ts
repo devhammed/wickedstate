@@ -7,6 +7,7 @@ export type {
   ContextWatcher,
   ContextWatcherFn,
 } from './contracts/context-watcher';
+export type { Filter } from './contracts/filter';
 export type { Directive } from './contracts/directive';
 export type { Component } from './contracts/component';
 export type { TimeoutService } from './services/timeout';

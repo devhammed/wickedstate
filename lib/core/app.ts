@@ -13,6 +13,7 @@ import { intervalService } from '../services/interval';
 import { componentDirective } from '../directives/component';
 import { controllerDirective } from '../directives/controller';
 import { CompiledDirective } from '../contracts/compiled-directive';
+import { Filter } from '../contracts/filter';
 
 export class App {
   private $rootContext: Context;
@@ -29,7 +30,12 @@ export class App {
 
   private $DIRECTIVE_PREFIX = 'Directive_';
 
+  private $FILTER_PREFIX = 'Filter_';
+
   private $TEMPLATE_EXPR_REGEX = /{{ *?(.*?) *?}}/g;
+
+  private $DIRECTIVE_ATTR_REGEX =
+    /^([\w\-@*#$]+)(\:([\w-]+))?((?:\.[\w-]+)+)?$/;
 
   constructor() {
     this.$providers = {};
@@ -68,6 +74,12 @@ export class App {
     return this;
   }
 
+  filter(name: string, fn: () => Filter): this {
+    this.$providers[this.makeFilterName(name)] = fn;
+
+    return this;
+  }
+
   service(name: string, fn: Function): this {
     this.$providers[name] = fn;
 
@@ -94,6 +106,10 @@ export class App {
 
   getController(name: string, locals?: Record<string, any>): Function | null {
     return this.get<Function>(this.makeControllerName(name), locals);
+  }
+
+  getFilter(name: string, locals?: Record<string, any>): Filter | null {
+    return this.get<Function>(this.makeFilterName(name), locals);
   }
 
   getComponent(name: string, locals?: Record<string, any>): Component | null {
@@ -213,7 +229,7 @@ export class App {
     for (let i = 0; i < attrs.length; i++) {
       const { name, value: exp } = attrs[i];
       const [_, directiveName, __, arg, modifiers] =
-        /^([\w\-@*#$]+)(\:([\w-]+))?((?:\.[\w-]+)+)?$/.exec(name) ?? [];
+        this.$DIRECTIVE_ATTR_REGEX.exec(name) ?? [];
       const directive = this.getDirective(directiveName);
 
       if (directive !== null) {
@@ -243,6 +259,10 @@ export class App {
 
   private makeControllerName(name: string): string {
     return this.$CONTROLLER_PREFIX + name;
+  }
+
+  private makeFilterName(name: string): string {
+    return this.$FILTER_PREFIX + name;
   }
 
   private makeDirectiveName(name: string): string {
