@@ -6,11 +6,29 @@ export function bindDirective(): Directive {
     newContext: false,
     isTemplate: false,
     apply: function ({ el, context, exp, arg: attribute }) {
-      el[attribute] = context.$eval<string>(exp);
+      function setAttribute(value: string | object) {
+        switch (attribute) {
+          case 'style':
+            if (typeof value === 'object') {
+              for (const key in value) {
+                if (Object.prototype.hasOwnProperty.call(value, key)) {
+                  (el as HTMLElement).style[key] = value[key];
+                }
+              }
+            } else {
+              el.setAttribute(attribute, value);
+            }
 
-      context.$watch<string>(exp, function (val) {
-        el[attribute] = val;
-      });
+            break;
+          default:
+            el[attribute] = value;
+            break;
+        }
+      }
+
+      setAttribute(context.$eval<string>(exp));
+
+      context.$watch(exp, setAttribute);
     },
   };
 }
