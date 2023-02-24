@@ -26,7 +26,7 @@ export function bindDirective(): Directive {
         }
       }
 
-      setAttribute(context.$eval<string>(exp));
+      setAttribute(context.$eval(exp));
 
       context.$watch(exp, setAttribute);
     },
