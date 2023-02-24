@@ -1,5 +1,6 @@
 import { Context } from '../core/context';
 import { Directive } from '../contracts/directive';
+import { Compiler } from '../contracts/compiler';
 
 type Marker = Comment & {
   $$currentIfElement: IfElement | null;
@@ -15,8 +16,7 @@ export function ifDirective(): Directive {
     isTemplate: true,
     newContext: false,
     apply({ el, context, exp }) {
-      const compile =
-        context.$app.get<(el: Element, context: Context) => void>('$compile');
+      const compile = context.$app.get<Compiler>('$compile');
       const marker = document.createComment(` wickedIf: ${exp} `) as Marker;
       const endMarker = document.createComment(
         ` wickedEndIf: ${exp} `

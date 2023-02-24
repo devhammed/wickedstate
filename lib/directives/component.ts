@@ -1,4 +1,4 @@
-import { Context } from '../core/context';
+import { Compiler } from '../contracts/compiler';
 import { Directive } from '../contracts/directive';
 
 export function componentDirective(): Directive {
@@ -23,8 +23,7 @@ export function componentDirective(): Directive {
         throw new Error(`template for component "${exp}" not found`);
       }
 
-      const compile =
-        context.$app.get<(el: Element, context: Context) => void>('$compile');
+      const compile = context.$app.get<Compiler>('$compile');
       const componentContext = context.$new();
       const marker = document.createComment(` wickedComponent: ${exp} `);
       const endMarker = document.createComment(` wickedEndComponent: ${exp} `);

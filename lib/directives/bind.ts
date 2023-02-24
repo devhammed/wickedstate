@@ -5,11 +5,11 @@ export function bindDirective(): Directive {
     priority: 10,
     newContext: false,
     isTemplate: false,
-    apply: function ({ el, context, exp }) {
-      el.textContent = context.$eval<string>(exp);
+    apply: function ({ el, context, exp, arg: attribute }) {
+      el[attribute] = context.$eval<string>(exp);
 
       context.$watch<string>(exp, function (val) {
-        el.textContent = val;
+        el[attribute] = val;
       });
     },
   };

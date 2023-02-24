@@ -5,7 +5,6 @@ import { forDirective } from '../directives/for';
 import { Component } from '../contracts/component';
 import { bindDirective } from '../directives/bind';
 import { Directive } from '../contracts/directive';
-import { htmlDirective } from '../directives/html';
 import { eventDirective } from '../directives/event';
 import { modelDirective } from '../directives/model';
 import { timeoutService } from '../services/timeout';
@@ -274,7 +273,6 @@ export class App {
     this.directive('*if', ifDirective);
     this.directive('*for', forDirective);
     this.directive('*bind', bindDirective);
-    this.directive('*html', htmlDirective);
     this.directive('*model', modelDirective);
     this.directive('*controller', controllerDirective);
 

@@ -1,4 +1,5 @@
 import { Context } from '../core/context';
+import { Compiler } from '../contracts/compiler';
 import { Directive } from '../contracts/directive';
 
 export function forDirective(): Directive {
@@ -10,8 +11,7 @@ export function forDirective(): Directive {
       const contexts: Context[] = [];
       const renderedElements: Element[] = [];
       const parts = exp.split('in').map((p) => p.trim());
-      const compile =
-        context.$app.get<(el: Element, context: Context) => void>('$compile');
+      const compile = context.$app.get<Compiler>('$compile');
 
       if (parts.length !== 2) {
         throw new Error('Invalid for expression');
