@@ -174,7 +174,7 @@ export class App {
         }
       });
 
-      // Then, evaluate template string...
+      // Then, evaluate template strings...
       for (let i = 0, nodes = el.childNodes, len = nodes.length; i < len; i++) {
         const textNode = nodes[i] as ChildNode & {
           $$template: string;
@@ -187,6 +187,10 @@ export class App {
         const exprs = [];
 
         const updateNodeValue = (isFirstTime: boolean) => {
+          if (isFirstTime) {
+            textNode.$$template = textNode.nodeValue;
+          }
+
           textNode.nodeValue = textNode.$$template.replace(
             this.$TEMPLATE_EXPR_REGEX,
             (_, exp) => {
@@ -200,8 +204,6 @@ export class App {
             }
           );
         };
-
-        textNode.$$template = textNode.nodeValue;
 
         updateNodeValue(true);
 
