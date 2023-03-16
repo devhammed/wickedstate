@@ -13,6 +13,7 @@ import { componentDirective } from '../directives/component';
 import { controllerDirective } from '../directives/controller';
 import { CompiledDirective } from '../contracts/compiled-directive';
 import { Filter } from '../contracts/filter';
+import { annotateFn } from '../utils/annotate-fn';
 
 export class App {
   private $rootContext: Context;
@@ -118,7 +119,7 @@ export class App {
   invoke<T>(fn: Function, locals?: Record<string, any> | null): T {
     const normalizedLocals = locals ?? {};
 
-    const deps = this.annotate(fn).map(
+    const deps = annotateFn(fn).map(
       (s) => normalizedLocals[s] ?? this.get(s, normalizedLocals)
     );
 
@@ -133,19 +134,6 @@ export class App {
     }
 
     this.compile(root, this.get<Context>('$rootContext'));
-  }
-
-  private annotate(fn: Function): string[] {
-    const res = fn
-      .toString()
-      .replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm, '')
-      .match(/\((.*?)\)/);
-
-    if (res && res[1]) {
-      return res[1].split(',').map((d) => d.trim());
-    }
-
-    return [];
   }
 
   private compile(el: Element, context: Context): void {
@@ -282,7 +270,7 @@ export class App {
     this.directive('#ref', refDirective);
     this.directive('#component', componentDirective);
 
-    // Register Event Directives
+    // Register Event Directive
     this.directive(`@`, eventDirective);
 
     // Register Services

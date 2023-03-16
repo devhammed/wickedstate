@@ -1,4 +1,5 @@
 import { Context } from '../core/context';
+import { isAsyncFn } from '../utils/is-async-fn';
 
 export interface TimeoutService {
   start(fn: Function, timeout?: number): number;
@@ -8,8 +9,16 @@ export interface TimeoutService {
 export function timeoutService($rootContext: Context): TimeoutService {
   return {
     start(fn, timeout) {
-      return setTimeout(function () {
-        fn();
+      return setTimeout(async function () {
+        try {
+          if (isAsyncFn(fn)) {
+            await fn();
+          } else {
+            fn();
+          }
+        } finally {
+          $rootContext.$notify();
+        }
         $rootContext.$notify();
       }, timeout);
     },
