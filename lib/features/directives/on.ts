@@ -20,7 +20,7 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
         throw new Error(`[WickedState] Event listeners must be an object for ${node}`);
     }
 
-    const el = node as ((HTMLElement | Document | Window) & {
+    const el = node as (HTMLElement & {
         __wickedEvents?: Record<string, EventListenerOrEventListenerObject>;
     })
 
