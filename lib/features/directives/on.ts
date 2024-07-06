@@ -1,5 +1,5 @@
 import {isObject} from '../../utils/checkers';
-import {DirectiveContract, DirectiveHandlerContract} from '../../utils/contracts';
+import {DirectiveContract} from '../../utils/contracts';
 
 interface OnDirectiveHandler {
     handler: Function;
