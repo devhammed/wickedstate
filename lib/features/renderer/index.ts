@@ -82,8 +82,6 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 const cleanups: Set<Function> = new Set();
 
                 config.reactivity.effect(() => {
-                    stateElement.__wickedStateCurrentEl = node;
-
                     const context = evaluate<object>(bindings, state);
 
                     cleanups.forEach((fx) => {
