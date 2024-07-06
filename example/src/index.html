@@ -7,10 +7,28 @@
     <title>Wicked State Example</title>
   </head>
   <body>
+    <h1
+      data-state="{
+        name: null,
+        init() {
+          return fetch('https://jsonplaceholder.typicode.com/users/1')
+            .then((response) => response.json())
+            .then((json) => {
+              this.name = json.name;
+            });
+        },
+      }"
+      data-bind="{
+        text: 'Welcome, ' + (name || 'Guest'),
+      }"
+    >
+
+    </h1>
+
     <button
       data-state="{ count: 0 }"
       data-bind="{
-        text: 'Single Root Element: ' + count,
+        text: 'Single Element: ' + count,
         on: {
           click() {
             count++;
