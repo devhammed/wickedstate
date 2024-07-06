@@ -1,4 +1,5 @@
-import {MagicContract, MagicHandlerContract} from "../../utils/contracts";
+import {isFunction} from '../../utils/checkers';
+import {MagicContract, MagicHandlerContract} from '../../utils/contracts';
 
 export const magics: Record<string, MagicHandlerContract<any>> = {};
 
@@ -7,7 +8,7 @@ export function decorateWithMagics({ state, effect }: MagicContract): Object {
         get(obj: Object, prop: string): any {
             const magic = magics[prop];
 
-            if (typeof magic === 'function') {
+            if (isFunction(magic)) {
                 return magic({ state: obj, effect });
             }
 
@@ -28,7 +29,7 @@ export function decorateWithMagics({ state, effect }: MagicContract): Object {
 export function magic<T>(name: string, fn: MagicHandlerContract<T>): void {
     const magicName = `$${name}`;
 
-    if (typeof magics[magicName] === 'function') {
+    if (isFunction(magics[magicName])) {
         throw new Error(`[WickedState] Overriding magics is not allowed, this error occurred while trying to set an existing magic for ${name}`);
     }
 

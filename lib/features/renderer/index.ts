@@ -1,9 +1,10 @@
-import {WickedStateContract, WickedStateConfigContract} from '../../utils/contracts';
-import {defaultReactivity} from '../reactivity';
-import {evaluate} from '../../utils/evaluate';
-import {decorateWithMagics} from '../magics';
-import {walkDom} from '../../utils/walk-dom';
 import {directives} from '../directives';
+import {walkDom} from '../../utils/walk-dom';
+import {decorateWithMagics} from '../magics';
+import {evaluate} from '../../utils/evaluate';
+import {isFunction} from '../../utils/checkers';
+import {defaultReactivity} from '../reactivity';
+import {WickedStateContract, WickedStateConfigContract} from '../../utils/contracts';
 
 export async function start(config: WickedStateConfigContract = {}): Promise<void> {
     const states: NodeListOf<HTMLElement> = document.querySelectorAll('[data-state]');
@@ -28,7 +29,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
             effect: config.reactivity.effect,
         });
 
-        if (typeof state.init === 'function') {
+        if (isFunction(state.init)) {
             const initValue = state.init();
 
             if (initValue instanceof Promise) {
@@ -75,8 +76,8 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                             effect: config.reactivity.effect,
                         });
 
-                        if (typeof cleanup === 'function') {
-                            cleanups.add(cleanup);
+                        if (isFunction(cleanup)) {
+                            cleanups.add(cleanup as Function);
                         }
                     }
                 }

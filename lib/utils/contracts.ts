@@ -11,7 +11,7 @@ export interface MagicHandlerContract<T> {
 }
 
 export interface DirectiveHandlerContract<T> {
-    (directive: DirectiveContract<T>): void;
+    (directive: DirectiveContract<T>): Function | void;
 }
 
 export interface EffectContract {

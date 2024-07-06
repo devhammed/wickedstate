@@ -7,14 +7,21 @@
     <title>Wicked State Example</title>
   </head>
   <body>
-    <div data-state="{ count: 0 }">
-      <span data-bind="{ text: count }"></span>
-      <button data-bind="{ on: { click: () => this.count++ } }">Increment</button>
-    </div>
-
-    <div data-state="{ count: 1 }">
-      <span data-bind="{ text: count }"></span>
-      <button data-bind="{ on: { click: () => this.count++ } }">Increment</button>
+    <div data-state="{ count: 0, counting: 'Click the button to start counting' }">
+      <p data-bind="{ text: count }"></p>
+      <p data-bind="{ text: counting }"></p>
+      <button
+        data-bind="{
+          on: {
+            click() {
+              count = count + 1;
+              counting = `Counting... ${count}`;
+            },
+          },
+        }"
+      >
+        Increment
+      </button>
     </div>
 
     <script type="module" src="./index.ts"></script>
