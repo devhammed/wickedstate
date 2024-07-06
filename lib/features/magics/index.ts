@@ -20,10 +20,10 @@ export function decorateWithMagics(magicContext: MagicContextContract): Object {
     Object.defineProperty(magicContext.state, magicName, {
       set(_: any): void {
         throw new Error(
-            `[WickedState] You cannot set a value of a magic, this error occurred while trying to set a value for ${magicName}.`);
+            `[WickedState] You cannot set a value of a magic, this error occurred while trying to set a value for ${magicName}.`,
+        );
       },
       get(): any {
-
         return magics[magicName](magicContext);
       },
     });
@@ -37,7 +37,8 @@ export function magic<T>(name: string, fn: MagicHandlerContract<T>): void {
 
   if (isFunction(magics[magicName])) {
     throw new Error(
-        `[WickedState] Overriding magics is not allowed, this error occurred while trying to set an existing magic for ${name}`);
+        `[WickedState] Overriding magics is not allowed, this error occurred while trying to set an existing magic for ${name}`,
+    );
   }
 
   magics[magicName] = fn;
