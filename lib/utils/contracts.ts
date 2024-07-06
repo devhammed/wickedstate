@@ -45,7 +45,7 @@ export interface MagicContextContract {
 }
 
 export interface DirectiveContract<T> {
-    context: Object;
+    bindings: Object;
 
     state: Object;
 

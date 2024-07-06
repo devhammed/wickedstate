@@ -73,25 +73,25 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                     return;
                 }
 
-                const bindings = node.dataset.bind;
+                const bindingsExpr = node.dataset.bind;
 
-                if ( ! bindings) {
+                if ( ! bindingsExpr) {
                     return;
                 }
 
                 const cleanups: Set<Function> = new Set();
 
                 config.reactivity.effect(() => {
-                    const context = evaluate<object>(bindings, state);
+                    const bindings = evaluate<object>(bindingsExpr, state);
 
                     cleanups.forEach((fx) => {
                         fx();
                         cleanups.delete(fx);
                     });
 
-                    for (const key in context) {
-                        if ({}.hasOwnProperty.call(context, key)) {
-                            const value = context[key];
+                    for (const key in bindings) {
+                        if ({}.hasOwnProperty.call(bindings, key)) {
+                            const value = bindings[key];
 
                             const directive = directives[key];
 
@@ -100,7 +100,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                             }
 
                             const cleanup = directive({
-                                context,
+                                bindings,
                                 value,
                                 node,
                                 state,
