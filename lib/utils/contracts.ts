@@ -7,8 +7,21 @@ export interface WickedStateConfigContract {
     reactivity?: ReactivityContract;
 }
 
+export interface ReactivityContract {
+    effect: EffectContract;
+
+    reactive: ReactiveContract;
+}
+
+export interface WickedStateElementContract extends HTMLElement {
+    __wickedStatePlaceholder: {
+        placeholder: HTMLElement,
+        previousDisplay: string,
+    } | null;
+}
+
 export interface MagicHandlerContract<T> {
-    (magic: MagicContract): T;
+    (magic: MagicContextContract): T;
 }
 
 export interface DirectiveHandlerContract<T> {
@@ -23,16 +36,12 @@ export interface ReactiveContract {
     (target: Object): Object;
 }
 
-export interface MagicContract {
+export interface MagicContextContract {
     state: Object;
 
     effect: EffectContract;
-}
 
-export interface ReactivityContract {
-    effect: EffectContract;
-
-    reactive: ReactiveContract;
+    root: WickedStateElementContract | null;
 }
 
 export interface DirectiveContract<T> {
@@ -41,6 +50,8 @@ export interface DirectiveContract<T> {
     state: Object;
 
     node: HTMLElement;
+
+    root: WickedStateElementContract | null;
 
     value: T;
 

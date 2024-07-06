@@ -4,14 +4,7 @@ import {decorateWithMagics} from '../magics';
 import {evaluate} from '../../utils/evaluate';
 import {isFunction} from '../../utils/checkers';
 import {defaultReactivity} from '../reactivity';
-import {WickedStateContract, WickedStateConfigContract} from '../../utils/contracts';
-
-interface WickedStateElementContract extends HTMLElement {
-    __wickedStatePlaceholder?: {
-        placeholder: HTMLElement,
-        previousDisplay: string
-    };
-}
+import {WickedStateContract,WickedStateElementContract, WickedStateConfigContract} from '../../utils/contracts';
 
 export async function start(config: WickedStateConfigContract = {}): Promise<void> {
     const states: NodeListOf<HTMLElement> = document.querySelectorAll('[data-state]');
@@ -33,6 +26,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
             const state: WickedStateContract = decorateWithMagics({
                 state: config.reactivity.reactive(data),
                 effect: config.reactivity.effect,
+                root: stateElement,
             });
 
             if (isFunction(state.init)) {
@@ -88,6 +82,8 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 const cleanups: Set<Function> = new Set();
 
                 config.reactivity.effect(() => {
+                    stateElement.__wickedStateCurrentEl = node;
+
                     const context = evaluate<object>(bindings, state);
 
                     cleanups.forEach((fx) => {
@@ -101,7 +97,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
 
                             const directive = directives[key];
 
-                            if (typeof directive === 'undefined') {
+                            if (typeof directive !== 'function') {
                                 throw new Error(`[WickedState] Unknown directive encountered: ${key}`);
                             }
 
@@ -110,6 +106,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                                 value,
                                 node,
                                 state,
+                                root: stateElement,
                                 effect: config.reactivity.effect,
                             });
 

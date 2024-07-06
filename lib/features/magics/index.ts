@@ -1,24 +1,26 @@
 import {watchMagic} from './watch';
 import {isFunction} from '../../utils/checkers';
-import {MagicContract, MagicHandlerContract} from '../../utils/contracts';
+import {MagicContextContract, MagicHandlerContract} from '../../utils/contracts';
+import {rootMagic} from './root';
 
 export const magics: Record<string, MagicHandlerContract<any>> = {
     $watch: watchMagic,
+    $root: rootMagic,
 };
 
-export function decorateWithMagics({ state, effect }: MagicContract): Object {
+export function decorateWithMagics(magicContext: MagicContextContract): Object {
     Object.keys(magics).forEach((magicName: string): void => {
-        Object.defineProperty(state, magicName, {
+        Object.defineProperty(magicContext.state, magicName, {
             set(_: any): void {
-                throw new Error(`[WickedState] You cannot set a value of a magic, this error occurred while trying to set a value for ${magicName}`);
+                throw new Error(`[WickedState] You cannot set a value of a magic, this error occurred while trying to set a value for ${magicName}.`);
             },
             get(): any {
-                return magics[magicName]({ state, effect });
+                return magics[magicName](magicContext);
             }
         });
     });
 
-    return state;
+    return magicContext.state;
 }
 
 export function magic<T>(name: string, fn: MagicHandlerContract<T>): void {

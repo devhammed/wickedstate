@@ -8,7 +8,7 @@ export type {
     ReactivityContract,
     DirectiveHandlerContract,
     EffectContract,
-    MagicContract,
+    MagicContextContract,
     WickedStateConfigContract,
     ReactiveContract,
     DirectiveContract,

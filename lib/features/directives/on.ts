@@ -1,5 +1,5 @@
 import {isObject} from '../../utils/checkers';
-import {DirectiveContract} from '../../utils/contracts';
+import {DirectiveContract, DirectiveHandlerContract} from '../../utils/contracts';
 
 interface OnDirectiveHandler {
     handler: Function;
@@ -16,12 +16,12 @@ interface OnDirective {
 }
 
 interface OnDirectiveElement extends HTMLElement {
-    __wickedEvents?: Record<string, EventListenerOrEventListenerObject>;
+    __wickedEvents?: Record<string, { target: OnDirectiveTarget, handler: EventListenerOrEventListenerObject }>;
 }
 
 type OnDirectiveTarget = Window | Document | OnDirectiveElement;
 
-export function onDirective({ node, value, state }: DirectiveContract<OnDirective>): void {
+export function onDirective({ node, value, state }: DirectiveContract<OnDirective>): () => void {
     if ( ! isObject(value)) {
         throw new Error(`[WickedState] Event listeners must be an object for ${node}`);
     }
@@ -32,18 +32,13 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
         el.__wickedEvents = {};
     }
 
-    const removeEvent = (target: OnDirectiveTarget, event: string) => {
-        const handler = el.__wickedEvents[event];
+    const removeEvent = (eventName: string) => {
+        const event = el.__wickedEvents[eventName];
 
-        if (handler) {
-            target.removeEventListener(event, handler);
-            el.__wickedEvents[event] = null;
+        if (event) {
+            event.target.removeEventListener(eventName, event.handler);
+            el.__wickedEvents[eventName] = null;
         }
-    }
-
-    const addEvent = (target: OnDirectiveTarget, event: string, handler: EventListenerOrEventListenerObject): void => {
-        target.addEventListener(event, handler);
-        el.__wickedEvents[event] = handler;
     }
 
     for (const [event, handler] of Object.entries(value)) {
@@ -62,13 +57,11 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
             ? globalThis.window
             : (document ? globalThis.document : node);
 
-        removeEvent(target, event);
-
         if ( ! options.handler) {
             continue;
         }
 
-        addEvent(target, event, function(e: Event): any {
+        const eventHandler = function(e: Event): any {
             if (prevent) {
                 e.preventDefault();
             }
@@ -84,10 +77,19 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
             const returnValue = options.handler.call(state, e);
 
             if (once) {
-                removeEvent(target, event);
+                removeEvent(event);
             }
 
             return returnValue;
-        });
+        };
+
+        target.addEventListener(event, eventHandler);
+
+        el.__wickedEvents[event] = {
+            target,
+            handler: eventHandler,
+        };
     }
+
+    return () => Object.keys(el.__wickedEvents).forEach(removeEvent);
 }
