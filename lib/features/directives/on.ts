@@ -15,20 +15,24 @@ interface OnDirective {
     [key: string]: Function | OnDirectiveHandler;
 }
 
+interface OnDirectiveElement extends HTMLElement {
+    __wickedEvents?: Record<string, EventListenerOrEventListenerObject>;
+}
+
+type OnDirectiveTarget = Window | Document | OnDirectiveElement;
+
 export function onDirective({ node, value, state }: DirectiveContract<OnDirective>): void {
     if ( ! isObject(value)) {
         throw new Error(`[WickedState] Event listeners must be an object for ${node}`);
     }
 
-    const el = node as (HTMLElement & {
-        __wickedEvents?: Record<string, EventListenerOrEventListenerObject>;
-    })
+    const el = node as OnDirectiveElement;
 
     if ( ! el.__wickedEvents) {
         el.__wickedEvents = {};
     }
 
-    const removeEvent = (target: Window | Document | HTMLElement, event: string) => {
+    const removeEvent = (target: OnDirectiveTarget, event: string) => {
         const handler = el.__wickedEvents[event];
 
         if (handler) {
@@ -37,7 +41,7 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
         }
     }
 
-    const addEvent = (target: Window | Document | HTMLElement, event: string, handler: EventListenerOrEventListenerObject): void => {
+    const addEvent = (target: OnDirectiveTarget, event: string, handler: EventListenerOrEventListenerObject): void => {
         target.addEventListener(event, handler);
         el.__wickedEvents[event] = handler;
     }
@@ -45,9 +49,16 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
     for (const [event, handler] of Object.entries(value)) {
         const options: OnDirectiveHandler = (isObject(handler) ? handler : {handler}) as OnDirectiveHandler;
 
-        const { prevent, stop, stopImmediate, once, window, document } = options;
+        const {
+            prevent,
+            stop,
+            stopImmediate,
+            once,
+            window,
+            document
+        } = options;
 
-        const target = window
+        const target: OnDirectiveTarget = window
             ? globalThis.window
             : (document ? globalThis.document : node);
 
