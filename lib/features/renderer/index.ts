@@ -6,6 +6,13 @@ import {isFunction} from '../../utils/checkers';
 import {defaultReactivity} from '../reactivity';
 import {WickedStateContract, WickedStateConfigContract} from '../../utils/contracts';
 
+interface WickedStateElementContract extends HTMLElement {
+    __wickedStatePlaceholder?: {
+        placeholder: HTMLElement,
+        previousDisplay: string
+    };
+}
+
 export async function start(config: WickedStateConfigContract = {}): Promise<void> {
     const states: NodeListOf<HTMLElement> = document.querySelectorAll('[data-state]');
 
@@ -34,20 +41,36 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 if (initValue instanceof Promise) {
                     const placeholderContent = isFunction(state.placeholder) ? state.placeholder() : null;
 
-                    const placeholder = document.createElement(stateElement.tagName);
-
                     const parent = stateElement.parentElement;
 
                     if (placeholderContent) {
+                        const placeholder = stateElement.cloneNode() as HTMLElement;
+
+                        placeholder.removeAttribute('data-state');
+
+                        placeholder.removeAttribute('data-bind');
+
                         placeholder.innerHTML = placeholderContent;
+
                         parent.insertBefore(placeholder, stateElement);
+
+                        stateElement.__wickedStatePlaceholder = {
+                            placeholder,
+                            previousDisplay: stateElement.style.display,
+                        };
+
+                        stateElement.style.display = 'none';
                     }
 
                     try {
                         await initValue;
                     } finally {
-                        if (parent.contains(placeholder)) {
-                            parent.removeChild(placeholder);
+                        const placeholderDetails = stateElement.__wickedStatePlaceholder;
+
+                        if (placeholderDetails) {
+                            parent.removeChild(placeholderDetails.placeholder);
+                            stateElement.style.display = placeholderDetails.previousDisplay;
+                            stateElement.__wickedStatePlaceholder = null;
                         }
                     }
                 }
@@ -99,6 +122,6 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                     }
                 });
             });
-        })(states[i]);
+        })(states[i] as WickedStateElementContract);
     }
 }
