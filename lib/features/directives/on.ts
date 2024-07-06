@@ -41,10 +41,11 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
         }
     }
 
-    for (const [event, handler] of Object.entries(value)) {
-        const options: OnDirectiveHandler = (isObject(handler) ? handler : {handler}) as OnDirectiveHandler;
+    for (const [eventName, eventValue] of Object.entries(value)) {
+        const options: OnDirectiveHandler = (isObject(eventValue) ? eventValue : {handler: eventValue}) as OnDirectiveHandler;
 
         const {
+            handler,
             prevent,
             stop,
             stopImmediate,
@@ -57,7 +58,7 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
             ? globalThis.window
             : (document ? globalThis.document : node);
 
-        if ( ! options.handler) {
+        if ( ! handler) {
             continue;
         }
 
@@ -74,18 +75,18 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
                 e.stopImmediatePropagation();
             }
 
-            const returnValue = options.handler.call(state, e);
+            const returnValue = handler.call(state, e);
 
             if (once) {
-                removeEvent(event);
+                removeEvent(eventName);
             }
 
             return returnValue;
         };
 
-        target.addEventListener(event, eventHandler);
+        target.addEventListener(eventName, eventHandler);
 
-        el.__wickedEvents[event] = {
+        el.__wickedEvents[eventName] = {
             target,
             handler: eventHandler,
         };
