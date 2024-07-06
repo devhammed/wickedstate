@@ -32,7 +32,24 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 const initValue = state.init();
 
                 if (initValue instanceof Promise) {
-                    await initValue;
+                    const placeholderContent = isFunction(state.placeholder) ? state.placeholder() : null;
+
+                    const placeholder = document.createElement(stateElement.tagName);
+
+                    const parent = stateElement.parentElement;
+
+                    if (placeholderContent) {
+                        placeholder.innerHTML = placeholderContent;
+                        parent.insertBefore(placeholder, stateElement);
+                    }
+
+                    try {
+                        await initValue;
+                    } finally {
+                        if (parent.contains(placeholder)) {
+                            parent.removeChild(placeholder);
+                        }
+                    }
                 }
             }
 

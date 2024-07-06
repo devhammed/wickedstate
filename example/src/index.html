@@ -17,6 +17,9 @@
               this.name = json.name;
             });
         },
+        placeholder() {
+          return 'Loading...';
+        },
       }"
       data-bind="{
         text: 'Welcome, ' + (name || 'Guest'),
@@ -41,6 +44,11 @@
       data-state="{
         count: 0,
         counting: 'Click the button to start counting',
+        init() {
+          this.$watch(() => this.count, function (newV, oldV) {
+            console.log('count changed from', oldV, 'to', newV);
+          });
+        }
       }"
     >
       <p data-bind="{ text: count }"></p>

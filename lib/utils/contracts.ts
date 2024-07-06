@@ -1,5 +1,6 @@
 export interface WickedStateContract {
     init?: Function;
+    placeholder?: Function;
 }
 
 export interface WickedStateConfigContract {
