@@ -1,3 +1,3 @@
-# wicked.js
+# wickedstate
 
-Experimenting with a simple JavaScript UI library.
+A plug-n-play JavaScript UI library.

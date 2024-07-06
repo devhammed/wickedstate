@@ -4,37 +4,9 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wicked Example</title>
+    <title>Wicked State Example</title>
   </head>
   <body>
-    <div *controller="mainCtrl">
-      <template
-        #ref="header"
-        #component="counterHeader"
-        $count="count"></template>
-      <button @:click.prevent="handleClick()">Click Me</button>
-      <button @:click.prevent="handleToggleCounting()">
-        {{ interval !== null ? 'Stop Counting' : 'Start Counting' }}
-      </button>
-
-      <div *controller="nameCtrl" style="margin-top: 20px">
-        <ul>
-          <li *for="name in names">
-            <template
-              #component="userItem"
-              $name="name.map(function (e) { return e.toUpperCase() })"></template>
-          </li>
-        </ul>
-        <input type="text" *model="newName" value="Test" />
-        <button @:click="handleAddName()">Add</button>
-      </div>
-
-      <div *controller="secretCtrl" style="margin-top: 20px">
-        <p *if="isShowing">The current count is: {{ $parent.count }}</p>
-        <button @:click="handleToggle()">Toggle Secret</button>
-      </div>
-    </div>
-
     <script type="module" src="./index.ts"></script>
   </body>
 </html>

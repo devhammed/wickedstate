@@ -1,7 +1,7 @@
 {
-  "name": "wicked.js",
+  "name": "wickedstate",
   "version": "1.0.0",
-  "description": "",
+  "description": "A plug-n-play TypeScript UI library.",
   "source": "index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,18 +16,17 @@
     "package.json",
     "README.md"
   ],
-  "keywords": [],
+  "keywords": [
+    "progressive",
+    "plug-n-play",
+    "ui",
+    "library",
+    "typescript"
+  ],
   "author": "Hammed Oyedele <itz.harmid@gmail.com> (https://github.com/devhammed)",
   "license": "MIT",
   "devDependencies": {
-    "@parcel/transformer-typescript-types": "^2.8.3",
-    "@types/lodash.clonedeep": "^4.5.7",
-    "@types/lodash.isequal": "^4.5.6",
-    "parcel": "^2.8.3",
-    "typescript": "^4.9.5"
-  },
-  "dependencies": {
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.isequal": "^4.5.0"
+    "parcel": "^2.12.0",
+    "typescript": "^5.5.3"
   }
 }
