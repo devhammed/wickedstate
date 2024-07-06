@@ -41,8 +41,6 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 if (initValue instanceof Promise) {
                     const placeholderContent = isFunction(state.placeholder) ? state.placeholder() : null;
 
-                    const parent = stateElement.parentElement;
-
                     if (placeholderContent) {
                         const placeholder = stateElement.cloneNode() as HTMLElement;
 
@@ -52,7 +50,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
 
                         placeholder.innerHTML = placeholderContent;
 
-                        parent.insertBefore(placeholder, stateElement);
+                        stateElement.parentElement.insertBefore(placeholder, stateElement);
 
                         stateElement.__wickedStatePlaceholder = {
                             placeholder,
@@ -68,7 +66,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                         const placeholderDetails = stateElement.__wickedStatePlaceholder;
 
                         if (placeholderDetails) {
-                            parent.removeChild(placeholderDetails.placeholder);
+                            stateElement.parentElement.removeChild(placeholderDetails.placeholder);
                             stateElement.style.display = placeholderDetails.previousDisplay;
                             stateElement.__wickedStatePlaceholder = null;
                         }
