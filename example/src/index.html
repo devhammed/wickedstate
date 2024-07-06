@@ -7,15 +7,34 @@
     <title>Wicked State Example</title>
   </head>
   <body>
-    <div data-state="{ count: 0, counting: 'Click the button to start counting' }">
+    <button
+      data-state="{ count: 0 }"
+      data-bind="{
+        text: 'Single Root Element: ' + count,
+        on: {
+          click() {
+            count++;
+          },
+        },
+      }"
+    ></button>
+
+    <div
+      data-state="{
+        count: 0,
+        counting: 'Click the button to start counting',
+      }"
+    >
       <p data-bind="{ text: count }"></p>
       <p data-bind="{ text: counting }"></p>
       <button
         data-bind="{
           on: {
-            click() {
-              count = count + 1;
-              counting = `Counting... ${count}`;
+            click: {
+              handler() {
+                count++;
+                counting = `Counting... ${count}`;
+              },
             },
           },
         }"
