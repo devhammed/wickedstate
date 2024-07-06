@@ -1,59 +1,53 @@
 export interface WickedStateContract {
-    init?: Function;
-    placeholder?: Function;
+  init?: Function;
+  placeholder?: Function;
 }
 
 export interface WickedStateConfigContract {
-    reactivity?: ReactivityContract;
+  reactivity?: ReactivityContract;
 }
 
 export interface ReactivityContract {
-    effect: EffectContract;
-
-    reactive: ReactiveContract;
+  effect: EffectContract;
+  reactive: ReactiveContract;
 }
 
 export interface WickedStateElementContract extends HTMLElement {
-    __wickedStatePlaceholder: {
-        placeholder: HTMLElement,
-        previousDisplay: string,
-    } | null;
+  __wickedState: Object;
+  __wickedStateParent: WickedStateElementContract | null;
+  __wickedStatePlaceholder: {
+    placeholder: HTMLElement,
+    previousDisplay: string,
+  } | null;
 }
 
 export interface MagicHandlerContract<T> {
-    (magic: MagicContextContract): T;
+  (magic: MagicContextContract): T;
 }
 
 export interface DirectiveHandlerContract<T> {
-    (directive: DirectiveContract<T>): Function | void;
+  (directive: DirectiveContract<T>): Function | void;
 }
 
 export interface EffectContract {
-    (fn: Function): void;
+  (fn: Function): void;
 }
 
 export interface ReactiveContract {
-    (target: Object): Object;
+  (target: Object): Object;
 }
 
 export interface MagicContextContract {
-    state: Object;
-
-    effect: EffectContract;
-
-    root: WickedStateElementContract | null;
+  state: Object;
+  effect: EffectContract;
+  root: WickedStateElementContract | null;
 }
 
 export interface DirectiveContract<T> {
-    bindings: Object;
-
-    state: Object;
-
-    node: HTMLElement;
-
-    root: WickedStateElementContract | null;
-
-    value: T;
-
-    effect: EffectContract;
+  bindings: Object;
+  state: Object;
+  node: HTMLElement;
+  root: WickedStateElementContract | null;
+  value: T;
+  effect: EffectContract;
 }

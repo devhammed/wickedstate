@@ -1,20 +1,23 @@
-import {MagicContextContract} from '../../utils/contracts';
+import { MagicContextContract } from '../../utils/contracts';
 
 export function watchMagic<T>({ state, effect }: MagicContextContract) {
-    return function watchMagicHandler(selector: { value: T } | (() => T), fn: (newValue: T, oldValue: T) => void) {
-        let get = (): T => typeof selector === 'object' && 'value' in selector
-            ? selector.value
-            : selector();
+  return function watchMagicHandler(
+      selector: { value: T } | (() => T),
+      fn: (newValue: T, oldValue: T) => void,
+  ): void {
+    let get = (): T => typeof selector === 'object' && 'value' in selector
+        ? selector.value
+        : selector();
 
-        let value = get();
+    let value = get();
 
-        effect(() => {
-            let newValue = get();
+    effect(() => {
+      let newValue = get();
 
-            if (value !== newValue) {
-                fn.call(state, newValue, value);
-                value = newValue;
-            }
-        });
-    };
+      if (value !== newValue) {
+        fn.call(state, newValue, value);
+        value = newValue;
+      }
+    });
+  };
 }

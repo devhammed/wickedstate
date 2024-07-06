@@ -1,75 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Wicked State Example</title>
-  </head>
-  <body>
-    <h1
-      data-state="{
+</head>
+<body>
+<h1
+    data-state="{
         name: null,
         init() {
-          return fetch('https://jsonplaceholder.typicode.com/users/1')
-            .then((response) => response.json())
-            .then((json) => {
-              this.name = json.name;
-            });
+            return fetch('https://jsonplaceholder.typicode.com/users/1')
+                .then((response) => response.json())
+                .then((json) => {
+                    this.name = json.name;
+                });
         },
         placeholder() {
-          return 'Loading...';
+            return 'Loading...';
         },
-      }"
-      data-bind="{
-        text: 'Welcome, ' + (name || 'Guest'),
-      }"
-    >
-
-    </h1>
-
-    <button
-      data-state="{ count: 0 }"
-      data-bind="{
-        text: 'Single Element: ' + count,
-        on: {
-          click() {
-            count++;
-          },
-        },
-      }"
-    ></button>
-
-    <div
-      data-state="{
+    }"
+    data-bind="{
+        text: `Welcome, ${name ?? 'Guest'}!`,
+    }"
+>
+</h1>
+<div
+    data-state="{
         count: 0,
-        counting: 'Click the button to start counting',
         init() {
-          this.$watch(() => this.count, function (newV, oldV) {
-            console.log('count changed from', oldV, 'to', newV);
-          });
+            this.$watch(() => this.count, function (newV, oldV) {
+                console.log('count changed from', oldV, 'to', newV);
+            });
         }
-      }"
-    >
-      <p data-bind="{ text: count }"></p>
-      <p data-bind="{ text: counting }"></p>
-      <button
+    }"
+>
+    <p data-bind="{ text: count }"></p>
+    <p data-bind="{ text: count > 0 ? 'Keep counting' : 'Click the button to start counting' }"></p>
+    <button
         data-bind="{
-          on: {
-            click: {
-              handler() {
-                count++;
-                counting = `Counting... ${count}`;
-                console.log('root', $root);
-              },
+            on: {
+                click() {
+                    count++;
+                },
             },
-          },
         }"
-      >
+    >
         Increment
-      </button>
-    </div>
+    </button>
+    <button
+        data-state="{ count: 0 }"
+        data-bind="{
+        text: `Single Element Count: ${count}, Parent Count: ${$parent.count}`,
+        on: {
+            click() {
+                count++;
+            },
+        },
+    }"
+    ></button>
+</div>
 
-    <script type="module" src="./index.ts"></script>
-  </body>
+<script type="module" src="./index.ts"></script>
+</body>
 </html>

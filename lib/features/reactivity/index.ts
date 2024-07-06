@@ -1,87 +1,87 @@
-import {ReactivityContract} from '../../utils/contracts';
+import { ReactivityContract } from '../../utils/contracts';
 
-let activeEffect: Function|null = null;
+let activeEffect: Function | null = null;
 
 let disposables: Set<Function> = new Set();
 
 let targetMap: WeakMap<object, Map<PropertyKey, Set<Function>>> = new WeakMap();
 
 function track(target: object, key: PropertyKey): void {
-    if (activeEffect) {
-        let depsMap = targetMap.get(target);
+  if (activeEffect) {
+    let depsMap = targetMap.get(target);
 
-        if ( ! depsMap) {
-            targetMap.set(target, depsMap = new Map());
-        }
-
-        let deps = depsMap.get(key);
-
-        if ( ! deps) {
-            depsMap.set(key, deps = new Set());
-        }
-
-        deps.add(activeEffect);
+    if ( ! depsMap) {
+      targetMap.set(target, depsMap = new Map());
     }
+
+    let deps = depsMap.get(key);
+
+    if ( ! deps) {
+      depsMap.set(key, deps = new Set());
+    }
+
+    deps.add(activeEffect);
+  }
 }
 
 function trigger(target: object, key: PropertyKey): void {
-    const depsMap = targetMap.get(target);
+  const depsMap = targetMap.get(target);
 
-    if ( ! depsMap) {
-        return;
+  if ( ! depsMap) {
+    return;
+  }
+
+  const deps = depsMap.get(key);
+
+  if ( ! deps) {
+    return;
+  }
+
+  disposables.forEach(function(fx) {
+    if (deps.has(fx)) {
+      deps.delete(fx);
+      disposables.delete(fx);
     }
+  });
 
-    const deps = depsMap.get(key);
-
-    if ( ! deps) {
-        return;
-    }
-
-    disposables.forEach(function (fx) {
-        if (deps.has(fx)) {
-            deps.delete(fx);
-            disposables.delete(fx);
-        }
-    });
-
-    deps.forEach((fx) => fx());
+  deps.forEach((fx) => fx());
 }
 
 function effect(fn: Function): () => void {
-    let previousEffect = activeEffect;
+  let previousEffect = activeEffect;
 
-    activeEffect = fn;
+  activeEffect = fn;
 
-    fn();
+  fn();
 
-    activeEffect = previousEffect;
+  activeEffect = previousEffect;
 
-    return () => disposables.add(fn);
+  return () => disposables.add(fn);
 }
 
 function reactive(obj: object): Object {
-    const state = new Proxy(obj, {
-        get(target: Object, key: PropertyKey): any {
-            const value = Reflect.get(target, key);
+  const state = new Proxy(obj, {
+    get(target: Object, key: PropertyKey): any {
+      const value = Reflect.get(target, key);
 
-            if (typeof value === 'function') {
-                return value.bind(state);
-            }
+      if (typeof value === 'function') {
+        return value.bind(state);
+      }
 
-            track(target, key);
+      track(target, key);
 
-            return value;
-        },
-        set(target: Object, key: PropertyKey, value: any): boolean {
-            const returnValue = Reflect.set(target, key, value);
+      return value;
+    },
+    set(target: Object, key: PropertyKey, value: any): boolean {
+      const returnValue = Reflect.set(target, key, value);
 
-            trigger(target, key);
+      trigger(target, key);
 
-            return returnValue;
-        }
-    });
+      return returnValue;
+    },
+  });
 
-    return state;
+  return state;
 }
 
 export const defaultReactivity: ReactivityContract = { effect, reactive };
