@@ -17,9 +17,7 @@ export function whenDirective({ value, node, bindings, hydrate }: WickedStateDir
     );
   }
 
-  const template = node as WickedStateElementContract & HTMLTemplateElement & {
-    __wickedStateWhenElement?: WickedStateElementContract;
-  };
+  const template = node as WickedStateElementContract & HTMLTemplateElement;
 
   if ( ! value) {
     const whenElement = template.__wickedStateWhenElement;

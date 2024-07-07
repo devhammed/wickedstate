@@ -34,6 +34,7 @@ export interface WickedStateElementContract extends HTMLElement {
     target: Window | Document | WickedStateElementContract,
     handler: EventListenerOrEventListenerObject
   }>;
+  __wickedStateWhenElement?: WickedStateElementContract;
 }
 
 export interface WickedStateMagicContextContract {
