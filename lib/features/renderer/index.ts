@@ -1,5 +1,3 @@
-import { directives } from '../directives';
-import { walkDom } from '../../utils/walk-dom';
 import { decorateWithMagics } from '../magics';
 import { evaluate } from '../../utils/evaluate';
 import { isFunction } from '../../utils/checkers';
@@ -7,9 +5,10 @@ import { defaultReactivity } from '../reactivity';
 import {
   WickedStateConfigContract,
   WickedStateContract,
-  WickedStateElementContract,
+  WickedStateRootContract,
 } from '../../utils/contracts';
 import { getStatefulParent } from '../../utils/get-stateful-parent';
+import { makeHydrator } from './make-hydrator';
 
 export async function start(config: WickedStateConfigContract = {}): Promise<void> {
   const states: NodeListOf<HTMLElement> = document.querySelectorAll(
@@ -30,7 +29,10 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
 
       const data = evaluate<object>(stateExpression, {});
 
+      const hydrate = makeHydrator(stateElement, config);
+
       const state: WickedStateContract = decorateWithMagics({
+        hydrate,
         state: config.reactivity.reactive(data),
         effect: config.reactivity.effect,
         root: stateElement,
@@ -83,62 +85,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         }
       }
 
-      walkDom(stateElement, function(node: Node) {
-        if (
-            ( ! (node instanceof HTMLElement)) ||
-            (
-                stateElement !== node &&
-                stateElement.contains(node) &&
-                node.dataset.state?.trim()
-            )
-        ) {
-          return;
-        }
-
-        const bindingsExpr = node.dataset.bind;
-
-        if ( ! bindingsExpr) {
-          return;
-        }
-
-        const cleanups: Set<Function> = new Set();
-
-        config.reactivity.effect(() => {
-          const bindings = evaluate<object>(bindingsExpr, state);
-
-          cleanups.forEach((fx) => {
-            fx();
-            cleanups.delete(fx);
-          });
-
-          for (const key in bindings) {
-            if ({}.hasOwnProperty.call(bindings, key)) {
-              const value = bindings[key];
-
-              const directive = directives[key];
-
-              if (typeof directive !== 'function') {
-                throw new Error(
-                    `[WickedState] Unknown directive encountered: ${key}`,
-                );
-              }
-
-              const cleanup = directive({
-                bindings,
-                value,
-                node,
-                state,
-                root: stateElement,
-                effect: config.reactivity.effect,
-              });
-
-              if (isFunction(cleanup)) {
-                cleanups.add(cleanup as Function);
-              }
-            }
-          }
-        });
-      }, 0);
-    })(states[i] as WickedStateElementContract);
+      hydrate();
+    })(states[i] as WickedStateRootContract);
   }
 }

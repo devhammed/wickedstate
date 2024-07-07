@@ -1,11 +1,11 @@
-import { WickedStateElementContract } from './contracts';
+import { WickedStateRootContract } from './contracts';
 
-export function getStatefulParent(el: HTMLElement): WickedStateElementContract | null {
+export function getStatefulParent(el: HTMLElement): WickedStateRootContract | null {
   let parent: HTMLElement = el.parentElement;
 
   while (parent) {
     if ('__wickedState' in parent) {
-      return parent as WickedStateElementContract;
+      return parent as WickedStateRootContract;
     }
 
     parent = parent.parentElement;

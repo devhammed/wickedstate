@@ -12,13 +12,17 @@ export interface ReactivityContract {
   reactive: ReactiveContract;
 }
 
-export interface WickedStateElementContract extends HTMLElement {
-  __wickedState: Object;
-  __wickedStateParent: WickedStateElementContract | null;
-  __wickedStatePlaceholder: {
+export interface WickedStateRootContract extends HTMLElement {
+  __wickedState?: Object;
+  __wickedStateParent?: WickedStateRootContract;
+  __wickedStatePlaceholder?: {
     placeholder: HTMLElement,
     previousDisplay: string,
-  } | null;
+  };
+}
+
+export interface WickedStateNodeContract extends HTMLElement {
+  __wickedStateDisconnect: () => void;
 }
 
 export interface MagicHandlerContract<T> {
@@ -30,7 +34,7 @@ export interface DirectiveHandlerContract<T> {
 }
 
 export interface EffectContract {
-  (fn: Function): void;
+  (fn: Function): () => void;
 }
 
 export interface ReactiveContract {
@@ -40,14 +44,16 @@ export interface ReactiveContract {
 export interface MagicContextContract {
   state: Object;
   effect: EffectContract;
-  root: WickedStateElementContract | null;
+  root: WickedStateRootContract | null;
+  hydrate: () => void;
 }
 
 export interface DirectiveContract<T> {
   bindings: Object;
   state: Object;
-  node: HTMLElement;
-  root: WickedStateElementContract | null;
+  node: WickedStateNodeContract;
+  root: WickedStateRootContract | null;
   value: T;
   effect: EffectContract;
+  hydrate: () => void;
 }

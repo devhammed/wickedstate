@@ -1,10 +1,12 @@
 import { onDirective } from './on';
+import { showDirective } from './show';
 import { textDirective } from './text';
 import { DirectiveHandlerContract } from '../../utils/contracts';
 
 export const directives: Record<string, DirectiveHandlerContract<any>> = {
   text: textDirective,
   on: onDirective,
+  show: showDirective,
 };
 
 export function directive<T>(
