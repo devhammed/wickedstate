@@ -1,4 +1,5 @@
 import { onDirective } from './on';
+import { refDirective } from './ref';
 import { showDirective } from './show';
 import { textDirective } from './text';
 import { whenDirective } from './when';
@@ -9,6 +10,7 @@ export const directives: Record<string, DirectiveHandlerContract<any>> = {
   on: onDirective,
   show: showDirective,
   when: whenDirective,
+  ref: refDirective,
 };
 
 export function directive<T>(

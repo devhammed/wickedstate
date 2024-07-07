@@ -49,8 +49,14 @@
     data-state="{
         count: 0,
         init() {
-            this.$watch(() => this.count, function (newV, oldV) {
-                console.log('count changed from', oldV, 'to', newV);
+            this.$watch(() => this.count, function (count, oldCount) {
+                console.log('count changed from', oldCount, 'to', count);
+
+                if (count > 5) {
+                    this.$refs.fiveTimes.style.color = 'red';
+                } else {
+                    this.$refs.fiveTimes.style.color = 'black';
+                }
             });
         }
     }"
@@ -65,7 +71,10 @@
             data-bind="{ text: 'You are definitely a clicker with ' + $parent.count + ' clicks!' }"
         ></div>
     </template>
-    <p data-bind="{ text: count > 0 ? 'Keep counting' : 'Click the button to start counting' }"></p>
+    <p data-bind="{
+        ref: 'fiveTimes',
+        text: count > 0 ? 'This will be red if you go over 5!' : 'Click the button to start counting!',
+    }"></p>
     <button
         data-bind="{
             on: {

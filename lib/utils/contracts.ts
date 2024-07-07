@@ -15,6 +15,7 @@ export interface ReactivityContract {
 export interface WickedStateRootContract extends HTMLElement {
   __wickedState?: Object;
   __wickedStateParent?: WickedStateRootContract;
+  __wickedRefs?: Record<string, HTMLElement>;
   __wickedStatePlaceholder?: {
     placeholder: HTMLElement,
     previousDisplay: string,
