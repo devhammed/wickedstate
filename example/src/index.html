@@ -11,10 +11,29 @@
     data-state="{
         name: null,
         init() {
+            this.$effect(() => {
+                if ( ! this.name) {
+                    return;
+                }
+
+                console.log('name changed to', this.name);
+            });
+
             return fetch('https://jsonplaceholder.typicode.com/users/1')
                 .then((response) => response.json())
                 .then((json) => {
                     this.name = json.name;
+
+                    setTimeout(() => {
+                        this.name = 'John Doe';
+
+                        setTimeout(() => {
+                            this.name = 'Jane Doe';
+                        }, 2000);
+                    }, 2000);
+                })
+                .catch((error) => {
+                    alert('Error:', error);
                 });
         },
         placeholder() {
@@ -42,6 +61,7 @@
     </p>
     <template data-bind="{ when: count >= 10 }">
         <div
+            data-state="{ init() { console.log('in the DOM!') } }"
             data-bind="{ text: 'You are definitely a clicker with ' + $parent.count + ' clicks!' }"
         ></div>
     </template>

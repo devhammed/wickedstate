@@ -7,25 +7,21 @@ import {
 import { rootMagic } from './root';
 import { dataMagic } from './data';
 import { parentMagic } from './parent';
+import { effectMagic } from './effect';
 
 export const magics: Record<string, MagicHandlerContract<any>> = {
-  $watch: watchMagic,
-  $root: rootMagic,
-  $data: dataMagic,
-  $parent: parentMagic,
+  watch: watchMagic,
+  root: rootMagic,
+  data: dataMagic,
+  parent: parentMagic,
+  effect: effectMagic,
 };
 
 export function decorateWithMagics(magicContext: MagicContextContract): Object {
   Object.keys(magics).forEach((magicName: string): void => {
-    Object.defineProperty(magicContext.state, magicName, {
-      set(_: any): void {
-        throw new Error(
-            `[WickedState] You cannot set a value of a magic, this error occurred while trying to set a value for ${magicName}.`,
-        );
-      },
-      get(): any {
-        return magics[magicName](magicContext);
-      },
+    Object.defineProperty(magicContext.state, `$${magicName}`, {
+      enumerable: false,
+      get: (): any => magics[magicName](magicContext),
     });
   });
 
@@ -33,13 +29,11 @@ export function decorateWithMagics(magicContext: MagicContextContract): Object {
 }
 
 export function magic<T>(name: string, fn: MagicHandlerContract<T>): void {
-  const magicName = `$${name}`;
-
-  if (isFunction(magics[magicName])) {
+  if (isFunction(magics[name])) {
     throw new Error(
         `[WickedState] Overriding magics is not allowed, this error occurred while trying to set an existing magic for ${name}`,
     );
   }
 
-  magics[magicName] = fn;
+  magics[name] = fn;
 }
