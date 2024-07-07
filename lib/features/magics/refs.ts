@@ -1,5 +1,5 @@
-import { MagicContextContract } from '../../utils/contracts';
+import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function refsMagic({ root }: MagicContextContract): Record<string, HTMLElement> {
-  return root.__wickedRefs ?? {};
+export function refsMagic({ root }: WickedStateMagicContextContract): Record<string, HTMLElement> {
+  return root.__wickedStateRefs ?? {};
 }

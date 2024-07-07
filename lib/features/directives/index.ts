@@ -3,9 +3,9 @@ import { refDirective } from './ref';
 import { showDirective } from './show';
 import { textDirective } from './text';
 import { whenDirective } from './when';
-import { DirectiveHandlerContract } from '../../utils/contracts';
+import { WickedStateDirectiveHandlerContract } from '../../utils/contracts';
 
-export const directives: Record<string, DirectiveHandlerContract<any>> = {
+export const directives: Record<string, WickedStateDirectiveHandlerContract<any>> = {
   text: textDirective,
   on: onDirective,
   show: showDirective,
@@ -15,7 +15,7 @@ export const directives: Record<string, DirectiveHandlerContract<any>> = {
 
 export function directive<T>(
     name: string,
-    fn: DirectiveHandlerContract<T>,
+    fn: WickedStateDirectiveHandlerContract<T>,
 ): void {
   if (typeof directives[name] === 'function') {
     throw new Error(

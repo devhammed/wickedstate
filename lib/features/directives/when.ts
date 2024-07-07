@@ -1,9 +1,10 @@
 import {
-  DirectiveContract,
-  WickedStateNodeContract,
+  WickedStateDirectiveContract,
+  WickedStateElementContract,
 } from '../../utils/contracts';
+import { isFunction } from '../../utils/checkers';
 
-export function whenDirective({ value, node, bindings, hydrate }: DirectiveContract<boolean>) {
+export function whenDirective({ value, node, bindings, hydrate }: WickedStateDirectiveContract<boolean>) {
   if ( ! (node instanceof HTMLTemplateElement)) {
     throw new Error(
         '[WickedState] When directive can only be used on <template> elements.',
@@ -16,16 +17,28 @@ export function whenDirective({ value, node, bindings, hydrate }: DirectiveContr
     );
   }
 
-  const template = node as WickedStateNodeContract & HTMLTemplateElement & {
-    __wickedStateWhenElement?: WickedStateNodeContract;
+  const template = node as WickedStateElementContract & HTMLTemplateElement & {
+    __wickedStateWhenElement?: WickedStateElementContract;
   };
 
   if ( ! value) {
     const whenElement = template.__wickedStateWhenElement;
 
     if (whenElement) {
-      whenElement.__wickedStateDisconnect();
+      const destroyHandler = whenElement.__wickedStateObject?.destroy;
+
+      if (isFunction(destroyHandler)) {
+        destroyHandler();
+      }
+
+      const disconnectHandler = whenElement.__wickedStateDisconnect;
+
+      if (isFunction(disconnectHandler)) {
+        disconnectHandler();
+      }
+
       whenElement.remove();
+
       template.__wickedStateWhenElement = null;
     }
 
@@ -38,7 +51,7 @@ export function whenDirective({ value, node, bindings, hydrate }: DirectiveContr
 
   const clone = template.content.cloneNode(true) as DocumentFragment;
 
-  const firstElementChild = clone.firstElementChild as WickedStateNodeContract;
+  const firstElementChild = clone.firstElementChild as WickedStateElementContract;
 
   if ( ! firstElementChild) {
     throw new Error(

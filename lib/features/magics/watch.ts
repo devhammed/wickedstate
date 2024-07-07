@@ -1,6 +1,6 @@
-import { MagicContextContract } from '../../utils/contracts';
+import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function watchMagic<T>({ state, effect }: MagicContextContract) {
+export function watchMagic<T>({ state, effect }: WickedStateMagicContextContract) {
   return function watchMagicHandler(
       selector: { value: T } | (() => T),
       fn: (newValue: T, oldValue: T) => void,

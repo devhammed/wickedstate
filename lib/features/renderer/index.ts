@@ -4,9 +4,9 @@ import { isFunction } from '../../utils/checkers';
 import { defaultReactivity } from '../reactivity';
 import {
   WickedStateConfigContract,
-  WickedStateContract,
-  WickedStateNodeContract,
-  WickedStateRootContract,
+  WickedStateDirectiveHandlerContract,
+  WickedStateElementContract,
+  WickedStateObjectContract,
 } from '../../utils/contracts';
 import { getStatefulParent } from '../../utils/get-stateful-parent';
 import { directives } from '../directives';
@@ -28,7 +28,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         );
       }
 
-      if (stateElement.__wickedState) {
+      if (stateElement.__wickedStateObject) {
         return;
       }
 
@@ -42,14 +42,14 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
 
       const hydrate = () => start(config);
 
-      const state: WickedStateContract = decorateWithMagics({
+      const state: WickedStateObjectContract = decorateWithMagics({
         hydrate,
         state: config.reactivity.reactive(data),
         effect: config.reactivity.effect,
         root: stateElement,
       });
 
-      stateElement.__wickedState = state;
+      stateElement.__wickedStateObject = state;
 
       stateElement.__wickedStateParent = getStatefulParent(stateElement);
 
@@ -73,7 +73,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
             stateElement.parentElement.insertBefore(placeholder, stateElement);
 
             stateElement.__wickedStatePlaceholder = {
-              placeholder,
+              el: placeholder,
               previousDisplay: stateElement.style.display,
             };
 
@@ -83,14 +83,14 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
           try {
             await initValue;
           } finally {
-            const placeholderDetails = stateElement.__wickedStatePlaceholder;
+            const placeholder = stateElement.__wickedStatePlaceholder;
 
-            if (placeholderDetails) {
-              stateElement.parentElement.removeChild(
-                  placeholderDetails.placeholder,
-              );
-              stateElement.style.display = placeholderDetails.previousDisplay;
-              stateElement.__wickedStatePlaceholder = null;
+            if (placeholder) {
+              stateElement.parentElement.removeChild(placeholder.el);
+
+              stateElement.style.display = placeholder.previousDisplay;
+
+              delete stateElement.__wickedStatePlaceholder;
             }
           }
         }
@@ -108,16 +108,18 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
           );
         }
 
+        const nodeStateElement = node as WickedStateElementContract;
+
         if (
             ( ! (node instanceof HTMLElement)) ||
             (stateElement !== node && stateElement.contains(node) &&
                 node.dataset.state?.trim()) ||
-            '__wickedStateDisconnect' in node
+            (typeof nodeStateElement.__wickedStateDisconnect === 'function')
         ) {
           continue;
         }
 
-        const bindingsExpr = node.dataset.bind;
+        const bindingsExpr: string = node.dataset.bind;
 
         if ( ! bindingsExpr) {
           continue;
@@ -125,10 +127,10 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
 
         const cleanups: Set<Function> = new Set();
 
-        const state = stateElement.__wickedState;
+        const state: WickedStateObjectContract = stateElement.__wickedStateObject;
 
         const unsubscribeFromEffect = config.reactivity.effect(() => {
-          const bindings = evaluate<object>(bindingsExpr, state);
+          const bindings: Object = evaluate<object>(bindingsExpr, state);
 
           cleanups.forEach((fx) => {
             fx();
@@ -139,7 +141,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
             if ({}.hasOwnProperty.call(bindings, key)) {
               const value = bindings[key];
 
-              const directive = directives[key];
+              const directive: WickedStateDirectiveHandlerContract<any> | undefined = directives[key];
 
               if (typeof directive !== 'function') {
                 throw new Error(
@@ -153,8 +155,8 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
                 state,
                 hydrate,
                 root: stateElement,
+                node: nodeStateElement,
                 effect: config.reactivity.effect,
-                node: node as WickedStateNodeContract,
               });
 
               if (isFunction(cleanup)) {
@@ -164,7 +166,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
           }
         });
 
-        (node as WickedStateNodeContract).__wickedStateDisconnect = function() {
+        nodeStateElement.__wickedStateDisconnect = function() {
           unsubscribeFromEffect();
 
           cleanups.forEach((fx) => {
@@ -172,9 +174,9 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
             cleanups.delete(fx);
           });
 
-          delete (node as WickedStateNodeContract).__wickedStateDisconnect;
+          delete nodeStateElement.__wickedStateDisconnect;
         };
       }
-    })(states[i] as WickedStateRootContract);
+    })(states[i] as WickedStateElementContract);
   }
 }

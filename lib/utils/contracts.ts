@@ -1,60 +1,62 @@
-export interface WickedStateContract {
-  init?: Function;
-  placeholder?: Function;
-}
-
 export interface WickedStateConfigContract {
-  reactivity?: ReactivityContract;
+  reactivity?: WickedStateReactivityContract;
 }
 
-export interface ReactivityContract {
-  effect: EffectContract;
-  reactive: ReactiveContract;
+export interface WickedStateReactivityContract {
+  effect: WickedStateEffectContract;
+  reactive: WickedStateReactiveContract;
 }
 
-export interface WickedStateRootContract extends HTMLElement {
-  __wickedState?: Object;
-  __wickedStateParent?: WickedStateRootContract;
-  __wickedRefs?: Record<string, HTMLElement>;
-  __wickedStatePlaceholder?: {
-    placeholder: HTMLElement,
-    previousDisplay: string,
-  };
-}
-
-export interface WickedStateNodeContract extends HTMLElement {
-  __wickedStateDisconnect: () => void;
-}
-
-export interface MagicHandlerContract<T> {
-  (magic: MagicContextContract): T;
-}
-
-export interface DirectiveHandlerContract<T> {
-  (directive: DirectiveContract<T>): Function | void;
-}
-
-export interface EffectContract {
+export interface WickedStateEffectContract {
   (fn: Function): () => void;
 }
 
-export interface ReactiveContract {
+export interface WickedStateReactiveContract {
   (target: Object): Object;
 }
 
-export interface MagicContextContract {
-  state: Object;
-  effect: EffectContract;
-  root: WickedStateRootContract | null;
+export interface WickedStateObjectContract extends Object {
+  init?: Function;
+  placeholder?: Function;
+  destroy?: Function;
+}
+
+export interface WickedStateElementContract extends HTMLElement {
+  __wickedStateObject?: WickedStateObjectContract;
+  __wickedStateParent?: WickedStateElementContract;
+  __wickedStateRefs?: Record<string, HTMLElement>;
+  __wickedStatePlaceholder?: {
+    el: HTMLElement,
+    previousDisplay: string,
+  };
+  __wickedStateDisconnect?: () => void;
+  __wickedStateEvents?: Record<string, {
+    target: Window | Document | WickedStateElementContract,
+    handler: EventListenerOrEventListenerObject
+  }>;
+}
+
+export interface WickedStateMagicContextContract {
+  state: WickedStateObjectContract;
+  effect: WickedStateEffectContract;
+  root: WickedStateElementContract;
   hydrate: () => void;
 }
 
-export interface DirectiveContract<T> {
-  bindings: Object;
-  state: Object;
-  node: WickedStateNodeContract;
-  root: WickedStateRootContract | null;
+export interface WickedStateDirectiveContract<T> {
+  bindings: Record<string, any>;
+  state: WickedStateObjectContract;
+  node: WickedStateElementContract;
+  root: WickedStateElementContract;
   value: T;
-  effect: EffectContract;
+  effect: WickedStateEffectContract;
   hydrate: () => void;
+}
+
+export interface WickedStateMagicHandlerContract<T> {
+  (magic: WickedStateMagicContextContract): T;
+}
+
+export interface WickedStateDirectiveHandlerContract<T> {
+  (directive: WickedStateDirectiveContract<T>): Function | void;
 }

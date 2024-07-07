@@ -1,6 +1,6 @@
-import { DirectiveContract } from '../../utils/contracts';
+import { WickedStateDirectiveContract } from '../../utils/contracts';
 
-export function showDirective({ value, node }: DirectiveContract<boolean>) {
+export function showDirective({ value, node }: WickedStateDirectiveContract<boolean>) {
   if ( ! value) {
     node.style.display = 'none';
 

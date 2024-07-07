@@ -1,5 +1,5 @@
-import { DirectiveContract } from '../../utils/contracts';
+import { WickedStateDirectiveContract } from '../../utils/contracts';
 
-export function textDirective({ node, value }: DirectiveContract<string>): void {
+export function textDirective({ node, value }: WickedStateDirectiveContract<string>): void {
   node.textContent = value;
 }

@@ -1,6 +1,6 @@
-import { MagicContextContract } from '../../utils/contracts';
+import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function effectMagic({ state, effect }: MagicContextContract): (fn: () => void) => void {
+export function effectMagic({ state, effect }: WickedStateMagicContextContract): (fn: () => void) => void {
   return function effectMagicHandler(fn: () => void): void {
     effect(fn.bind(state));
   };

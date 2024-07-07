@@ -1,4 +1,4 @@
-import { ReactivityContract } from '../../utils/contracts';
+import { WickedStateReactivityContract } from '../../utils/contracts';
 
 let activeEffect: Function | null = null;
 
@@ -84,4 +84,4 @@ function reactive(obj: object): Object {
   return state;
 }
 
-export const defaultReactivity: ReactivityContract = { effect, reactive };
+export const defaultReactivity: WickedStateReactivityContract = { effect, reactive };

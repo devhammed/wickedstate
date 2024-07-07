@@ -1,5 +1,5 @@
-import { MagicContextContract } from '../../utils/contracts';
+import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function dataMagic({ root }: MagicContextContract): Object {
-  return root.__wickedState;
+export function dataMagic({ root }: WickedStateMagicContextContract): Object {
+  return root.__wickedStateObject;
 }

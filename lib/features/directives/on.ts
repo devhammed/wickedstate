@@ -1,5 +1,5 @@
 import { isObject } from '../../utils/checkers';
-import { DirectiveContract } from '../../utils/contracts';
+import { WickedStateDirectiveContract } from '../../utils/contracts';
 
 interface OnDirectiveHandler {
   handler: Function;
@@ -15,34 +15,23 @@ interface OnDirective {
   [key: string]: Function | OnDirectiveHandler;
 }
 
-interface OnDirectiveElement extends HTMLElement {
-  __wickedEvents?: Record<string, {
-    target: OnDirectiveTarget,
-    handler: EventListenerOrEventListenerObject
-  }>;
-}
-
-type OnDirectiveTarget = Window | Document | OnDirectiveElement;
-
-export function onDirective({ node, value, state }: DirectiveContract<OnDirective>): () => void {
+export function onDirective({ node, value, state }: WickedStateDirectiveContract<OnDirective>): () => void {
   if ( ! isObject(value)) {
     throw new Error(
         `[WickedState] Event listeners must be an object for ${node}`,
     );
   }
 
-  const el = node as OnDirectiveElement;
-
-  if ( ! el.__wickedEvents) {
-    el.__wickedEvents = {};
+  if ( ! node.__wickedStateEvents) {
+    node.__wickedStateEvents = {};
   }
 
   const removeEvent = (eventName: string) => {
-    const event = el.__wickedEvents[eventName];
+    const event = node.__wickedStateEvents[eventName];
 
     if (event) {
       event.target.removeEventListener(eventName, event.handler);
-      el.__wickedEvents[eventName] = null;
+      node.__wickedStateEvents[eventName] = null;
     }
   };
 
@@ -61,7 +50,7 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
       document,
     } = options;
 
-    const target: OnDirectiveTarget = window
+    const target = window
         ? globalThis.window
         : (document ? globalThis.document : node);
 
@@ -93,11 +82,11 @@ export function onDirective({ node, value, state }: DirectiveContract<OnDirectiv
 
     target.addEventListener(eventName, eventHandler);
 
-    el.__wickedEvents[eventName] = {
+    node.__wickedStateEvents[eventName] = {
       target,
       handler: eventHandler,
     };
   }
 
-  return () => Object.keys(el.__wickedEvents).forEach(removeEvent);
+  return () => Object.keys(node.__wickedStateEvents).forEach(removeEvent);
 }

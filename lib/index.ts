@@ -5,13 +5,13 @@ export { start } from './features/renderer';
 export { directive } from './features/directives';
 
 export type {
-  ReactivityContract,
-  DirectiveHandlerContract,
-  EffectContract,
-  MagicContextContract,
+  WickedStateReactivityContract,
+  WickedStateDirectiveHandlerContract,
+  WickedStateEffectContract,
+  WickedStateMagicContextContract,
   WickedStateConfigContract,
-  ReactiveContract,
-  DirectiveContract,
-  MagicHandlerContract,
-  WickedStateContract,
+  WickedStateReactiveContract,
+  WickedStateDirectiveContract,
+  WickedStateMagicHandlerContract,
+  WickedStateObjectContract,
 } from './utils/contracts';
