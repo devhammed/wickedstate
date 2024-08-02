@@ -27,7 +27,7 @@ export function modelDirective({ node, value: path, state, effect }: WickedState
           ? 'input'
           : 'change';
 
-  const removeEffect = effect(() => {
+  const unsubscribeFromState = effect(() => {
     const value = state.$get(path);
 
     if (isRadio) {
@@ -57,7 +57,7 @@ export function modelDirective({ node, value: path, state, effect }: WickedState
     target.value = value as any;
   });
 
-  const inputHandler = function(event: Event) {
+  const eventHandler = function(event: Event) {
     if (event instanceof CustomEvent && typeof event.detail !== 'undefined') {
       state.$set(path, event.detail || (event.target as any).value);
       return;
@@ -93,10 +93,10 @@ export function modelDirective({ node, value: path, state, effect }: WickedState
     })());
   };
 
-  node.addEventListener(eventName, inputHandler);
+  node.addEventListener(eventName, eventHandler);
 
   return () => {
-    removeEffect();
-    node.removeEventListener(eventName, inputHandler);
+    unsubscribeFromState();
+    node.removeEventListener(eventName, eventHandler);
   };
 }
