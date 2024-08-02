@@ -50,7 +50,7 @@
         todos: [],
         todo: null,
         attributes: [],
-        markAsCompleteImmediately: true,
+        markAsCompleteImmediately: false,
         init() {
             setTimeout(() => {
                 this.todo = 'And eat it too!';
@@ -85,7 +85,7 @@
 
             this.attributes = [];
 
-            console.log('Todos:', this.todos);
+            this.markAsCompleteImmediately = false;
         },
     }"
     data-bind="{ on: { submit: { handler: addTodo, prevent: true } } }"
