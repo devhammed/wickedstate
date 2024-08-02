@@ -45,6 +45,88 @@
     }"
 >
 </h1>
+<form
+    data-state="{
+        todos: [],
+        todo: null,
+        attributes: [],
+        markAsCompleteImmediately: true,
+        init() {
+            setTimeout(() => {
+                this.todo = 'And eat it too!';
+
+                this.todos = [
+                    { id: 1, title: 'Buy milk', completed: false, attributes: ['urgent', 'important'] },
+                    { id: 2, title: 'Buy eggs', completed: false, attributes: ['urgent'] },
+                    { id: 3, title: 'Buy bread', completed: false, attributes: ['important'] },
+                ];
+            }, 1000);
+
+            this.$watch(() => this.attributes, function (attributes) {
+                console.log('attributes changed to', attributes);
+            });
+        },
+        addTodo() {
+            if ( ! this.todo) {
+                return;
+            }
+
+            this.todos = [
+                ...this.todos,
+                {
+                    id: this.todos.length + 1,
+                    title: this.todo,
+                    completed: this.markAsCompleteImmediately,
+                    attributes: this.attributes,
+                },
+            ];
+
+            this.todo = '';
+
+            this.attributes = [];
+
+            console.log('Todos:', this.todos);
+        },
+    }"
+    data-bind="{ on: { submit: { handler: addTodo, prevent: true } } }"
+>
+    <ul></ul>
+
+    <div>
+        <label>
+            <span>Add a new todo:</span>
+            <input type="text" data-bind="{ model: 'todo' }"/>
+        </label>
+    </div>
+
+    <p
+        data-bind="{
+            show: todo,
+            text: 'Will be adding: ' + todo + ', Old task?: ' + markAsCompleteImmediately + ', Attributes: ' + (attributes.length ? attributes.join(', ') : 'None'),
+         }"
+    ></p>
+
+    <div>
+        <label>
+            <input type="checkbox" data-bind="{ model: 'attributes' }" value="urgent"/>
+            <span>Urgent</span>
+        </label>
+
+        <label>
+            <input type="checkbox" data-bind="{ model: 'attributes' }" value="important"/>
+            <span>Important</span>
+        </label>
+    </div>
+
+    <div>
+        <label>
+            <input type="checkbox" data-bind="{ model: 'markAsCompleteImmediately' }"/>
+            <span>Old task?</span>
+        </label>
+    </div>
+
+    <button type="submit">Add</button>
+</form>
 <div
     data-state="{
         count: 0,

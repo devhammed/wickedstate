@@ -1,18 +1,17 @@
 import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function watchMagic<T>({ state, effect }: WickedStateMagicContextContract) {
+export function watchMagic<T>({ state, effect }: WickedStateMagicContextContract): (
+    selector: () => T,
+    fn: (newValue: T, oldValue: T) => void,
+) => void {
   return function watchMagicHandler(
-      selector: { value: T } | (() => T),
+      selector: () => T,
       fn: (newValue: T, oldValue: T) => void,
   ): void {
-    let get = (): T => typeof selector === 'object' && 'value' in selector
-        ? selector.value
-        : selector();
-
-    let value = get();
+    let value = selector();
 
     effect(() => {
-      let newValue = get();
+      let newValue = selector();
 
       if (value !== newValue) {
         fn.call(state, newValue, value);

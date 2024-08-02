@@ -9,6 +9,8 @@ import { dataMagic } from './data';
 import { parentMagic } from './parent';
 import { effectMagic } from './effect';
 import { refsMagic } from './refs';
+import { setMagic } from './set';
+import { getMagic } from './get';
 
 export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   watch: watchMagic,
@@ -17,6 +19,8 @@ export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   parent: parentMagic,
   effect: effectMagic,
   refs: refsMagic,
+  set: setMagic,
+  get: getMagic,
 };
 
 export function decorateWithMagics(magicContext: WickedStateMagicContextContract): Object {

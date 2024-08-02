@@ -3,6 +3,7 @@ import { refDirective } from './ref';
 import { showDirective } from './show';
 import { textDirective } from './text';
 import { whenDirective } from './when';
+import { modelDirective } from './model';
 import { WickedStateDirectiveHandlerContract } from '../../utils/contracts';
 
 export const directives: Record<string, WickedStateDirectiveHandlerContract<any>> = {
@@ -11,6 +12,7 @@ export const directives: Record<string, WickedStateDirectiveHandlerContract<any>
   show: showDirective,
   when: whenDirective,
   ref: refDirective,
+  model: modelDirective,
 };
 
 export function directive<T>(

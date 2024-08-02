@@ -36,7 +36,7 @@ export function onDirective({ node, value, state }: WickedStateDirectiveContract
   };
 
   for (const [eventName, eventValue] of Object.entries(value)) {
-    const options: OnDirectiveHandler = (isObject(eventValue)
+    const options = (isObject(eventValue)
         ? eventValue
         : { handler: eventValue }) as OnDirectiveHandler;
 

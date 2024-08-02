@@ -19,6 +19,17 @@ export interface WickedStateObjectContract extends Object {
   init?: Function;
   placeholder?: Function;
   destroy?: Function;
+  $watch?: <T>(
+      selector: () => T,
+      fn: (newValue: T, oldValue: T) => void,
+  ) => void;
+  $root?: WickedStateElementContract | null;
+  $data?: WickedStateObjectContract;
+  $parent?: WickedStateElementContract | null;
+  $effect?: WickedStateEffectContract;
+  $refs?: Record<string, HTMLElement>;
+  $set?: <T>(path: string, value: T) => void;
+  $get?: <T>(path: string, defaultValue?: T | null) => T;
 }
 
 export interface WickedStateElementContract extends HTMLElement {
