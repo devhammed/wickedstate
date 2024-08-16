@@ -4,6 +4,8 @@ let activeEffect: Function | null = null;
 
 let disposables: Set<Function> = new Set();
 
+let cleanups = new WeakMap<object, Set<Function>>();
+
 let targetMap: WeakMap<object, Map<PropertyKey, Set<Function>>> = new WeakMap();
 
 function track(target: object, key: PropertyKey): void {
@@ -84,4 +86,32 @@ function reactive(obj: object): Object {
   return state;
 }
 
-export const defaultReactivity: WickedStateReactivityContract = { effect, reactive };
+function cleanup(obj: object, fn: Function): void {
+  let set = cleanups.get(obj);
+
+  if ( ! set) {
+    cleanups.set(obj, set = new Set());
+  }
+
+  set.add(fn);
+}
+
+function dispose(obj: object): void {
+  let set = cleanups.get(obj);
+
+  if ( ! set) {
+    return;
+  }
+
+  set.forEach((fx) => {
+    fx();
+    set.delete(fx);
+  });
+}
+
+export const defaultReactivity: WickedStateReactivityContract = {
+  effect,
+  reactive,
+  cleanup,
+  dispose,
+};

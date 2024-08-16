@@ -102,19 +102,15 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         const node = walkingNodes.shift();
 
         if (node?.childNodes?.length > 0) {
-          walkingNodes.unshift.apply(
-              walkingNodes,
-              [].slice.call(node.childNodes),
-          );
+          walkingNodes.unshift([].slice.call(node.childNodes));
         }
 
         const nodeStateElement = node as WickedStateElementContract;
 
         if (
-            ( ! (node instanceof HTMLElement)) ||
-            (stateElement !== node && stateElement.contains(node) &&
-                node.dataset.state?.trim()) ||
-            (typeof nodeStateElement.__wickedStateDisconnect === 'function')
+            ( ! (node instanceof HTMLElement))
+            || (stateElement !== node && stateElement.contains(node) && node.dataset.state?.trim())
+            || (typeof nodeStateElement.__wickedStateDisconnect === 'function')
         ) {
           continue;
         }
@@ -125,17 +121,12 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
           continue;
         }
 
-        const cleanups: Set<Function> = new Set();
-
         const state: WickedStateObjectContract = stateElement.__wickedStateObject;
 
         const unsubscribeFromEffect = config.reactivity.effect(() => {
-          const bindings: Object = evaluate<object>(bindingsExpr, state);
+          config.reactivity.dispose(state);
 
-          cleanups.forEach((fx) => {
-            fx();
-            cleanups.delete(fx);
-          });
+          const bindings: Object = evaluate<object>(bindingsExpr, state);
 
           for (const key in bindings) {
             if ({}.hasOwnProperty.call(bindings, key)) {
@@ -160,7 +151,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
               });
 
               if (isFunction(cleanup)) {
-                cleanups.add(cleanup as Function);
+                config.reactivity.cleanup(state, cleanup as Function);
               }
             }
           }
@@ -169,10 +160,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         nodeStateElement.__wickedStateDisconnect = function() {
           unsubscribeFromEffect();
 
-          cleanups.forEach((fx) => {
-            fx();
-            cleanups.delete(fx);
-          });
+          config.reactivity.dispose(state);
 
           delete nodeStateElement.__wickedStateDisconnect;
         };

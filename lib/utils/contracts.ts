@@ -5,6 +5,8 @@ export interface WickedStateConfigContract {
 export interface WickedStateReactivityContract {
   effect: WickedStateEffectContract;
   reactive: WickedStateReactiveContract;
+  cleanup: (obj: object, fn: Function) => void;
+  dispose: (obj: object) => void;
 }
 
 export interface WickedStateEffectContract {
