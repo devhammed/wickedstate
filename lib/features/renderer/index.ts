@@ -102,7 +102,10 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         const node = walkingNodes.shift();
 
         if (node?.childNodes?.length > 0) {
-          walkingNodes.unshift([].slice.call(node.childNodes));
+          walkingNodes.unshift.apply(
+            walkingNodes,
+            [].slice.call(node.childNodes),
+          );
         }
 
         const nodeStateElement = node as WickedStateElementContract;
@@ -124,7 +127,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         const state: WickedStateObjectContract = stateElement.__wickedStateObject;
 
         const unsubscribeFromEffect = config.reactivity.effect(() => {
-          config.reactivity.dispose(state);
+          config.reactivity.dispose(nodeStateElement);
 
           const bindings: Object = evaluate<object>(bindingsExpr, state);
 
@@ -151,7 +154,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
               });
 
               if (isFunction(cleanup)) {
-                config.reactivity.cleanup(state, cleanup as Function);
+                config.reactivity.cleanup(nodeStateElement, cleanup as Function);
               }
             }
           }
@@ -160,7 +163,7 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
         nodeStateElement.__wickedStateDisconnect = function() {
           unsubscribeFromEffect();
 
-          config.reactivity.dispose(state);
+          config.reactivity.dispose(nodeStateElement);
 
           delete nodeStateElement.__wickedStateDisconnect;
         };

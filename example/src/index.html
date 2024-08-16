@@ -149,7 +149,14 @@
     </p>
     <template data-bind="{ when: count >= 10 }">
         <div
-            data-state="{ init() { console.log('in the DOM!') } }"
+            data-state="{
+                init() {
+                    console.log('in the DOM!');
+                },
+                destroy() {
+                    console.log('out of the DOM!');
+                },
+            }"
             data-bind="{ text: 'You are definitely a clicker with ' + $parent.count + ' clicks!' }"
         ></div>
     </template>
