@@ -5,12 +5,14 @@ import { textDirective } from './text';
 import { whenDirective } from './when';
 import { modelDirective } from './model';
 import { WickedStateDirectiveHandlerContract } from '../../utils/contracts';
+import {eachDirective} from "./each";
 
 export const directives: Record<string, WickedStateDirectiveHandlerContract<any>> = {
   text: textDirective,
   on: onDirective,
   show: showDirective,
   when: whenDirective,
+  each: eachDirective,
   ref: refDirective,
   model: modelDirective,
 };

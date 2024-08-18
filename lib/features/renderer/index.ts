@@ -8,7 +8,6 @@ import {
   WickedStateElementContract,
   WickedStateObjectContract,
 } from '../../utils/contracts';
-import { getStatefulParent } from '../../utils/get-stateful-parent';
 import { directives } from '../directives';
 
 export async function start(config: WickedStateConfigContract = {}): Promise<void> {
@@ -50,8 +49,6 @@ export async function start(config: WickedStateConfigContract = {}): Promise<voi
       });
 
       stateElement.__wickedStateObject = state;
-
-      stateElement.__wickedStateParent = getStatefulParent(stateElement);
 
       if (isFunction(state.init)) {
         const initValue = state.init();

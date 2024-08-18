@@ -2,7 +2,7 @@ import {
   WickedStateDirectiveContract,
   WickedStateElementContract,
 } from '../../utils/contracts';
-import { isFunction } from '../../utils/checkers';
+import {count, isFunction} from '../../utils/checkers';
 
 export function whenDirective({ value, node, bindings, hydrate }: WickedStateDirectiveContract<boolean>) {
   if ( ! (node instanceof HTMLTemplateElement)) {
@@ -11,7 +11,7 @@ export function whenDirective({ value, node, bindings, hydrate }: WickedStateDir
     );
   }
 
-  if (Object.keys(bindings).length > 1) {
+  if (count(bindings) > 1) {
     throw new Error(
         '[WickedState] You cannot use other directives with the when directive.',
     );

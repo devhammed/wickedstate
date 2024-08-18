@@ -50,6 +50,7 @@
         todos: [],
         todo: null,
         attributes: [],
+        nextId: 1,
         markAsCompleteImmediately: false,
         init() {
             setTimeout(() => {
@@ -60,6 +61,8 @@
                     { id: 2, title: 'Buy eggs', completed: false, attributes: ['urgent'] },
                     { id: 3, title: 'Buy bread', completed: false, attributes: ['important'] },
                 ];
+
+                this.nextId = 4;
             }, 1000);
 
             this.$watch(() => this.attributes, function (attributes) {
@@ -74,18 +77,35 @@
             this.todos = [
                 ...this.todos,
                 {
-                    id: this.todos.length + 1,
+                    id: this.nextId,
                     title: this.todo,
                     completed: this.markAsCompleteImmediately,
                     attributes: this.attributes,
                 },
             ];
 
+            this.nextId += 1;
+
             this.todo = '';
 
             this.attributes = [];
 
             this.markAsCompleteImmediately = false;
+        },
+        toggleComplete(id) {
+            this.todos = this.todos.map((todo) => {
+                if (todo.id === id) {
+                    return {
+                        ...todo,
+                        completed: ! todo.completed,
+                    };
+                }
+
+                return todo;
+            });
+        },
+        removeTodo(id) {
+            this.todos = this.todos.filter((todo) => todo.id !== id);
         },
     }"
     data-bind="{ on: { submit: { handler: addTodo, prevent: true } } }"
@@ -126,6 +146,35 @@
     </div>
 
     <button type="submit">Add</button>
+
+    <ul>
+        <template data-bind="{ each: todos }">
+            <li>
+                <span data-bind="{ text: $loop.item.id }"></span>
+                <span data-bind="{ text: $loop.item.title }"></span>
+                <button
+                    type="button"
+                    data-bind="{
+                         text: $loop.item.completed ? '✔️' : '-',
+                         on: {
+                            click: () => $parent.toggleComplete($loop.item.id),
+                         },
+                   }"
+                >
+                </button>
+                <button
+                    type="button"
+                    data-bind="{
+                        text: '❌',
+                        on: {
+                            click: () => $parent.removeTodo($loop.item.id),
+                        },
+                    }"
+                >
+                </button>
+            </li>
+        </template>
+    </ul>
 </form>
 <div
     data-state="{

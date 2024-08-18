@@ -17,6 +17,16 @@ export interface WickedStateReactiveContract {
   (target: Object): Object;
 }
 
+export interface WickedStateLoopContract<T> {
+    item: T;
+    index: number;
+    iteration: number;
+    even: boolean;
+    odd: boolean;
+    first: boolean;
+    last: boolean;
+}
+
 export interface WickedStateObjectContract extends Object {
   init?: Function;
   placeholder?: Function;
@@ -36,7 +46,6 @@ export interface WickedStateObjectContract extends Object {
 
 export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
-  __wickedStateParent?: WickedStateElementContract;
   __wickedStateRefs?: Record<string, HTMLElement>;
   __wickedStatePlaceholder?: {
     el: HTMLElement,
@@ -48,6 +57,7 @@ export interface WickedStateElementContract extends HTMLElement {
     handler: EventListenerOrEventListenerObject
   }>;
   __wickedStateWhenElement?: WickedStateElementContract;
+  __wickedStateLoop?: WickedStateLoopContract<any>;
 }
 
 export interface WickedStateMagicContextContract {
