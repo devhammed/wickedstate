@@ -1,24 +1,12 @@
+import {functionEvaluator} from './function';
 import {WickedStateEvaluatorContract} from '../../utils/contracts';
 
-export let evaluator: WickedStateEvaluatorContract = (expr, context) => {
-    const accessor = new Function(
-        'context',
-        `
-        return (function() {
-          with (context) {
-            return ${expr};
-          }
-        })();
-      `,
-    );
+export let evaluator: WickedStateEvaluatorContract = functionEvaluator;
 
-    return accessor.call(context, context);
-};
-
-export function setEvaluator(fn: WickedStateEvaluatorContract): WickedStateEvaluatorContract {
+export function setEvaluator(newEvaluator: WickedStateEvaluatorContract): WickedStateEvaluatorContract {
     const previousEvaluator = evaluator;
 
-    evaluator = fn;
+    evaluator = newEvaluator;
 
     return previousEvaluator;
 }

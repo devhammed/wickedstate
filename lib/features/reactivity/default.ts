@@ -1,3 +1,5 @@
+import {WickedStateReactivityContract} from "../../utils/contracts";
+
 let activeEffect: Function | null = null;
 
 let disposables: Set<Function> = new Set();
@@ -47,7 +49,7 @@ function trigger(target: object, key: PropertyKey): void {
     deps.forEach((fx) => fx());
 }
 
-export function effect(fn: Function): () => void {
+function effect(fn: Function): () => void {
     let previousEffect = activeEffect;
 
     activeEffect = fn;
@@ -59,7 +61,7 @@ export function effect(fn: Function): () => void {
     return () => disposables.add(fn);
 }
 
-export function reactive(obj: object): Object {
+function reactive(obj: object): Object {
     const state = new Proxy(obj, {
         get(target: Object, key: PropertyKey): any {
             const value = Reflect.get(target, key);
@@ -84,7 +86,7 @@ export function reactive(obj: object): Object {
     return state;
 }
 
-export function cleanup(obj: object, fn: Function): void {
+function cleanup(obj: object, fn: Function): void {
     let set = cleanups.get(obj);
 
     if ( ! set) {
@@ -94,7 +96,7 @@ export function cleanup(obj: object, fn: Function): void {
     set.add(fn);
 }
 
-export function dispose(obj: object): void {
+function dispose(obj: object): void {
     let set = cleanups.get(obj);
 
     if ( ! set) {
@@ -106,3 +108,10 @@ export function dispose(obj: object): void {
         set.delete(fx);
     });
 }
+
+export const defaultReactivity: WickedStateReactivityContract = {
+    effect,
+    reactive,
+    cleanup,
+    dispose,
+};

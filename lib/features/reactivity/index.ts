@@ -1,13 +1,12 @@
-import {effect, reactive, cleanup, dispose} from './default';
+import {defaultReactivity} from './default';
 import {WickedStateReactivityContract} from '../../utils/contracts';
 
-export let reactivity: WickedStateReactivityContract = {
-  effect,
-  reactive,
-  cleanup,
-  dispose,
-};
+export let reactivity: WickedStateReactivityContract = defaultReactivity;
 
-export function setReactivity(newReactivity: WickedStateReactivityContract) {
+export function setReactivity(newReactivity: WickedStateReactivityContract): WickedStateReactivityContract {
+  const previousReactivity = reactivity;
+
   reactivity = newReactivity;
+
+  return previousReactivity;
 }
