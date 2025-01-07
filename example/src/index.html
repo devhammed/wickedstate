@@ -35,8 +35,8 @@
         <span >Reset</span>
     </button>
     <ul>
-        <template *for="item in history">
-            <li *text="'Item: ' + item"></li>
+        <template *for="log in history">
+            <li *state="{ init() { console.log('added') } }" *text="'History Log: ' + log"></li>
         </template>
     </ul>
 </div>

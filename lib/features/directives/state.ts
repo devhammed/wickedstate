@@ -8,17 +8,18 @@ export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
     priority: 0,
     handler({node, value}): void {
-        if (node.__wickedStateObject) {
+        if (node.__wickedStateDisconnect) {
             return;
         }
 
         const expr = value.trim() || '{}';
 
-        const state = evaluator(expr, {});
-
         node.__wickedStateObject = decorateWithMagics({
             root: node,
-            state: reactivity.reactive(state),
+            state: reactivity.reactive({
+                ...evaluator(expr, {}),
+                ...node.__wickedStateObject ?? {},
+            }),
         });
 
         const init = node.__wickedStateObject.init ?? null;

@@ -79,24 +79,13 @@ export const forDirective: WickedStateDirectiveContract = {
 
             newKeys.push(key);
 
-            const itemScope = new Proxy({ ...state, [valueKey]: val, [indexKey]: index }, {
-                set(_, prop, value, receiver) {
-                    if (prop === valueKey || prop === indexKey) {
-                        return false;
-                    }
+            const itemScope = { [valueKey]: val };
 
-                    return Reflect.set(state, prop, value, receiver);
-                },
-                get(target, prop) {
-                    if (prop === valueKey || prop === indexKey) {
-                        return target[prop];
-                    }
+            if (indexKey) {
+                itemScope[indexKey] = key;
+            }
 
-                    return Reflect.get(state, prop);
-                },
-            });
-
-            const uniqueKey = itemKey ? evaluator(itemKey, itemScope) : index;
+            const uniqueKey = itemKey ? evaluator(itemKey, state, itemScope) : index;
 
             const previousItem = template.__wickedStateLoopItems[uniqueKey];
 
