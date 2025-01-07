@@ -97,3 +97,7 @@ export interface WickedStateDirectiveHandlerContract {
 export interface WickedStateEvaluatorContract {
   (expr: string, context: object): any;
 }
+
+export interface WickedStateRendererContract {
+  (root: any): Promise<void>;
+}

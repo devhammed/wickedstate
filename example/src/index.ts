@@ -1,5 +1,5 @@
-import {start} from 'wickedstate';
+import {render} from 'wickedstate';
 
-start().then(() => {
+render(document.body).then(() => {
     console.log('We are ready to be wicked!');
 });
