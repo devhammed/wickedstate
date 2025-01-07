@@ -1,9 +1,21 @@
 import {
     WickedStateDirectiveContract,
-    WickedStateElementContract
+    WickedStateElementContract, WickedStateLoopContract
 } from '../../utils/contracts';
 import {evaluator} from '../evaluator';
 import {count, isArray } from '../../utils/checkers';
+
+function nearestLoop(element: WickedStateElementContract): WickedStateLoopContract<any> | null {
+    if (element.__wickedStateLoop) {
+        return element.__wickedStateLoop;
+    }
+
+    if (element.parentElement) {
+        return nearestLoop(element.parentElement);
+    }
+
+    return null;
+}
 
 export const eachDirective: WickedStateDirectiveContract = {
     name: 'each',
@@ -51,6 +63,7 @@ export const eachDirective: WickedStateDirectiveContract = {
                 odd: (index + 1) % 2 !== 0,
                 first: index === 0,
                 last: index === value.length - 1,
+                parent: nearestLoop(template),
             };
 
             if (index >= elements.length) {

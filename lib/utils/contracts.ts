@@ -19,6 +19,7 @@ export interface WickedStateLoopContract<T> {
     odd: boolean;
     first: boolean;
     last: boolean;
+    parent?: WickedStateLoopContract<any> | null;
 }
 
 export interface WickedStateObjectContract extends Object {

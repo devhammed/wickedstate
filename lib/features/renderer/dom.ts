@@ -3,15 +3,13 @@ import {directives} from '../directives';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
-function getStateRoot(node: WickedStateElementContract): WickedStateElementContract|null {
-    let parent = node;
+function nearestStateRoot(element: WickedStateElementContract): WickedStateElementContract | null {
+    if (element.__wickedStateObject) {
+        return element;
+    }
 
-    while (parent) {
-        if (parent.__wickedStateObject) {
-            return parent;
-        }
-
-        parent = parent.parentElement;
+    if (element.parentElement) {
+        return nearestStateRoot(element.parentElement);
     }
 
     return null;
@@ -101,7 +99,7 @@ export async function domRenderer(root: any): Promise<void> {
         for (let i = 0; i < bindingsLength; i++) {
             const binding = bindings[i];
 
-            const stateRoot = getStateRoot(node);
+            const stateRoot = nearestStateRoot(node);
 
             const state = stateRoot?.__wickedStateObject;
 
