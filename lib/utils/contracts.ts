@@ -58,7 +58,6 @@ export interface WickedStateElementContract extends HTMLElement {
 export interface WickedStateMagicContextContract {
   state: WickedStateObjectContract;
   root: WickedStateElementContract;
-  hydrate: () => void;
 }
 
 export interface WickedStateDirectiveContract {

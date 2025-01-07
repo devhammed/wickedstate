@@ -7,7 +7,7 @@ import {reactivity} from "../reactivity";
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
     priority: 0,
-    handler({node, value, hydrate}): void {
+    handler({node, value}): void {
         if (node.__wickedStateObject) {
             return;
         }
@@ -17,7 +17,6 @@ export const stateDirective: WickedStateDirectiveContract = {
         const state = evaluator(expr, {});
 
         node.__wickedStateObject = decorateWithMagics({
-            hydrate,
             root: node,
             state: reactivity.reactive(state),
         });
