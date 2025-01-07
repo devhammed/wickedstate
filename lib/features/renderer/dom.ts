@@ -105,7 +105,7 @@ export async function domRenderer(root: any): Promise<void> {
 
             const state = stateRoot?.__wickedStateObject;
 
-            const unsubscribeFromEffect = reactivity.effect(() => {
+            (node as WickedStateElementContract).__wickedStateDisconnect = reactivity.effect(() => {
                 if (stateRoot) {
                     stateRoot.__wickedStateCurrentElement = node;
                 }
@@ -128,14 +128,6 @@ export async function domRenderer(root: any): Promise<void> {
                     cleanups.push(cleanup as Function);
                 }
             });
-
-            (node as WickedStateElementContract).__wickedStateDisconnect = function () {
-                unsubscribeFromEffect();
-
-                while (cleanups.length) {
-                    cleanups.shift()();
-                }
-            };
         }
     }
 
@@ -179,9 +171,5 @@ export async function domRenderer(root: any): Promise<void> {
         observer.observe(root, { childList: true, subtree: true });
 
         root.__wickedObserved = true;
-
-        root.__wickedStateDisconnect = function () {
-            observer.disconnect();
-        };
     }
 }
