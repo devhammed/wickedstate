@@ -149,9 +149,9 @@ export async function domRenderer(root: any): Promise<void> {
                 return acc;
             }, {added: [], removed: []});
 
-            nodes.added.forEach((node) => {
-                domRenderer(node);
-            });
+            if (nodes.added.length) {
+                domRenderer(root);
+            }
 
             nodes.removed.forEach((node) => {
                 if (node instanceof HTMLElement) {
