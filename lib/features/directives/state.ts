@@ -23,22 +23,8 @@ export const stateDirective: WickedStateDirectiveContract = {
 
         const init = node.__wickedStateObject.init ?? null;
 
-        const destroy = node.__wickedStateObject.destroy ?? null;
-
         if (isFunction(init)) {
             init.call(node.__wickedStateObject);
-        }
-
-        if (isFunction(destroy)) {
-           const observer = new MutationObserver(() => {
-                if (!node.isConnected) {
-                     observer.disconnect();
-
-                     destroy.call(node.__wickedStateObject);
-                }
-           });
-
-           observer.observe(document, {childList: true, subtree: true});
         }
     },
 };

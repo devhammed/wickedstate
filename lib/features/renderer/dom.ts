@@ -154,12 +154,24 @@ export async function domRenderer(root: any): Promise<void> {
             }
 
             nodes.removed.forEach((node) => {
-                if (node instanceof HTMLElement) {
-                    const disconnectHandler = (node as WickedStateElementContract).__wickedStateDisconnect;
+                if (!(node instanceof HTMLElement)) {
+                    return;
+                }
 
-                    if (isFunction(disconnectHandler)) {
-                        disconnectHandler();
-                    }
+                const element = node as WickedStateElementContract;
+
+                const elementState = element.__wickedStateObject;
+
+                const destroyHandler = elementState?.destroy;
+
+                if (isFunction(destroyHandler)) {
+                    destroyHandler.call(elementState);
+                }
+
+                const disconnectHandler = element.__wickedStateDisconnect;
+
+                if (isFunction(disconnectHandler)) {
+                    disconnectHandler.call(element);
                 }
             });
         });
