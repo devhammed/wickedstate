@@ -2,13 +2,16 @@ import {
     WickedStateDirectiveContract,
     WickedStateElementContract
 } from '../../utils/contracts';
+import {evaluator} from '../evaluator';
 import {count, isArray } from '../../utils/checkers';
 
-export const eachDirective: WickedStateDirectiveContract<any[]> = {
+export const eachDirective: WickedStateDirectiveContract = {
     name: 'each',
     priority: 1,
-    handler({ node, value, hydrate, bindings }): () => void {
-        if ( ! isArray(value)) {
+    handler({ node, state, value, hydrate, bindings }): () => void {
+        const evaluated = evaluator(value, state) as any[];
+
+        if ( ! isArray(evaluated)) {
             throw new Error(
                 '[WickedState] Each directive requires an array of items.',
             );
@@ -29,7 +32,7 @@ export const eachDirective: WickedStateDirectiveContract<any[]> = {
         const template = node as WickedStateElementContract & HTMLTemplateElement;
         const elements = <WickedStateElementContract[]>[];
 
-        value.forEach((item: any, index: number) => {
+        evaluated.forEach((item: any, index: number) => {
             const clone = template.content.cloneNode(true) as DocumentFragment;
 
             const firstElementChild = clone.firstElementChild as WickedStateElementContract;

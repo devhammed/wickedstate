@@ -74,6 +74,7 @@ export interface WickedStateDirectiveBindingContract {
   type: string;
   value: string;
   modifiers: Record<string, any>;
+  handler: WickedStateDirectiveHandlerContract;
 }
 
 export interface WickedStateDirectiveContextContract {
@@ -82,7 +83,6 @@ export interface WickedStateDirectiveContextContract {
   node: WickedStateElementContract;
   root: WickedStateElementContract;
   value: string;
-  effect: WickedStateEffectContract;
   hydrate: () => void;
 }
 

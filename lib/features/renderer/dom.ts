@@ -1,3 +1,4 @@
+import {directives} from '../directives';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
 function getStateRoot(node: WickedStateElementContract): WickedStateElementContract|null {
@@ -37,11 +38,11 @@ export async function domRenderer(root: any): Promise<void> {
 
         const bindings: WickedStateDirectiveBindingContract[] = [];
 
-        const stateRoot = getStateRoot(node);
-
         const attributes = node.attributes;
 
-        for (let i = 0; i < attributes.length; i++) {
+        const attributesLength = attributes.length;
+
+        for (let i = 0; i < attributesLength; i++) {
             const attribute = attributes[i];
 
             const directive = directiveRegex.exec(attribute.name);
@@ -54,6 +55,12 @@ export async function domRenderer(root: any): Promise<void> {
 
             if (!name) {
                 continue;
+            }
+
+            const registeredDirective = directives.find((directive) => directive.name === name);
+
+            if (!registeredDirective) {
+                throw new Error(`Directive ${name} is not registered`);
             }
 
             const type = directive.groups.type ?? name;
@@ -81,11 +88,29 @@ export async function domRenderer(root: any): Promise<void> {
                 type,
                 modifiers,
                 value: attribute.value,
+                handler: registeredDirective.handler,
             });
         }
 
-        console.log(bindings);
+        const hydrate = () => domRenderer(node);
 
-        // Process the node
+        const bindingsLength = bindings.length;
+
+        for (let i = 0; i < bindingsLength; i++) {
+            const binding = bindings[i];
+
+            const root = getStateRoot(node);
+
+            const state = root?.__wickedStateObject;
+
+            binding.handler({
+                bindings,
+                state,
+                node,
+                root,
+                hydrate,
+                value: binding.value,
+            });
+        }
     }
 }

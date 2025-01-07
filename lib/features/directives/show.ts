@@ -1,6 +1,6 @@
 import {WickedStateDirectiveContract} from '../../utils/contracts';
 
-export const showDirective: WickedStateDirectiveContract<boolean> = {
+export const showDirective: WickedStateDirectiveContract = {
   name: 'show',
   priority: 2,
   handler({ value, node }) {

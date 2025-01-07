@@ -4,7 +4,7 @@ import {
 } from '../../utils/contracts';
 import {count, isFunction} from '../../utils/checkers';
 
-export const whenDirective: WickedStateDirectiveContract<boolean> = {
+export const whenDirective: WickedStateDirectiveContract = {
   name: 'when',
   priority: 1,
   handler({ value, node, bindings, hydrate }) {

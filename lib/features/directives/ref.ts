@@ -1,6 +1,6 @@
 import {WickedStateDirectiveContract} from '../../utils/contracts';
 
-export const refDirective: WickedStateDirectiveContract<string> = {
+export const refDirective: WickedStateDirectiveContract = {
   name: 'ref',
   priority: 1,
   handler({ value, node, root }) {

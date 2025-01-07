@@ -4,7 +4,7 @@ import {
 } from '../../utils/contracts';
 import { isArray, isString } from '../../utils/checkers';
 
-export const modelDirective: WickedStateDirectiveContract<any> = {
+export const modelDirective: WickedStateDirectiveContract = {
   name: 'model',
   priority: 2,
   handler({ node, value: path, state, effect }): () => void {
