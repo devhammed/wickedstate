@@ -1,8 +1,6 @@
 export interface WickedStateReactivityContract {
   effect: WickedStateEffectContract;
   reactive: WickedStateReactiveContract;
-  cleanup: (obj: object, fn: Function) => void;
-  dispose: (obj: object) => void;
 }
 
 export interface WickedStateEffectContract {
@@ -85,7 +83,6 @@ export interface WickedStateDirectiveContextContract {
   modifiers: Record<string, any>;
   type: string;
   value: string;
-  hydrate: () => void;
 }
 
 export interface WickedStateMagicHandlerContract<T> {
@@ -97,7 +94,7 @@ export interface WickedStateDirectiveHandlerContract {
 }
 
 export interface WickedStateEvaluatorContract {
-  (expr: string, context: object): any;
+  (expr: string, state: object, locals?: object): any;
 }
 
 export interface WickedStateRendererContract {

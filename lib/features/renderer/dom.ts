@@ -94,49 +94,82 @@ export async function domRenderer(root: any): Promise<void> {
             });
         }
 
-        const hydrate = () => domRenderer(node);
-
         const bindingsLength = bindings.length;
+
+        const cleanups: Function[] = [];
 
         for (let i = 0; i < bindingsLength; i++) {
             const binding = bindings[i];
 
-            const root = getStateRoot(node);
+            const stateRoot = getStateRoot(node);
 
-            const state = root?.__wickedStateObject;
+            const state = stateRoot?.__wickedStateObject;
 
             const unsubscribeFromEffect = reactivity.effect(() => {
-                if (root) {
-                    root.__wickedStateCurrentElement = node;
+                if (stateRoot) {
+                    stateRoot.__wickedStateCurrentElement = node;
                 }
 
-                reactivity.dispose(node);
+                while (cleanups.length) {
+                    cleanups.shift()();
+                }
 
                 const cleanup = binding.handler({
                     bindings,
                     state,
                     node,
-                    root,
-                    hydrate,
+                    root: stateRoot,
                     type: binding.type,
                     value: binding.value,
                     modifiers: binding.modifiers,
                 });
 
                 if (isFunction(cleanup)) {
-                    reactivity.cleanup(node, cleanup as Function);
+                    cleanups.push(cleanup as Function);
                 }
             });
 
-            const observer = new MutationObserver(() => {
-                if (!node.isConnected) {
-                    observer.disconnect();
+            (node as WickedStateElementContract).__wickedStateDisconnect = function () {
+                unsubscribeFromEffect();
 
-                    unsubscribeFromEffect();
+                while (cleanups.length) {
+                    cleanups.shift()();
                 }
-            });
-
-            observer.observe(document, { childList: true, subtree: true });
+            };
         }
+    }
+
+    if (!root.__wickedObserved && !root.__wickedStateDisconnect) {
+        const observer = new MutationObserver((mutations) => {
+            const nodes = mutations.reduce((acc, mutation) => {
+                acc.removed.push.apply(acc.removed, [].slice.call(mutation.removedNodes));
+
+                acc.added.push.apply(acc.added, [].slice.call(mutation.addedNodes));
+
+                return acc;
+            }, {added: [], removed: []});
+
+            nodes.added.forEach((node) => {
+                domRenderer(node);
+            });
+
+            nodes.removed.forEach((node) => {
+                if (node instanceof HTMLElement) {
+                    const disconnectHandler = (node as WickedStateElementContract).__wickedStateDisconnect;
+
+                    if (isFunction(disconnectHandler)) {
+                        disconnectHandler();
+                    }
+                }
+            });
+        });
+
+        observer.observe(root, { childList: true, subtree: true });
+
+        root.__wickedObserved = true;
+
+        root.__wickedStateDisconnect = function () {
+            observer.disconnect();
+        };
     }
 }

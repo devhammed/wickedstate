@@ -1,16 +1,18 @@
-import {WickedStateEvaluatorContract} from "../../utils/contracts";
+import {WickedStateEvaluatorContract} from '../../utils/contracts';
 
-export const functionEvaluator: WickedStateEvaluatorContract = (expr, context) => {
+export const functionEvaluator: WickedStateEvaluatorContract = (expr, state, locals = {}) => {
     const accessor = new Function(
-        'context',
+        'locals',
         `
-        return (function() {
-          with (context) {
-            return ${expr};
-          }
-        })();
+           return (function() {
+              with (this) {
+                 with (locals) {
+                    return ${expr};
+                 }
+              }
+           }).call(this);
       `,
     );
 
-    return accessor.call(context, context);
+    return accessor.call(state, locals);
 };

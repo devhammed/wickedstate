@@ -7,10 +7,23 @@
     <title>Wicked State Example</title>
 </head>
 <body>
-<div *state="{ count: 0 }">
+<div
+    *state="{
+        count: 0,
+        increment() {
+            this.count++;
+        },
+        decrement() {
+            this.count--;
+        },
+    }"
+>
     <h1 *text="count"></h1>
-    <button *on[click]="count++">Increment</button>
-    <button *on[click]="count--">Decrement</button>
+    <template *when="count > 5">
+        <p *text="'Count is greater than 5, so it is ' + count"></p>
+    </template>
+    <button *on[click]="increment">Increment</button>
+    <button *on[click]="decrement">Decrement</button>
 </div>
 <script type="module" src="./index.ts"></script>
 </body>

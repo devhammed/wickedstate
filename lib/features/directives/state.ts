@@ -2,6 +2,7 @@ import {evaluator} from '../evaluator';
 import {decorateWithMagics} from '../magics';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
+import {reactivity} from "../reactivity";
 
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
@@ -11,12 +12,14 @@ export const stateDirective: WickedStateDirectiveContract = {
             return;
         }
 
-        const state = evaluator(value.trim() || '{}', {});
+        const expr = value.trim() || '{}';
+
+        const state = evaluator(expr, {});
 
         node.__wickedStateObject = decorateWithMagics({
             hydrate,
-            state,
             root: node,
+            state: reactivity.reactive(state),
         });
 
         const init = node.__wickedStateObject.init ?? null;

@@ -8,7 +8,7 @@ import {count, isArray } from '../../utils/checkers';
 export const eachDirective: WickedStateDirectiveContract = {
     name: 'each',
     priority: 1,
-    handler({ node, state, value, hydrate, bindings }): () => void {
+    handler({ node, state, value, bindings }): () => void {
         const evaluated = evaluator(value, state) as any[];
 
         if ( ! isArray(evaluated)) {
@@ -65,8 +65,6 @@ export const eachDirective: WickedStateDirectiveContract = {
 
             elements.push(firstElementChild);
         });
-
-        hydrate();
 
         return () => {
             elements.forEach((element: WickedStateElementContract) => {

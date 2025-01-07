@@ -3,11 +3,14 @@ import {
   WickedStateElementContract,
 } from '../../utils/contracts';
 import {count, isFunction} from '../../utils/checkers';
+import {evaluator} from "../evaluator";
 
 export const whenDirective: WickedStateDirectiveContract = {
   name: 'when',
   priority: 1,
-  handler({ value, node, bindings, hydrate }) {
+  handler({ value, node, bindings, state, hydrate }) {
+    const evaluatedValue = evaluator(value, state);
+
     if ( ! (node instanceof HTMLTemplateElement)) {
       throw new Error(
           '[WickedState] When directive can only be used on <template> elements.',
@@ -22,7 +25,7 @@ export const whenDirective: WickedStateDirectiveContract = {
 
     const template = node as WickedStateElementContract & HTMLTemplateElement;
 
-    if ( ! value) {
+    if ( ! evaluatedValue) {
       const whenElement = template.__wickedStateWhenElement;
 
       if (whenElement) {
@@ -46,28 +49,20 @@ export const whenDirective: WickedStateDirectiveContract = {
       return;
     }
 
-    if (template.__wickedStateWhenElement) {
-      return;
+    if ( !template.__wickedStateWhenElement) {
+      const clone = template.content.cloneNode(true) as DocumentFragment;
+
+      const firstElementChild = clone.firstElementChild as WickedStateElementContract;
+
+      if (!firstElementChild) {
+        throw new Error(
+            '[WickedState] When directive requires a child element.',
+        );
+      }
+
+      template.after(firstElementChild);
+
+      template.__wickedStateWhenElement = firstElementChild;
     }
-
-    const clone = template.content.cloneNode(true) as DocumentFragment;
-
-    const firstElementChild = clone.firstElementChild as WickedStateElementContract;
-
-    if ( ! firstElementChild) {
-      throw new Error(
-          '[WickedState] When directive requires a child element.',
-      );
-    }
-
-    if ( ! firstElementChild.dataset.state) {
-      firstElementChild.dataset.state = '{}';
-    }
-
-    template.after(firstElementChild);
-
-    template.__wickedStateWhenElement = firstElementChild;
-
-    hydrate();
   },
 };
