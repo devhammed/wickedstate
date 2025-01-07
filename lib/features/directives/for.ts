@@ -74,6 +74,8 @@ export const forDirective: WickedStateDirectiveContract = {
 
         const newKeys = [];
 
+        const previousKeys = Object.keys(template.__wickedStateLoopItems);
+
         Object.keys(iterable).forEach((key, index) => {
             const val = iterable[key];
 
@@ -124,7 +126,7 @@ export const forDirective: WickedStateDirectiveContract = {
 
         template.__wickedStateInLoop = false;
 
-        Object.keys(template.__wickedStateLoopItems).forEach(key => {
+        previousKeys.forEach(key => {
             if ( ! newKeys.includes(key)) {
                 const item = template.__wickedStateLoopItems[key];
 
