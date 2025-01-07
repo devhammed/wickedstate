@@ -145,10 +145,6 @@ export async function domRenderer(root: any): Promise<void> {
                 return acc;
             }, {added: [], removed: []});
 
-            if (nodes.added.length) {
-                domRenderer(root);
-            }
-
             nodes.removed.forEach((node) => {
                 const element = node as WickedStateElementContract;
 
@@ -166,6 +162,10 @@ export async function domRenderer(root: any): Promise<void> {
                     disconnectHandler.call(element);
                 }
             });
+
+            if (nodes.added.length) {
+                domRenderer(root);
+            }
         });
 
         observer.observe(root, { childList: true, subtree: true });
