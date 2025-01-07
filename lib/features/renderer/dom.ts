@@ -1,5 +1,18 @@
-import {getStateRoot} from '../../utils/dom';
-import {WickedStateDirectiveBindingContract} from '../../utils/contracts';
+import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
+
+function getStateRoot(node: WickedStateElementContract): WickedStateElementContract|null {
+    let parent = node;
+
+    while (parent) {
+        if (parent.__wickedStateObject) {
+            return parent;
+        }
+
+        parent = parent.parentElement;
+    }
+
+    return null;
+}
 
 export async function domRenderer(root: any): Promise<void> {
     const directiveRegex = /\*(?<name>[\w-]+)(?:\[(?<type>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
