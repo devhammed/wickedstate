@@ -60,7 +60,7 @@ export async function domRenderer(root: any): Promise<void> {
             const registeredDirective = directives.find((directive) => directive.name === name);
 
             if (!registeredDirective) {
-                throw new Error(`Directive ${name} is not registered`);
+                throw new Error(`Directive ${name} is not registered.`);
             }
 
             const type = directive.groups.type ?? name;
@@ -109,7 +109,9 @@ export async function domRenderer(root: any): Promise<void> {
                 node,
                 root,
                 hydrate,
+                type: binding.type,
                 value: binding.value,
+                modifiers: binding.modifiers,
             });
         }
     }

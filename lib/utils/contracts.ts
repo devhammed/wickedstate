@@ -82,6 +82,8 @@ export interface WickedStateDirectiveContextContract {
   state: WickedStateObjectContract;
   node: WickedStateElementContract;
   root: WickedStateElementContract;
+  modifiers: Record<string, any>;
+  type: string;
   value: string;
   hydrate: () => void;
 }
