@@ -1,5 +1,5 @@
-import * as WickedState from 'wickedstate';
+import {start} from 'wickedstate';
 
-WickedState.start().then(() => {
+start().then(() => {
     console.log('We are ready to be wicked!');
 });

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2018",
     "esModuleInterop": true,
-    "lib": ["ES2018", "DOM"]
+    "lib": ["ES2018", "DOM"],
+    "moduleResolution": "Bundler"
   }
 }

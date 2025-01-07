@@ -63,18 +63,25 @@ export interface WickedStateMagicContextContract {
   hydrate: () => void;
 }
 
-export interface WickedStateDirectiveContract<T> {
+export interface WickedStateDirectiveContract {
   name: string;
   priority: number;
-  handler: WickedStateDirectiveHandlerContract<T>;
+  handler: WickedStateDirectiveHandlerContract;
 }
 
-export interface WickedStateDirectiveContextContract<T> {
-  bindings: Record<string, any>;
+export interface WickedStateDirectiveBindingContract {
+  name: string;
+  type: string;
+  value: string;
+  modifiers: Record<string, any>;
+}
+
+export interface WickedStateDirectiveContextContract {
+  bindings: WickedStateDirectiveBindingContract[];
   state: WickedStateObjectContract;
   node: WickedStateElementContract;
   root: WickedStateElementContract;
-  value: T;
+  value: string;
   effect: WickedStateEffectContract;
   hydrate: () => void;
 }
@@ -83,6 +90,10 @@ export interface WickedStateMagicHandlerContract<T> {
   (magic: WickedStateMagicContextContract): T;
 }
 
-export interface WickedStateDirectiveHandlerContract<T> {
-  (context: WickedStateDirectiveContextContract<T>): Function | void;
+export interface WickedStateDirectiveHandlerContract {
+  (context: WickedStateDirectiveContextContract): Function | void;
+}
+
+export interface WickedStateEvaluatorContract {
+  (expr: string, context: object): any;
 }
