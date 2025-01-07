@@ -10,20 +10,35 @@
 <div
     *state="{
         count: 0,
+        history: [],
         increment() {
+            this.history = [...this.history, 'Increment: ' + this.count];
             this.count++;
         },
         decrement() {
+            this.history = [...this.history, 'Decrement: ' + this.count];
             this.count--;
         },
+        reset() {
+            this.count = 0;
+            this.history = [];
+        }
     }"
 >
     <h1 *text="count"></h1>
-    <template *when="count > 5">
-        <p *text="'Count is greater than 5, so it is ' + count"></p>
+    <template *if="count > 5">
+        <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
     </template>
-    <button *on[click]="increment">Increment</button>
-    <button *on[click]="decrement">Decrement</button>
+    <button *on[click]="increment" type="button">Increment</button>
+    <button *on[click]="decrement" type="button">Decrement</button>
+    <button type="reset" *state *on[click]="$parent.reset">
+        <span >Reset</span>
+    </button>
+    <ul>
+        <template *for="item in history">
+            <li *text="'Item: ' + item"></li>
+        </template>
+    </ul>
 </div>
 <script type="module" src="./index.ts"></script>
 </body>

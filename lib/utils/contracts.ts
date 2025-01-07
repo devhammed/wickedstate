@@ -11,17 +11,6 @@ export interface WickedStateReactiveContract {
   (target: Object): Object;
 }
 
-export interface WickedStateLoopContract<T> {
-    item: T;
-    index: number;
-    iteration: number;
-    even: boolean;
-    odd: boolean;
-    first: boolean;
-    last: boolean;
-    parent?: WickedStateLoopContract<any> | null;
-}
-
 export interface WickedStateObjectContract extends Object {
   init?: Function;
   placeholder?: Function;
@@ -53,7 +42,14 @@ export interface WickedStateElementContract extends HTMLElement {
     handler: EventListenerOrEventListenerObject
   }>;
   __wickedStateWhenElement?: WickedStateElementContract;
-  __wickedStateLoop?: WickedStateLoopContract<any>;
+  __wickedStateInLoop?: boolean;
+  __wickedStateLoopItems?: Record<any, WickedStateLoopItemContract>;
+}
+
+export interface WickedStateLoopItemContract {
+  key: any;
+  value: any;
+  el: WickedStateElementContract;
 }
 
 export interface WickedStateMagicContextContract {

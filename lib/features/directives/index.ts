@@ -1,17 +1,17 @@
 import { onDirective } from './on';
+import { ifDirective } from './if';
 import { refDirective } from './ref';
-import {stateDirective} from './state';
+import { stateDirective } from './state';
 import { showDirective } from './show';
 import { textDirective } from './text';
-import { whenDirective } from './when';
-import { eachDirective } from './each';
+import { forDirective } from './for';
 import { modelDirective } from './model';
 import { WickedStateDirectiveContract } from '../../utils/contracts';
 
-export const directives: WickedStateDirectiveContract<any>[] = [
+export const directives: WickedStateDirectiveContract[] = [
   stateDirective,
-  whenDirective,
-  eachDirective,
+  ifDirective,
+  forDirective,
   refDirective,
   onDirective,
   textDirective,
@@ -19,7 +19,7 @@ export const directives: WickedStateDirectiveContract<any>[] = [
   modelDirective,
 ];
 
-export function directive<T>(directive: WickedStateDirectiveContract<T>): WickedStateDirectiveContract<T> {
+export function directive(directive: WickedStateDirectiveContract): WickedStateDirectiveContract {
   if (directives.some((d) => d.name === directive.name)) {
       throw new Error(
           `[WickedState] Directive ${directive.name} is already registered`,

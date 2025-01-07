@@ -132,9 +132,15 @@ export async function domRenderer(root: any): Promise<void> {
     if (!root.__wickedObserved && !root.__wickedStateDisconnect) {
         const observer = new MutationObserver((mutations) => {
             const nodes = mutations.reduce((acc, mutation) => {
-                acc.removed.push.apply(acc.removed, [].slice.call(mutation.removedNodes));
+                acc.removed.push.apply(
+                    acc.removed,
+                    [].slice.call(mutation.removedNodes).filter((node: Node) => node instanceof HTMLElement),
+                );
 
-                acc.added.push.apply(acc.added, [].slice.call(mutation.addedNodes));
+                acc.added.push.apply(
+                    acc.added,
+                    [].slice.call(mutation.addedNodes).filter((node: Node) => node instanceof HTMLElement),
+                );
 
                 return acc;
             }, {added: [], removed: []});
@@ -144,10 +150,6 @@ export async function domRenderer(root: any): Promise<void> {
             }
 
             nodes.removed.forEach((node) => {
-                if (!(node instanceof HTMLElement)) {
-                    return;
-                }
-
                 const element = node as WickedStateElementContract;
 
                 const elementState = element.__wickedStateObject;
