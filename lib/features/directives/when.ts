@@ -4,66 +4,70 @@ import {
 } from '../../utils/contracts';
 import {count, isFunction} from '../../utils/checkers';
 
-export function whenDirective({ value, node, bindings, hydrate }: WickedStateDirectiveContract<boolean>) {
-  if ( ! (node instanceof HTMLTemplateElement)) {
-    throw new Error(
-        '[WickedState] When directive can only be used on <template> elements.',
-    );
-  }
-
-  if (count(bindings) > 1) {
-    throw new Error(
-        '[WickedState] You cannot use other directives with the when directive.',
-    );
-  }
-
-  const template = node as WickedStateElementContract & HTMLTemplateElement;
-
-  if ( ! value) {
-    const whenElement = template.__wickedStateWhenElement;
-
-    if (whenElement) {
-      const destroyHandler = whenElement.__wickedStateObject?.destroy;
-
-      if (isFunction(destroyHandler)) {
-        destroyHandler();
-      }
-
-      const disconnectHandler = whenElement.__wickedStateDisconnect;
-
-      if (isFunction(disconnectHandler)) {
-        disconnectHandler();
-      }
-
-      whenElement.remove();
-
-      template.__wickedStateWhenElement = null;
+export const whenDirective: WickedStateDirectiveContract<boolean> = {
+  name: 'when',
+  priority: 1,
+  handler({ value, node, bindings, hydrate }) {
+    if ( ! (node instanceof HTMLTemplateElement)) {
+      throw new Error(
+          '[WickedState] When directive can only be used on <template> elements.',
+      );
     }
 
-    return;
-  }
+    if (count(bindings) > 1) {
+      throw new Error(
+          '[WickedState] You cannot use other directives with the when directive.',
+      );
+    }
 
-  if (template.__wickedStateWhenElement) {
-    return;
-  }
+    const template = node as WickedStateElementContract & HTMLTemplateElement;
 
-  const clone = template.content.cloneNode(true) as DocumentFragment;
+    if ( ! value) {
+      const whenElement = template.__wickedStateWhenElement;
 
-  const firstElementChild = clone.firstElementChild as WickedStateElementContract;
+      if (whenElement) {
+        const destroyHandler = whenElement.__wickedStateObject?.destroy;
 
-  if ( ! firstElementChild) {
-    throw new Error(
-        '[WickedState] When directive requires a child element.',
-    );
-  }
+        if (isFunction(destroyHandler)) {
+          destroyHandler();
+        }
 
-  if ( ! firstElementChild.dataset.state) {
-    firstElementChild.dataset.state = '{}';
-  }
+        const disconnectHandler = whenElement.__wickedStateDisconnect;
 
-  template.after(firstElementChild);
+        if (isFunction(disconnectHandler)) {
+          disconnectHandler();
+        }
 
-  template.__wickedStateWhenElement = firstElementChild;
+        whenElement.remove();
 
-  hydrate();
-}
+        template.__wickedStateWhenElement = null;
+      }
+
+      return;
+    }
+
+    if (template.__wickedStateWhenElement) {
+      return;
+    }
+
+    const clone = template.content.cloneNode(true) as DocumentFragment;
+
+    const firstElementChild = clone.firstElementChild as WickedStateElementContract;
+
+    if ( ! firstElementChild) {
+      throw new Error(
+          '[WickedState] When directive requires a child element.',
+      );
+    }
+
+    if ( ! firstElementChild.dataset.state) {
+      firstElementChild.dataset.state = '{}';
+    }
+
+    template.after(firstElementChild);
+
+    template.__wickedStateWhenElement = firstElementChild;
+
+    hydrate();
+  },
+};

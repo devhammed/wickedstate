@@ -1,7 +1,3 @@
-export interface WickedStateConfigContract {
-  reactivity?: WickedStateReactivityContract;
-}
-
 export interface WickedStateReactivityContract {
   effect: WickedStateEffectContract;
   reactive: WickedStateReactiveContract;
@@ -68,6 +64,12 @@ export interface WickedStateMagicContextContract {
 }
 
 export interface WickedStateDirectiveContract<T> {
+  name: string;
+  priority: number;
+  handler: WickedStateDirectiveHandlerContract<T>;
+}
+
+export interface WickedStateDirectiveContextContract<T> {
   bindings: Record<string, any>;
   state: WickedStateObjectContract;
   node: WickedStateElementContract;
@@ -82,5 +84,5 @@ export interface WickedStateMagicHandlerContract<T> {
 }
 
 export interface WickedStateDirectiveHandlerContract<T> {
-  (directive: WickedStateDirectiveContract<T>): Function | void;
+  (context: WickedStateDirectiveContextContract<T>): Function | void;
 }

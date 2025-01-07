@@ -1,5 +1,9 @@
 import { WickedStateDirectiveContract } from '../../utils/contracts';
 
-export function textDirective({ node, value }: WickedStateDirectiveContract<string>): void {
-  node.textContent = value;
-}
+export const textDirective: WickedStateDirectiveContract<string> = {
+  name: 'text',
+  priority: 2,
+  handler({ node, value }): void {
+    node.textContent = value;
+  },
+};
