@@ -19,4 +19,8 @@ export type {
   WickedStateMagicHandlerContract,
   WickedStateObjectContract,
   WickedStateEvaluatorContract,
+  WickedStateRendererContract,
+  WickedStateDirectiveBindingContract,
+  WickedStateElementContract,
+  WickedStateLoopContract,
 } from './utils/contracts';

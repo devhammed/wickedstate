@@ -1,5 +1,5 @@
 import {domRenderer} from './dom';
-import {WickedStateRendererContract} from "../../utils/contracts";
+import {WickedStateRendererContract} from '../../utils/contracts';
 
 export let render: WickedStateRendererContract = domRenderer;
 
