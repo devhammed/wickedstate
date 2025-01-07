@@ -42,6 +42,7 @@ export interface WickedStateObjectContract extends Object {
 
 export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
+  __wickedStateCurrentElement?: WickedStateElementContract;
   __wickedStateRefs?: Record<string, HTMLElement>;
   __wickedStatePlaceholder?: {
     el: HTMLElement,
@@ -58,7 +59,6 @@ export interface WickedStateElementContract extends HTMLElement {
 
 export interface WickedStateMagicContextContract {
   state: WickedStateObjectContract;
-  effect: WickedStateEffectContract;
   root: WickedStateElementContract;
   hydrate: () => void;
 }

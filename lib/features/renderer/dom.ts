@@ -1,4 +1,6 @@
+import {reactivity} from '../reactivity';
 import {directives} from '../directives';
+import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
 function getStateRoot(node: WickedStateElementContract): WickedStateElementContract|null {
@@ -103,16 +105,38 @@ export async function domRenderer(root: any): Promise<void> {
 
             const state = root?.__wickedStateObject;
 
-            binding.handler({
-                bindings,
-                state,
-                node,
-                root,
-                hydrate,
-                type: binding.type,
-                value: binding.value,
-                modifiers: binding.modifiers,
+            const unsubscribeFromEffect = reactivity.effect(() => {
+                if (root) {
+                    root.__wickedStateCurrentElement = node;
+                }
+
+                reactivity.dispose(node);
+
+                const cleanup = binding.handler({
+                    bindings,
+                    state,
+                    node,
+                    root,
+                    hydrate,
+                    type: binding.type,
+                    value: binding.value,
+                    modifiers: binding.modifiers,
+                });
+
+                if (isFunction(cleanup)) {
+                    reactivity.cleanup(node, cleanup as Function);
+                }
             });
+
+            const observer = new MutationObserver(() => {
+                if (!node.isConnected) {
+                    observer.disconnect();
+
+                    unsubscribeFromEffect();
+                }
+            });
+
+            observer.observe(document, { childList: true, subtree: true });
         }
     }
 }

@@ -1,6 +1,7 @@
+import {reactivity} from '../reactivity';
 import { WickedStateMagicContextContract } from '../../utils/contracts';
 
-export function watchMagic<T>({ state, effect }: WickedStateMagicContextContract): (
+export function watchMagic<T>({ state }: WickedStateMagicContextContract): (
     selector: () => T,
     fn: (newValue: T, oldValue: T) => void,
 ) => void {
@@ -10,7 +11,7 @@ export function watchMagic<T>({ state, effect }: WickedStateMagicContextContract
   ): void {
     let value = selector();
 
-    effect(() => {
+    reactivity.effect(() => {
       let newValue = selector();
 
       if (value !== newValue) {

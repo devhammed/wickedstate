@@ -11,7 +11,8 @@ import { effectMagic } from './effect';
 import { refsMagic } from './refs';
 import { setMagic } from './set';
 import { getMagic } from './get';
-import {loopMagic} from "./loop";
+import { loopMagic } from './loop';
+import { elMagic } from './el';
 
 export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   watch: watchMagic,
@@ -20,6 +21,7 @@ export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   parent: parentMagic,
   effect: effectMagic,
   refs: refsMagic,
+  el: elMagic,
   set: setMagic,
   get: getMagic,
   loop: loopMagic,
