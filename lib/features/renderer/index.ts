@@ -1,7 +1,7 @@
 export async function start(): Promise<void> {
-  const directiveRegex = /\*(?<name>[\w-]+)(?:\[(?<tag>[^\]]*)\])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*\])?(?:\.[\w-]+(?:\[[^\]]*\])?)*)?)?/;
+  const directiveRegex = /\*(?<name>[\w-]+)(?:\[(?<tag>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
 
-  const modifiersRegex = /(?<name>[\w-]+)(?:\[(?<args>[^\]]*)\])?/;
+  const modifiersRegex = /(?<name>[\w-]+)(?:\[(?<args>[^\]]*)])?/;
 
   const walkingNodes: Node[] = [document.body];
 

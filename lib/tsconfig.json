@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2018",
     "esModuleInterop": true,
-    "lib": ["es2018", "dom"]
+    "lib": ["ES2018", "DOM"]
   }
 }
