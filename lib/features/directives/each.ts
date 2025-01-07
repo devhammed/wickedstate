@@ -53,10 +53,6 @@ export const eachDirective: WickedStateDirectiveContract = {
                 last: index === value.length - 1,
             };
 
-            if (!firstElementChild.dataset.state) {
-                firstElementChild.dataset.state = '{}';
-            }
-
             if (index >= elements.length) {
                 template.before(clone);
             } else {
