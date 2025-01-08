@@ -11,7 +11,6 @@ import { effectMagic } from './effect';
 import { refsMagic } from './refs';
 import { setMagic } from './set';
 import { getMagic } from './get';
-import { loopMagic } from './loop';
 import { elMagic } from './el';
 
 export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
@@ -24,7 +23,6 @@ export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   el: elMagic,
   set: setMagic,
   get: getMagic,
-  loop: loopMagic,
 };
 
 export function decorateWithMagics(magicContext: WickedStateMagicContextContract): Object {
