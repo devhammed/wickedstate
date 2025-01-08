@@ -43,8 +43,8 @@
     >
     </button>
     <ul>
-        <template *for="log in history">
-            <li *state="{ init() { console.log('added') } }" *text="'History Log: ' + log"></li>
+        <template *for="log in history : log">
+            <li *text="'History Log: ' + log"></li>
         </template>
     </ul>
 </div>

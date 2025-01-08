@@ -1,6 +1,6 @@
 import {reactivity} from '../reactivity';
 import {directives} from '../directives';
-import {isFunction} from '../../utils/checkers';
+import {isFunction, isObject} from '../../utils/checkers';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
 function nearestStateRoot(element: WickedStateElementContract): WickedStateElementContract | null {
@@ -40,10 +40,6 @@ export async function domRenderer(root: any): Promise<void> {
 
         if (castedNode.__wickedStateDisconnect) {
             continue;
-        }
-
-        if (! castedNode.__wickedStateCleanups) {
-            castedNode.__wickedStateCleanups = {};
         }
 
         const bindings: WickedStateDirectiveBindingContract[] = [];
@@ -112,6 +108,10 @@ export async function domRenderer(root: any): Promise<void> {
             const state = stateRoot?.__wickedStateObject;
 
             castedNode.__wickedStateDisconnect = reactivity.effect(() => {
+                if (! castedNode.__wickedStateCleanups) {
+                    castedNode.__wickedStateCleanups = {};
+                }
+
                 if ( ! castedNode.__wickedStateCleanups[binding.type]) {
                     castedNode.__wickedStateCleanups[binding.type] = [];
                 }
@@ -174,6 +174,18 @@ export async function domRenderer(root: any): Promise<void> {
 
                 if (isFunction(disconnectHandler)) {
                     disconnectHandler.call(element);
+                }
+
+                const cleanups = element.__wickedStateCleanups;
+
+                if (isObject(cleanups)) {
+                    Object.keys(cleanups).forEach((type) => {
+                        const typeCleanups = cleanups[type];
+
+                        while (typeCleanups.length) {
+                            typeCleanups.shift()();
+                        }
+                    });
                 }
 
                 delete element.__wickedStateObject;

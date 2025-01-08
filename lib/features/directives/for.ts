@@ -105,7 +105,22 @@ export const forDirective: WickedStateDirectiveContract = {
                 );
             }
 
-            el.__wickedStateObject = itemState;
+            el.__wickedStateObject = new Proxy({ ...state, ...itemState }, {
+                get(_, prop, receiver) {
+                    if (prop === valueKey || prop === indexKey) {
+                        return itemState[prop];
+                    }
+
+                    return Reflect.get(state, prop, receiver);
+                },
+                set(_, prop, value, receiver) {
+                    if (prop === valueKey || prop === indexKey) {
+                       return false;
+                    }
+
+                    return Reflect.set(state, prop, value, receiver);
+                },
+            });
 
             template.__wickedStateLoopItems[uniqueKey] = {
                 el,
