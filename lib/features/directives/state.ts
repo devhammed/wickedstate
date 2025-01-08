@@ -3,6 +3,7 @@ import {reactivity} from '../reactivity';
 import {decorateWithMagics} from '../magics';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
+import {decorateWithDataProviders} from "../datas";
 
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
@@ -12,15 +13,20 @@ export const stateDirective: WickedStateDirectiveContract = {
             return;
         }
 
-        const expr = value.trim() || '{}';
+        const expression = value.trim() || '{}';
 
-        node.__wickedStateObject = decorateWithMagics({
-            root: node,
-            state: reactivity.reactive({
-                ...evaluator(expr, {}),
-                ...node.__wickedStateObject ?? {},
-            }),
+        const magicContext = decorateWithMagics({}, node);
+
+        const dataContext = decorateWithDataProviders({}, magicContext);
+
+        const state = evaluator(expression, dataContext);
+
+        const reactiveState =  reactivity.reactive({
+            ...state,
+            ...node.__wickedStateObject ?? {},
         });
+
+        node.__wickedStateObject = decorateWithMagics(reactiveState, node);
 
         node.__wickedStateCurrentElement = node;
 

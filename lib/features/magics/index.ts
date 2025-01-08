@@ -1,8 +1,9 @@
 import { watchMagic } from './watch';
 import { isFunction } from '../../utils/checkers';
 import {
+  WickedStateElementContract,
   WickedStateMagicContextContract,
-  WickedStateMagicHandlerContract,
+  WickedStateMagicHandlerContract, WickedStateObjectContract,
 } from '../../utils/contracts';
 import { rootMagic } from './root';
 import { dataMagic } from './data';
@@ -25,15 +26,15 @@ export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   get: getMagic,
 };
 
-export function decorateWithMagics(magicContext: WickedStateMagicContextContract): Object {
+export function decorateWithMagics(state: WickedStateObjectContract, root: WickedStateElementContract): Object {
   Object.keys(magics).forEach((magicName: string): void => {
-    Object.defineProperty(magicContext.state, `$${magicName}`, {
+    Object.defineProperty(state, `$${magicName}`, {
       enumerable: false,
-      get: (): any => magics[magicName](magicContext),
+      get: (): any => magics[magicName]({ state, root }),
     });
   });
 
-  return magicContext.state;
+  return state;
 }
 
 export function magic<T>(
