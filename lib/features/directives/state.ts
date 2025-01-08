@@ -21,7 +21,7 @@ export const stateDirective: WickedStateDirectiveContract = {
 
         const dataContext = decorateWithDataProviders({}, magicContext);
 
-        const state = evaluator(expression, dataContext, magicContext);
+        const state = evaluator(expression, magicContext, dataContext);
 
         const reactiveState =  reactivity.reactive({
             ...state,
