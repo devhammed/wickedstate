@@ -29,10 +29,18 @@
     <template *if="count > 5">
         <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
     </template>
+    <div *show="count < 0">
+        <p *text="'So much negativity??'"></p>
+    </div>
     <button *on[click]="increment" type="button">Increment</button>
     <button *on[click]="decrement" type="button">Decrement</button>
-    <button type="reset" *state *on[click]="$parent.reset">
-        Reset
+    <button
+        type="reset"
+        *state="{}"
+        *ref="resetButton"
+        *on[click]="$parent.reset"
+        *text="$refs.resetButton.type.toUpperCase()"
+    >
     </button>
     <ul>
         <template *for="log in history">

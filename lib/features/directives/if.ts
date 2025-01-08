@@ -3,7 +3,7 @@ import {
   WickedStateElementContract,
 } from '../../utils/contracts';
 import {evaluator} from '../evaluator';
-import {count, isFunction} from '../../utils/checkers';
+import {count} from '../../utils/checkers';
 
 export const ifDirective: WickedStateDirectiveContract = {
   name: 'if',
@@ -17,7 +17,7 @@ export const ifDirective: WickedStateDirectiveContract = {
 
     if (count(bindings) > 1) {
       throw new Error(
-          '[WickedState] You cannot use other directives with the when directive.',
+          '[WickedState] You cannot use other directives with the if directive.',
       );
     }
 

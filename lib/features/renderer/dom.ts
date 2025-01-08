@@ -36,9 +36,19 @@ export async function domRenderer(root: any): Promise<void> {
             continue;
         }
 
+        const castedNode = node as WickedStateElementContract;
+
+        if (castedNode.__wickedStateDisconnect) {
+            continue;
+        }
+
+        if (! castedNode.__wickedStateCleanups) {
+            castedNode.__wickedStateCleanups = {};
+        }
+
         const bindings: WickedStateDirectiveBindingContract[] = [];
 
-        const attributes = node.attributes;
+        const attributes = castedNode.attributes;
 
         const attributesLength = attributes.length;
 
@@ -94,18 +104,22 @@ export async function domRenderer(root: any): Promise<void> {
 
         const bindingsLength = bindings.length;
 
-        const cleanups: Function[] = [];
-
         for (let i = 0; i < bindingsLength; i++) {
             const binding = bindings[i];
 
-            const stateRoot = nearestStateRoot(node);
+            const stateRoot = nearestStateRoot(castedNode);
 
             const state = stateRoot?.__wickedStateObject;
 
-            (node as WickedStateElementContract).__wickedStateDisconnect = reactivity.effect(() => {
+            castedNode.__wickedStateDisconnect = reactivity.effect(() => {
+                if ( ! castedNode.__wickedStateCleanups[binding.type]) {
+                    castedNode.__wickedStateCleanups[binding.type] = [];
+                }
+
+                const cleanups = castedNode.__wickedStateCleanups[binding.type];
+
                 if (stateRoot) {
-                    stateRoot.__wickedStateCurrentElement = node;
+                    stateRoot.__wickedStateCurrentElement = castedNode;
                 }
 
                 while (cleanups.length) {
@@ -115,7 +129,7 @@ export async function domRenderer(root: any): Promise<void> {
                 const cleanup = binding.handler({
                     bindings,
                     state,
-                    node,
+                    node: castedNode,
                     root: stateRoot,
                     type: binding.type,
                     value: binding.value,
@@ -161,6 +175,26 @@ export async function domRenderer(root: any): Promise<void> {
                 if (isFunction(disconnectHandler)) {
                     disconnectHandler.call(element);
                 }
+
+                delete element.__wickedStateObject;
+
+                delete element.__wickedStateCurrentElement;
+
+                delete element.__wickedStateCleanups;
+
+                delete element.__wickedStateRefs;
+
+                delete element.__wickedStatePlaceholder;
+
+                delete element.__wickedStateDisconnect;
+
+                delete element.__wickedStateEvents;
+
+                delete element.__wickedStateWhenElement;
+
+                delete element.__wickedStateInLoop;
+
+                delete element.__wickedStateLoopItems;
             });
 
             if (nodes.added.length) {

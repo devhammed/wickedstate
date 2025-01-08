@@ -1,21 +1,10 @@
-import {WickedStateDirectiveContract} from '../../utils/contracts';
 import {evaluator} from '../evaluator';
+import {WickedStateDirectiveContract} from '../../utils/contracts';
 
 export const onDirective: WickedStateDirectiveContract = {
   name: 'on',
   priority: 2,
-  handler({ node, value, state, modifiers, type }): () => void {
-
-    const removeEvent = () => {
-      const event = node.__wickedStateEvents[type] ?? null;
-
-      if (event) {
-        event.target.removeEventListener(type, event.handler);
-
-        delete node.__wickedStateEvents[type];
-      }
-    };
-
+  handler({ node, value, state, modifiers, type }): void {
     const target = modifiers.window
         ? globalThis.window
         : (modifiers.document ? globalThis.document : node);
@@ -40,25 +29,23 @@ export const onDirective: WickedStateDirectiveContract = {
             : evaluatedValue;
 
       if (modifiers.once) {
-        removeEvent();
+        target.removeEventListener(type, eventHandler);
+
+        delete node.__wickedStateEvents[type];
       }
 
       return returnValue;
     };
 
+    target.addEventListener(type, eventHandler);
+
     if ( ! node.__wickedStateEvents) {
       node.__wickedStateEvents = {};
     }
-
-    removeEvent();
-
-    target.addEventListener(type, eventHandler);
 
     node.__wickedStateEvents[type] = {
       target,
       handler: eventHandler,
     };
-
-    return removeEvent;
   },
 };

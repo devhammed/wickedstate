@@ -1,3 +1,4 @@
+import {evaluator} from '../evaluator';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
 
 export const showDirective: WickedStateDirectiveContract = {

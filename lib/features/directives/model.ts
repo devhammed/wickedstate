@@ -2,18 +2,13 @@ import {
   WickedStateDirectiveContract,
   WickedStateElementContract,
 } from '../../utils/contracts';
-import { isArray, isString } from '../../utils/checkers';
+import {reactivity} from '../reactivity';
+import { isArray } from '../../utils/checkers';
 
 export const modelDirective: WickedStateDirectiveContract = {
   name: 'model',
   priority: 2,
-  handler({ node, value: path, state, effect }): () => void {
-    if ( ! isString(path)) {
-      throw new Error(
-          `[WickedState] Model value must be a string for ${node}`,
-      );
-    }
-
+  handler({ node, value, state }): () => void {
     const target = node as ((HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) & WickedStateElementContract);
 
     const isInput = target instanceof HTMLInputElement;
@@ -30,56 +25,56 @@ export const modelDirective: WickedStateDirectiveContract = {
             ? 'input'
             : 'change';
 
-    const unsubscribeFromState = effect(() => {
-      const value = state.$get(path);
+    const unsubscribeFromState = reactivity.effect(() => {
+      const stateValue = state.$get(value);
 
       if (isRadio) {
-        (target as any).checked = value === target.value;
+        (target as any).checked = stateValue === target.value;
         return;
       }
 
       if (isCheckbox) {
-        (target as any).checked = isArray(value)
-            ? (value as Array<any>).indexOf(target.value) > -1
-            : !! value;
+        (target as any).checked = isArray(stateValue)
+            ? (stateValue as Array<any>).indexOf(target.value) > -1
+            : !! stateValue;
 
         return;
       }
 
-      if (isSelect && target.multiple && isArray(value)) {
+      if (isSelect && target.multiple && isArray(stateValue)) {
         target.selectedIndex = 0;
 
         [].slice.call(target.options).forEach((option: HTMLOptionElement) => {
-          option.selected = (value as Array<any>).indexOf(
+          option.selected = (stateValue as Array<any>).indexOf(
               option.value || option.text) > -1;
         });
 
         return;
       }
 
-      target.value = value as any;
+      target.value = stateValue as any;
     });
 
     const eventHandler = function(event: Event) {
       if (event instanceof CustomEvent && typeof event.detail !== 'undefined') {
-        state.$set(path, event.detail || (event.target as any).value);
+        state.$set(value, event.detail || (event.target as any).value);
         return;
       }
 
-      state.$set(path, (() => {
+      state.$set(value, (() => {
         if (isRadio) {
           return (target as any).value;
         }
 
         if (isCheckbox) {
-          const value = state.$get(path);
+          const stateValue = state.$get(value);
 
-          if (isArray(value)) {
+          if (isArray(stateValue)) {
             return (target as any).checked
-                ? (value as Array<any>).concat(target.value).filter(
+                ? (stateValue as Array<any>).concat(target.value).filter(
                     (v: any, i: number, a: Array<any>) => a.indexOf(v) === i,
                 )
-                : (value as Array<any>).filter(
+                : (stateValue as Array<any>).filter(
                     (v: any) => v !== target.value,
                 );
           }

@@ -31,6 +31,7 @@ export interface WickedStateObjectContract extends Object {
 export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
   __wickedStateCurrentElement?: WickedStateElementContract;
+  __wickedStateCleanups?: Record<string, Function[]>;
   __wickedStateRefs?: Record<string, HTMLElement>;
   __wickedStatePlaceholder?: {
     el: HTMLElement,

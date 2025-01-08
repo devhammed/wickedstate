@@ -1,8 +1,8 @@
 import {evaluator} from '../evaluator';
+import {reactivity} from '../reactivity';
 import {decorateWithMagics} from '../magics';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
-import {reactivity} from '../reactivity';
 
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
@@ -21,6 +21,8 @@ export const stateDirective: WickedStateDirectiveContract = {
                 ...node.__wickedStateObject ?? {},
             }),
         });
+
+        node.__wickedStateCurrentElement = node;
 
         const init = node.__wickedStateObject.init ?? null;
 
