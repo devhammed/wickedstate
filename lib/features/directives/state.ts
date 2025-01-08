@@ -22,6 +22,8 @@ export const stateDirective: WickedStateDirectiveContract = {
             }),
         });
 
+        node.__wickedStateRefs = {};
+
         node.__wickedStateCurrentElement = node;
 
         const init = node.__wickedStateObject.init ?? null;

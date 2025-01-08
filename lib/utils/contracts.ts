@@ -32,9 +32,9 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
   __wickedStateCurrentElement?: WickedStateElementContract;
   __wickedStateCleanups?: Record<string, Function[]>;
-  __wickedStateRefs?: Record<string, HTMLElement>;
+  __wickedStateRefs?: Record<string, WickedStateElementContract>;
   __wickedStatePlaceholder?: {
-    el: HTMLElement,
+    el: WickedStateElementContract,
     previousDisplay: string,
   };
   __wickedStateDisconnect?: () => void;
