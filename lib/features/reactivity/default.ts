@@ -1,4 +1,4 @@
-import {WickedStateReactivityContract} from "../../utils/contracts";
+import {WickedStateReactivityContract} from '../../utils/contracts';
 
 let activeEffect: Function | null = null;
 
