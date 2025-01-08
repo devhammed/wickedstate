@@ -77,21 +77,21 @@ export const forDirective: WickedStateDirectiveContract = {
         const previousKeys = Object.keys(template.__wickedStateLoopItems);
 
         Object.keys(iterable).forEach((key, index) => {
-            const val = iterable[key];
+            const value = iterable[key];
 
-            const itemScope = { [valueKey]: val };
+            const itemState = { [valueKey]: value };
 
             if (indexKey) {
-                itemScope[indexKey] = key;
+                itemState[indexKey] = key;
             }
 
-            const uniqueKey = itemKey ? evaluator(itemKey, state, itemScope) : index;
+            const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : index;
 
             const previousItem = template.__wickedStateLoopItems[uniqueKey] ?? null;
 
             newKeys.push(uniqueKey);
 
-            if (previousItem && JSON.stringify(previousItem.value) === JSON.stringify(val)) {
+            if (previousItem && JSON.stringify(previousItem.value) === JSON.stringify(value)) {
                 return;
             }
 
@@ -105,12 +105,12 @@ export const forDirective: WickedStateDirectiveContract = {
                 );
             }
 
-            el.__wickedStateObject = itemScope;
+            el.__wickedStateObject = itemState;
 
             template.__wickedStateLoopItems[uniqueKey] = {
                 el,
                 key,
-                value: val,
+                value,
             };
 
             const previousSiblingKey = newKeys[index - 1];
