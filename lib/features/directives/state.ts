@@ -3,7 +3,7 @@ import {reactivity} from '../reactivity';
 import {decorateWithMagics} from '../magics';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
-import {decorateWithDataProviders} from "../datas";
+import {decorateWithDatas} from "../datas";
 
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
@@ -19,7 +19,7 @@ export const stateDirective: WickedStateDirectiveContract = {
 
         const magicContext = decorateWithMagics({}, node);
 
-        const dataContext = decorateWithDataProviders({}, magicContext);
+        const dataContext = decorateWithDatas({}, magicContext);
 
         const state = evaluator(expression, magicContext, dataContext);
 

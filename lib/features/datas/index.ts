@@ -4,7 +4,7 @@ export function data(name: string, callback: Function) {
     datas[name] = callback;
 }
 
-export function decorateWithDataProviders(obj: object, context: object) {
+export function decorateWithDatas(obj: object, context: object) {
     Object.entries(datas).forEach(([name, callback]) => {
         Object.defineProperty(obj, name, {
             get: () => (...args: any) => callback.bind(context)(...args),
