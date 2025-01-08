@@ -3,7 +3,7 @@ import {WickedStateDirectiveContract} from '../../utils/contracts';
 export const showDirective: WickedStateDirectiveContract = {
   name: 'show',
   priority: 2,
-  handler({ value, node }) {
+  handler({ value, node, state }) {
     const evaluatedValue = evaluator(value, state);
 
     if ( ! evaluatedValue) {
