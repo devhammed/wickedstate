@@ -9,8 +9,6 @@ export const ifDirective: WickedStateDirectiveContract = {
   name: 'if',
   priority: 1,
   handler({ value, node, bindings, state }) {
-    const evaluatedValue = evaluator(value, state);
-
     if ( ! (node instanceof HTMLTemplateElement)) {
       throw new Error(
           '[WickedState] If directive can only be used on <template> elements.',
@@ -23,6 +21,8 @@ export const ifDirective: WickedStateDirectiveContract = {
       );
     }
 
+    const evaluatedValue = evaluator(value, state);
+
     const template = node as WickedStateElementContract & HTMLTemplateElement;
 
     if ( ! evaluatedValue) {
@@ -31,7 +31,7 @@ export const ifDirective: WickedStateDirectiveContract = {
       if (whenElement) {
         whenElement.remove();
 
-        template.__wickedStateWhenElement = null;
+        delete template.__wickedStateWhenElement;
       }
 
       return;
