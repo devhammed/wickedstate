@@ -13,6 +13,8 @@ export const stateDirective: WickedStateDirectiveContract = {
             return;
         }
 
+        node.__wickedStateCurrentElement = node;
+
         const expression = value.trim() || '{}';
 
         const magicContext = decorateWithMagics({}, node);
@@ -27,8 +29,6 @@ export const stateDirective: WickedStateDirectiveContract = {
         });
 
         node.__wickedStateObject = decorateWithMagics(reactiveState, node);
-
-        node.__wickedStateCurrentElement = node;
 
         const init = node.__wickedStateObject.init ?? null;
 
