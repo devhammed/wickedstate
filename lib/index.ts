@@ -22,5 +22,5 @@ export type {
   WickedStateRendererContract,
   WickedStateDirectiveBindingContract,
   WickedStateElementContract,
-  WickedStateLoopContract,
+  WickedStateLoopItemContract,
 } from './utils/contracts';
