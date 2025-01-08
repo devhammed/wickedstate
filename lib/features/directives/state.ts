@@ -2,7 +2,7 @@ import {evaluator} from '../evaluator';
 import {decorateWithMagics} from '../magics';
 import {isFunction} from '../../utils/checkers';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
-import {reactivity} from "../reactivity";
+import {reactivity} from '../reactivity';
 
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
