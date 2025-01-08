@@ -1,5 +1,5 @@
 import {WickedStateDirectiveContract} from '../../utils/contracts';
-import {evaluator} from "../evaluator";
+import {evaluator} from '../evaluator';
 
 export const onDirective: WickedStateDirectiveContract = {
   name: 'on',
@@ -7,12 +7,12 @@ export const onDirective: WickedStateDirectiveContract = {
   handler({ node, value, state, modifiers, type }): () => void {
 
     const removeEvent = () => {
-      const event = node.__wickedStateEvents[type];
+      const event = node.__wickedStateEvents[type] ?? null;
 
       if (event) {
         event.target.removeEventListener(type, event.handler);
 
-        node.__wickedStateEvents[type] = null;
+        delete node.__wickedStateEvents[type];
       }
     };
 
