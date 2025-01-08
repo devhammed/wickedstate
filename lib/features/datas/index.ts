@@ -7,7 +7,7 @@ export function data(name: string, callback: Function) {
 export function decorateWithDataProviders(obj: object, context: object) {
     Object.entries(datas).forEach(([name, callback]) => {
         Object.defineProperty(obj, name, {
-            get: () => (...args: any) =>  callback.bind(context)(...args),
+            get: () => (...args: any) => callback.bind(context)(...args),
             enumerable: false,
         });
     });
