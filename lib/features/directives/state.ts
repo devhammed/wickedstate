@@ -15,7 +15,7 @@ export const stateDirective: WickedStateDirectiveContract = {
 
         node.__wickedStateCurrentElement = node;
 
-        const expression = value.trim() || '{}';
+        const expression = value === '' ? '{}' : value;
 
         const magicContext = decorateWithMagics({}, node);
 
