@@ -4,7 +4,7 @@ import {
 } from '../../utils/contracts';
 import {evaluator} from '../evaluator';
 import {count, isArray, isObject, isString} from '../../utils/checkers';
-import {reactivity} from "../reactivity";
+import {reactivity} from '../reactivity';
 
 const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)(\s+:\s+(?<itemKey>.*))?/;
 
