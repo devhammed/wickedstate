@@ -12,11 +12,9 @@ export { reactivity, setReactivity } from './features/reactivity';
 
 export { domRenderer } from './features/renderer/dom';
 
-export { cspEvaluator } from './features/evaluator/csp';
-
 export { functionEvaluator } from './features/evaluator/function';
 
-export  { defaultReactivity } from './features/reactivity/default';
+export { defaultReactivity } from './features/reactivity/default';
 
 export type {
   WickedStateReactivityContract,

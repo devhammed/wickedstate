@@ -7,24 +7,7 @@
     <title>Wicked State Example</title>
 </head>
 <body>
-<div
-    *state="{
-        count: 0,
-        history: [],
-        increment() {
-            this.history = [...this.history, 'Increment: ' + this.count];
-            this.count++;
-        },
-        decrement() {
-            this.history = [...this.history, 'Decrement: ' + this.count];
-            this.count--;
-        },
-        reset() {
-            this.count = 0;
-            this.history = [];
-        }
-    }"
->
+<div *state="counter()">
     <h1 *text="count"></h1>
     <template *if="count > 5">
         <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
@@ -36,7 +19,7 @@
     <button *on[click]="decrement" type="button">Decrement</button>
     <button
         type="reset"
-        *state="{}"
+        *state
         *ref="resetButton"
         *on[click]="$parent.reset"
         *text="$refs.resetButton.type.toUpperCase()"
