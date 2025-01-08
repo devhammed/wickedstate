@@ -79,8 +79,6 @@ export const forDirective: WickedStateDirectiveContract = {
         Object.keys(iterable).forEach((key, index) => {
             const val = iterable[key];
 
-            newKeys.push(key);
-
             const itemScope = { [valueKey]: val };
 
             if (indexKey) {
@@ -89,7 +87,9 @@ export const forDirective: WickedStateDirectiveContract = {
 
             const uniqueKey = itemKey ? evaluator(itemKey, state, itemScope) : index;
 
-            const previousItem = template.__wickedStateLoopItems[uniqueKey];
+            const previousItem = template.__wickedStateLoopItems[uniqueKey] ?? null;
+
+            newKeys.push(uniqueKey);
 
             if (previousItem && JSON.stringify(previousItem.value) === JSON.stringify(val)) {
                 return;
