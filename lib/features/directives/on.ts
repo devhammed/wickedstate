@@ -70,14 +70,14 @@ export const onDirective: WickedStateDirectiveContract = {
     let eventHandler: EventListener = function(e: Event): any {
       const previousElement = root.__wickedStateCurrentElement;
 
-      root.__wickedStateCurrentElement = node;
-
       try {
-        const evaluatedValue = evaluator(value, state, { $event: e });
+          root.__wickedStateCurrentElement = node;
 
-        return evaluatedValue instanceof Function
-            ? evaluatedValue.call(state, e)
-            : evaluatedValue;
+          const evaluatedValue = evaluator(value, state, { $event: e });
+
+          return evaluatedValue instanceof Function
+              ? evaluatedValue.call(state, e)
+              : evaluatedValue;
       } finally {
         root.__wickedStateCurrentElement = previousElement;
       }
