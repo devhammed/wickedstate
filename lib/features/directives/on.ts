@@ -79,7 +79,7 @@ export const onDirective: WickedStateDirectiveContract = {
               ? evaluatedValue.call(state, e)
               : evaluatedValue;
       } finally {
-        root.__wickedStateCurrentElement = previousElement;
+          root.__wickedStateCurrentElement = previousElement;
       }
     };
 
