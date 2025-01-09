@@ -137,6 +137,7 @@ import { data, render } from 'wickedstate';
 
 data('postItem', (id) => ({
     id,
+    postData: null,
     init() {
         // Fetch post from server
     },
