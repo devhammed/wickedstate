@@ -1,7 +1,7 @@
 {
   "name": "wickedstate",
-  "version": "1.0.0",
-  "description": "A plug-n-play TypeScript UI library.",
+  "version": "0.1.0",
+  "description": "A plug-n-play reactive library for building web applications.",
   "source": "index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,10 +17,10 @@
     "README.md"
   ],
   "keywords": [
-    "progressive",
     "plug-n-play",
-    "ui",
+    "reactive",
     "library",
+    "javascript",
     "typescript"
   ],
   "author": "Hammed Oyedele <itz.harmid@gmail.com> (https://github.com/devhammed)",

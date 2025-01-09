@@ -1,0 +1,6 @@
+{
+  "name": "@devhammed/wickedstate",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": "./lib/index.ts"
+}

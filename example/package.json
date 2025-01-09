@@ -1,6 +1,6 @@
 {
   "name": "wickedstate-example",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Example of Wicked State library.",
   "source": "src/index.html",
   "browserslist": ["last 2 versions"],
@@ -20,7 +20,7 @@
   "author": "Hammed Oyedele <itz.harmid@gmail.com> (https://github.com/devhammed)",
   "license": "MIT",
   "dependencies": {
-    "wickedstate": "^1.0.0"
+    "wickedstate": "^0.1.0"
   },
   "devDependencies": {
     "parcel": "^2.12.0",
