@@ -2,12 +2,6 @@
 
 A plug-n-play reactive library for building web applications.
 
-## Concepts
-
-- **Directives**: Directives are special HTML attributes that are used to enable the library to interact with the DOM e.g. `*state`, `*on` and several others.
-- **State**: State is the object that holds the data of the application.
-- **Magics**: Magics are special properties that are automatically available in the state object e.g. `$el`, `$event`, `$root`, `$parent` and several others.
-
 ## Installation
 
 ### Using CDN
@@ -106,3 +100,16 @@ npm run dev
 ```
 
 Go to `http://localhost:5173` in your browser to see the app in action.
+
+## Directives
+
+A directive is a special HTML attribute that is recognized by the library which instructs it what to do with the element.
+
+The syntax for a directive is `<tag *name[type].modifiers[value]="expression" />` where:
+
+- `tag` is the HTML tag name e.g. `div`, `button`, `input`, etc.
+- `name` is the name of the directive e.g. `state`, `on`, `text`, etc.
+- `type` serves as an identifier for the directive, and it is optional but some directives like `on` requires it to differentiate between different events e.g `*on[click]`, `*on[submit]`, etc.
+- `modifiers` are used to modify the behavior of the directive, you can repeat modifiers but not on the same directive e.g. `*on[click].once`, `*on[click].prevent`, `*on[click].once.prevent`, etc.
+- `value` is the value of a modifier for the ones that requires it e.g. `*on[input].debounce[500ms]`, `*on[resize].window.debounce[300ms]`, etc.
+- `expression` is the attribute value that will be evaluated as a JavaScript expression e.g. `*state="{ count: 0 }"`, `*on[click]="count++"`, etc.
