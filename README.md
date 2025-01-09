@@ -150,6 +150,32 @@ Then call the name of the state object in the `*state` directive like a function
 </div>
 ```
 
+### Lifecycle Hooks
+
+You can also define lifecycle hooks for your state object by adding the following methods:
+
+- `init` - Called when the state object is initialized.
+- `destroy` - Called when the state object is destroyed.
+
+Below is a common example where you can use the lifecycle hooks to start and stop an interval:
+
+```html
+<div
+    *state="{
+        interval: null,
+        init() {
+            this.interval = setInterval(() => {
+                console.log('Interval tick');
+            }, 1000);
+        },
+        destroy() {
+            clearInterval(this.interval);
+        }
+    }"
+>
+    ...
+</div>
+
 ### `on`
 
 Listen for browser events on an element
