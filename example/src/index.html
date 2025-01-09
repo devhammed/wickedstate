@@ -37,6 +37,22 @@
         <button *on[click]="open = ! open" type="button">Toggle</button>
         <div *show="open">This is a dropdown</div>
     </div>
+    <div
+            *state="{
+        count: 0,
+        interval: null,
+        init() {
+            this.interval = setInterval(() => {
+                this.count++;
+            }, 1000);
+        },
+        destroy() {
+            clearInterval(this.interval);
+        }
+    }"
+    >
+        <h1 *text="count"></h1>
+    </div>
     <div *state="{ name: 'John' }">
         <input
             type="text"

@@ -157,15 +157,16 @@ You can also define lifecycle hooks for your state object by adding the followin
 - `init` - Called when the state object is initialized.
 - `destroy` - Called when the state object is destroyed.
 
-Below is a common example where you can use the lifecycle hooks to start and stop an interval:
+Below is a timer example that increments a counter every second and clears the interval when the component is destroyed:
 
 ```html
 <div
     *state="{
+        count: 0,
         interval: null,
         init() {
             this.interval = setInterval(() => {
-                console.log('Interval tick');
+                this.count++;
             }, 1000);
         },
         destroy() {
@@ -173,7 +174,7 @@ Below is a common example where you can use the lifecycle hooks to start and sto
         }
     }"
 >
-    ...
+    <h1 *text="count"></h1>
 </div>
 
 ### `on`
