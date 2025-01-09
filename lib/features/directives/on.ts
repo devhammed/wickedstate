@@ -104,6 +104,7 @@ export const onDirective: WickedStateDirectiveContract = {
     if (modifiers.stop) {
       eventHandler = addMiddleware(eventHandler, (callback, e) => {
         e.stopPropagation();
+
         return callback(e);
       });
     }
