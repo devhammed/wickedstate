@@ -1,10 +1,11 @@
 import { onDirective } from './on';
 import { ifDirective } from './if';
 import { refDirective } from './ref';
-import { stateDirective } from './state';
+import { forDirective } from './for';
+import { htmlDirective } from './html';
 import { showDirective } from './show';
 import { textDirective } from './text';
-import { forDirective } from './for';
+import { stateDirective } from './state';
 import { modelDirective } from './model';
 import { WickedStateDirectiveContract } from '../../utils/contracts';
 
@@ -15,6 +16,7 @@ export const directives: WickedStateDirectiveContract[] = [
   refDirective,
   onDirective,
   textDirective,
+  htmlDirective,
   showDirective,
   modelDirective,
 ];

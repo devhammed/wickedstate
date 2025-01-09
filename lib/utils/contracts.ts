@@ -38,10 +38,6 @@ export interface WickedStateElementContract extends HTMLElement {
     previousDisplay: string,
   };
   __wickedStateDisconnect?: () => void;
-  __wickedStateEvents?: Record<string, {
-    target: Window | Document | WickedStateElementContract,
-    handler: EventListenerOrEventListenerObject
-  }>;
   __wickedStateWhenElement?: WickedStateElementContract;
   __wickedStateInLoop?: boolean;
   __wickedStateLoopItems?: Record<any, WickedStateLoopItemContract>;

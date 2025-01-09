@@ -8,7 +8,7 @@
 </head>
 <body>
 <div *state="counter()">
-    <h1 *text="count"></h1>
+    <h1 *ref="count" *text="count"></h1>
     <template *if="count > 5">
         <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
     </template>
@@ -25,11 +25,40 @@
         *text="$refs.resetButton.type.toUpperCase()"
     >
     </button>
+    <button *on[click]="navigator.clipboard.writeText($refs.count.textContent)" type="button">
+        Click to Copy
+    </button>
     <ul>
-        <template *for="log in history : log">
-            <li *text="'History Log: ' + log"></li>
+        <template *for="log in history : log.id">
+            <li *text="log.text"></li>
         </template>
     </ul>
+    <div *state="{ open: false }" *on[click].away="open = false">
+        <button *on[click]="open = ! open" type="button">Toggle</button>
+        <div *show="open">This is a dropdown</div>
+    </div>
+    <div *state="{ name: 'John' }">
+        <input
+            type="text"
+            *ref="nameInput"
+            *model="name"
+            *on[keydown].esc.window="() => {
+                alert('Clearing name');
+
+                name = '';
+
+                $el.blur();
+            }"
+            *on[keyup].slash.window="() => {
+                alert('Focusing search');
+
+                $el.focus();
+            }"
+        />
+        <p *text="name"></p>
+    </div>
+    <footer *text="'Copyright &copy; ' + new Date().getFullYear()">
+    </footer>
 </div>
 <script type="module" src="./index.ts"></script>
 </body>
