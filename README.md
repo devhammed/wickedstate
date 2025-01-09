@@ -12,7 +12,7 @@ A plug-n-play reactive library for building web applications.
 
 ### Using CDN
 
-CDN is the easiest way to get started with the library. You can include the following script tag in your HTML file to get started:
+Using a CDN is the easiest way to get started with the library. You can include the following script tag in your HTML file to get started:
 
 ```html
 <!doctype html>
@@ -29,7 +29,7 @@ CDN is the easiest way to get started with the library. You can include the foll
     <button *on[click]="count--" type="button">Decrement</button>
 </div>
 <script type="module">
-    import { render } from 'https://cdn.skypack.dev/wickedstate';
+    import { render } from 'https://esm.sh/wickedstate@0.1.0';
 
     render(document.body).then(() => {
         console.log('App is ready');
@@ -38,6 +38,8 @@ CDN is the easiest way to get started with the library. You can include the foll
 </body>
 </html>
 ```
+
+We are using [esm.sh](https://esm.sh) CDN in the example above, you can replace it with any other CDN of your choice that supports ES Modules e.g `https://cdn.skypack.dev/wickedstate@0.1.0`.
 
 ### Using Vite
 
