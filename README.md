@@ -128,6 +128,28 @@ Declares a component and its data for a block of HTML elements.
 </div>
 ```
 
+### Reusing State
+
+You can reuse a state object across multiple elements by using the `data` function exported from the library.
+
+```js
+import { data, render } from 'wickedstate';
+
+data('counter', () => ({ count: 0 }));
+
+render(document.body).then(() => {
+    console.log('App is ready');
+});
+```
+
+Then call the name of the state object in the `*state` directive like a function (this allows you to pass arguments to the state object).
+
+```html
+<div *state="counter()">
+    ...
+</div>
+```
+
 ### `on`
 
 Listen for browser events on an element
