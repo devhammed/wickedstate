@@ -135,7 +135,18 @@ You can reuse a state object across multiple elements by using the `data` functi
 ```js
 import { data, render } from 'wickedstate';
 
-data('counter', () => ({ count: 0 }));
+data('postItem', (id) => ({
+    id,
+    init() {
+        // Fetch post from server
+    },
+    like() {
+        // like post
+    },
+    unlike() {
+        // unlike post
+    },
+}));
 
 render(document.body).then(() => {
     console.log('App is ready');
@@ -145,8 +156,12 @@ render(document.body).then(() => {
 Then call the name of the state object in the `*state` directive like a function (this allows you to pass arguments to the state object).
 
 ```html
-<div *state="counter()">
-    ...
+<div *state="{ postIds: [1, 2, 3, 4] }">
+    <template *for="id in postIds : id">
+        <div *state="postItem(id)">
+            ...
+        </div>
+    </template>
 </div>
 ```
 
