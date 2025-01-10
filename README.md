@@ -528,7 +528,7 @@ The `$watch` magic property allows you to watch for changes on a state property.
 
 ### `$effect`
 
-The `$effect` magic property allows you to run a function whenever one of the state properties used in it changes.
+The `$effect` magic property will run a function on mount and whenever one of the state properties used in it changes.
 
 ```html
 <div
