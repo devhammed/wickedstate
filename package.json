@@ -1,6 +1,42 @@
 {
-  "workspaces": [
-    "./lib",
-    "./example"
-  ]
+  "name": "wickedstate",
+  "version": "0.1.1",
+  "description": "A plug-n-play reactive library for building web applications.",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "prebuild": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist",
+    "tsconfig.json",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "plug-n-play",
+    "reactive",
+    "library",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Hammed Oyedele <itz.harmid@gmail.com> (https://github.com/devhammed)",
+  "license": "MIT",
+  "homepage": "https://github.com/devhammed/wickedstate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devhammed/wickedstate"
+  },
+  "bugs": {
+    "url": "https://github.com/devhammed/wickedstate/issues"
+  },
+  "devDependencies": {
+    "@parcel/packager-ts": "^2.13.3",
+    "@parcel/transformer-typescript-types": "^2.13.3",
+    "parcel": "^2.12.0",
+    "typescript": "^5.5.3"
+  }
 }

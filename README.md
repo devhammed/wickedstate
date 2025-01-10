@@ -23,9 +23,9 @@ Using a CDN is the easiest way to get started with the library. You can include 
     <button *on[click]="count--" type="button">Decrement</button>
 </div>
 <script type="module">
-    import { render } from 'https://esm.sh/wickedstate@0.1.0';
+    import WickedState from 'https://esm.sh/wickedstate@0.1.1';
 
-    render(document.body).then(() => {
+    WickedState.render(document.body).then(() => {
         console.log('App is ready');
     });
 </script>
@@ -33,7 +33,7 @@ Using a CDN is the easiest way to get started with the library. You can include 
 </html>
 ```
 
-We are using [esm.sh](https://esm.sh) CDN in the example above, you can replace it with any other CDN of your choice that supports ES Modules e.g `https://cdn.skypack.dev/wickedstate@0.1.0`.
+We are using [esm.sh](https://esm.sh) CDN in the example above, you can replace it with any other CDN of your choice that supports ES Modules e.g `https://cdn.skypack.dev/wickedstate@0.1.1`.
 
 ### Using Vite
 
