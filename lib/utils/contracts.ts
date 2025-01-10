@@ -52,6 +52,7 @@ export interface WickedStateLoopItemContract {
 export interface WickedStateMagicContextContract {
   state: WickedStateObjectContract;
   root: WickedStateElementContract;
+  cleanup: (fn: Function) => void;
 }
 
 export interface WickedStateDirectiveContract {

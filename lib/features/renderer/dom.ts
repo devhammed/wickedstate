@@ -200,8 +200,6 @@ export async function domRenderer(root: any): Promise<void> {
 
                 delete element.__wickedStateDisconnect;
 
-                delete element.__wickedStateEvents;
-
                 delete element.__wickedStateWhenElement;
 
                 delete element.__wickedStateInLoop;

@@ -30,7 +30,23 @@ export function decorateWithMagics(state: WickedStateObjectContract, root: Wicke
   Object.keys(magics).forEach((magicName: string): void => {
     Object.defineProperty(state, `$${magicName}`, {
       enumerable: false,
-      get: (): any => magics[magicName]({ state, root }),
+      get: (): any => magics[magicName]({
+        state,
+        root,
+        cleanup(fn: Function): void {
+          const cleanupKey = '_magic_cleanups';
+
+          if ( ! root.__wickedStateCleanups) {
+            root.__wickedStateCleanups = {};
+          }
+
+          if ( ! root.__wickedStateCleanups[cleanupKey]) {
+            root.__wickedStateCleanups[cleanupKey] = [];
+          }
+
+          root.__wickedStateCleanups[cleanupKey].push(fn);
+        },
+      }),
     });
   });
 
