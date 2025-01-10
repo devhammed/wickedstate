@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "parcel watch",
     "build": "parcel build",
-    "prebuild": "rm -rf dist"
+    "prebuild": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",
