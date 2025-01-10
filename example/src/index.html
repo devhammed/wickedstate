@@ -13,7 +13,7 @@
         <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
     </template>
     <div *show="count < 0">
-        <p *text="'So much negativity??'"></p>
+        <p>So much negativity??</p>
     </div>
     <button *on[click]="increment" type="button">Increment</button>
     <button *on[click]="decrement" type="button">Decrement</button>
