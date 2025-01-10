@@ -16,6 +16,7 @@ export function watchMagic<T>({ root, state }: WickedStateMagicContextContract):
 
       if (value !== newValue) {
         fn.call(state, newValue, value);
+
         value = newValue;
       }
     });
