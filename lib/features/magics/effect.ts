@@ -3,9 +3,9 @@ import {WickedStateMagicContextContract} from '../../utils/contracts';
 
 export function effectMagic({ state, cleanup }: WickedStateMagicContextContract): (fn: () => void) => void {
   return function effectMagicHandler(fn: () => void): void {
-    const stateFn = fn.bind(state);
+    const effectFn = fn.bind(state);
 
-    const stopEffect = reactivity.effect(stateFn);
+    const stopEffect = reactivity.effect(effectFn);
 
     cleanup(stopEffect);
   };
