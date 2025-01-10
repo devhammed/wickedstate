@@ -526,13 +526,36 @@ The `$watch` magic property allows you to watch for changes on a state property.
 </div>
 ```
 
+### `$effect`
+
+The `$effect` magic property allows you to run a function whenever one of the state properties used in it changes.
+
+```html
+<div
+    *state="{
+        count: 0,
+        double: 0,
+        init() {
+            this.$effect(() => {
+                this.double = this.count * 2;
+            });
+        },
+    }"
+>
+    <h1 *text="double"></h1>
+    <button type="button" *on[click]="count++">
+        Double Increment
+    </button>
+</div>
+```
+
 ### `$data`
 
 The `$data` magic property gives you access to the state object, useful for when you want to send the whole thing to an API.
 
 ```html
 <div *state="{ count: 0 }">
-    <button type="button" *on[click]="fetch('/api/data', { method: 'POST', body: JSON.stringify($data) })">
+    <button type="button" *on[click]="fetch('https://httpbin.org/post', { method: 'POST', body: JSON.stringify($data) })">
         Increment
     </button>
 </div>
