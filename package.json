@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "dev": "parcel sink.html",
+    "dev": "parcel src/index.html",
     "build": "parcel build",
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm run build"
