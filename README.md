@@ -346,7 +346,7 @@ Sets the text content of an element.
 
 ### `html`
 
-Sets the inner HTML of an element (this directive is very dangerous and should only be used with trusted input).
+Sets the inner HTML of an element (Only use on trusted content and never on user-provided content. ⚠️ Dynamically rendering HTML from third parties can easily lead to XSS vulnerabilities.).
 
 ```html
 <div *html="post.content"></div>
@@ -427,3 +427,7 @@ Two-way data binding for form elements.
 <input *model="name" type="text" />
 <p *text="name"></p>
 ```
+
+## Magics
+
+Magics a
