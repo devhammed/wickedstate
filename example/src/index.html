@@ -97,12 +97,6 @@
             Double Increment
         </button>
     </div>
-    <div *state="{ count: 0 }">
-        <h1 *text="count"></h1>
-        <button type="button" *on[click]="fetch('https://httpbin.org/post', { method: 'POST', body: JSON.stringify($data) })">
-            API Increment
-        </button>
-    </div>
     <footer *text="'Copyright &copy; ' + new Date().getFullYear()">
     </footer>
 </div>

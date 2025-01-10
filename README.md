@@ -560,3 +560,9 @@ The `$data` magic property gives you access to the state object, useful for when
     </button>
 </div>
 ```
+
+## Credits
+
+- [Hammed Oyedele](https://github.com/devhammed) - Author
+- [AlpineJS](https://alpinejs.dev/) - Inspiration
+- [VueJS](https://vuejs.org/) - Inspiration
