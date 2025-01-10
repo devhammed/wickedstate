@@ -1,19 +1,20 @@
 {
   "name": "wickedstate",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A plug-n-play reactive library for building web applications.",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "dev": "parcel src/index.html",
+    "dev": "parcel example.html",
     "build": "parcel build",
     "prebuild": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",
+    "jsr.json",
     "tsconfig.json",
     "package.json",
     "README.md"
