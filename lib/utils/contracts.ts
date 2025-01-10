@@ -16,8 +16,8 @@ export interface WickedStateObjectContract extends Object {
   placeholder?: Function;
   destroy?: Function;
   $watch?: <T>(
-      selector: () => T,
-      fn: (newValue: T, oldValue: T) => void,
+      selector: string,
+      fn: (value: T, oldValue: T) => void,
   ) => void;
   $root?: WickedStateElementContract | null;
   $data?: WickedStateObjectContract;

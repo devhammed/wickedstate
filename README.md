@@ -192,6 +192,15 @@ Below is a timer example that increments a counter every second and clears the i
 >
     <h1 *text="count"></h1>
 </div>
+```
+
+### Single-element States
+
+This library also supports single-element states, which means you can declare a state object for a single element and also use other directives right on the element.
+
+```html
+    <button *state="{ label: 'Click Here' }" *text="label" *on[click]="alert('Clicked')"></button>
+```
 
 ### `on`
 
@@ -430,4 +439,89 @@ Two-way data binding for form elements.
 
 ## Magics
 
-Magics a
+Magics are special properties that are available in the state object and can be used in expressions.
+
+They are prefixed with the `$` character to prevent conflicts with your normal state properties.
+
+### `$root`
+
+The `$root` magic property gives you access to the element where the state object was declared.
+
+```html
+<div *state="{}" data-message="Hello World!">
+    <button type="button" *on[click]="alert($root.dataset.message)">
+        Greet Me
+    </button>
+</div>
+```
+
+### `$el`
+
+The `$el` magic property gives you access to the current element.
+
+```html
+<button *on[click]="$el.innerHTML = 'Hello World!'">Replace me with "Hello World!"</button>
+```
+
+### `$refs`
+
+The `$refs` magic property gives you access to the elements with the `ref` directive.
+
+```html
+<button data-text="Copy Me" *ref="copyButton" *on[click]="navigator.clipboard.writeText($refs.copyButton.dataset.text)">
+    Copy
+</button>
+```
+
+### `$parent`
+
+The `$parent` magic property gives you access to the parent state object.
+
+```html
+<div *state="{ count: 0 }">
+    <h1 *text="count"></h1>
+    <button *state="{ text: 'Increment' }" *on[click]="$parent.count++" *text="text"></button>
+</div>
+```
+
+### `$get`
+
+The `$get` magic property allows you to access the value of a state property using dot-syntax.
+
+```html
+<div *state="{ user: { name: 'John Doe' } }">
+    <p *text="$get('user.name')"></p>
+</div>
+```
+
+### `$set`
+
+The `$set` magic property allows you to update the value of a state property using dot-syntax.
+
+```html
+<div *state="{ user: { name: 'John Doe' } }">
+    <input *model="name" type="text" />
+    <button *on[click]="$set('user.name', 'Jane Doe')" type="button">Update Name</button>
+</div>
+```
+
+### `$watch`
+
+The `$watch` magic property allows you to watch for changes on a state property.
+
+```html
+<div
+    *state="{
+        count: 0,
+        init() {
+            this.$watch('count', (value, oldValue) => {
+                console.log(`Count changed from ${oldValue} to ${value}`);
+            });
+        },
+    }"
+>
+    <button type="button" *on[click]="count++">
+        Trigger Watch
+    </button>
+</div>
+```

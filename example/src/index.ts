@@ -4,6 +4,11 @@ data('counter', () => ({
     count: 0,
     nextId: 1,
     history: [],
+    init() {
+        this.$watch('count', (value: number, oldValue: number) => {
+            console.log(`Count changed from ${oldValue} to ${value}`);
+        });
+    },
     increment() {
         this.history = [...this.history, { id: this.nextId, text: 'Increment: ' + this.count }];
         this.count++;

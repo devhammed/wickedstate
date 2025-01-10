@@ -37,6 +37,13 @@
         <button *on[click]="open = ! open" type="button">Toggle</button>
         <div *show="open">This is a dropdown</div>
     </div>
+    <div *state="{}" data-message="Hello World!">
+        <button type="button" *on[click]="alert($root.dataset.message)">
+            Greet Me
+        </button>
+    </div>
+    <button *state="{ label: 'Click Here' }" *text="label" *on[click]="alert('Clicked')"></button>
+    <button type="button" *on[click]="$el.innerHTML = 'Hello World!'">Replace me with "Hello World!"</button>
     <div
             *state="{
         count: 0,
@@ -53,15 +60,15 @@
     >
         <h1 *text="count"></h1>
     </div>
-    <div *state="{ name: 'John' }">
+    <div *state="{ user: { name: 'John Doe' } }">
         <input
             type="text"
             *ref="nameInput"
-            *model="name"
+            *model="user.name"
             *on[keydown].esc.window="() => {
                 alert('Clearing name');
 
-                name = '';
+                user.name = '';
 
                 $el.blur();
             }"
@@ -71,7 +78,8 @@
                 $el.focus();
             }"
         />
-        <p *text="name"></p>
+        <p *text="user.name"></p>
+        <button *on[click]="$set('user.name', 'Jane Doe')" type="button">Update Name</button>
     </div>
     <footer *text="'Copyright &copy; ' + new Date().getFullYear()">
     </footer>
