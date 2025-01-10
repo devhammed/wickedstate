@@ -1,4 +1,5 @@
 import {WickedStateReactivityContract} from '../../utils/contracts';
+import {render} from "../renderer";
 
 let activeEffect: Function | null = null;
 
@@ -61,8 +62,8 @@ function effect(fn: Function): () => void {
 
 function reactive(obj: object): Object {
     const state = new Proxy(obj, {
-        get(target: Object, key: PropertyKey): any {
-            const value = Reflect.get(target, key);
+        get(target: Object, key: PropertyKey, receiver: any): any {
+            const value = Reflect.get(target, key, receiver);
 
             if (typeof value === 'function') {
                 return value.bind(state);
@@ -72,8 +73,8 @@ function reactive(obj: object): Object {
 
             return value;
         },
-        set(target: Object, key: PropertyKey, value: any): boolean {
-            const returnValue = Reflect.set(target, key, value);
+        set(target: Object, key: PropertyKey, value: any, receiver: any): boolean {
+            const returnValue = Reflect.set(target, key, value, receiver);
 
             trigger(target, key);
 
@@ -84,6 +85,11 @@ function reactive(obj: object): Object {
     return state;
 }
 
+/**
+ * Very basic reactivity engine.
+ *
+ * You can swap this with other engines like `@vue/reactivity`.
+ */
 export const defaultReactivity: WickedStateReactivityContract = {
     effect,
     reactive,

@@ -3,6 +3,9 @@ import {directives} from '../directives';
 import {isFunction, isObject} from '../../utils/checkers';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
+/**
+ * Get the nearest state root element.
+ */
 function getStateRoot(element: WickedStateElementContract): WickedStateElementContract | null {
     if (element.__wickedStateObject) {
         return element;
@@ -15,6 +18,11 @@ function getStateRoot(element: WickedStateElementContract): WickedStateElementCo
     return null;
 }
 
+/**
+ * DOM renderer.
+ *
+ * This function is responsible for applying directives to the DOM elements starting from `root`.
+ */
 export async function domRenderer(root: any): Promise<void> {
     const directiveRegex = /\*(?<name>[\w-]+)(?:\[(?<type>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
 

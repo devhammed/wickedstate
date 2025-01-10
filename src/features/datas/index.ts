@@ -8,6 +8,8 @@ let datas: Record<string, Function> = {};
  *
  * @example
  * ```ts
+ * import { data } from 'wickedstate';
+ *
  * data('counter', () => ({ count: 0 }));
  * ```
  */

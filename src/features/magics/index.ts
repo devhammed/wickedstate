@@ -2,7 +2,6 @@ import { watchMagic } from './watch';
 import { isFunction } from '../../utils/checkers';
 import {
   WickedStateElementContract,
-  WickedStateMagicContextContract,
   WickedStateMagicHandlerContract, WickedStateObjectContract,
 } from '../../utils/contracts';
 import { rootMagic } from './root';
@@ -14,6 +13,9 @@ import { setMagic } from './set';
 import { getMagic } from './get';
 import { elMagic } from './el';
 
+/**
+ * The available magics.
+ */
 export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   watch: watchMagic,
   root: rootMagic,
@@ -26,6 +28,9 @@ export const magics: Record<string, WickedStateMagicHandlerContract<any>> = {
   get: getMagic,
 };
 
+/**
+ * Decorates the state object with the magics.
+ */
 export function decorateWithMagics(state: WickedStateObjectContract, root: WickedStateElementContract): Object {
   Object.keys(magics).forEach((magicName: string): void => {
     Object.defineProperty(state, `$${magicName}`, {
@@ -53,6 +58,16 @@ export function decorateWithMagics(state: WickedStateObjectContract, root: Wicke
   return state;
 }
 
+/**
+ * Registers a new magic.
+ *
+ * @example
+ * ```ts
+ * import { magic } from 'wickedstate';
+ *
+ * magic('now', () => new Date());
+ * ```
+ */
 export function magic<T>(
     name: string,
     fn: WickedStateMagicHandlerContract<T>,
