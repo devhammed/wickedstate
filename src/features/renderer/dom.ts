@@ -220,9 +220,7 @@ export async function domRenderer(root: any): Promise<void> {
                     Object.keys(cleanups).forEach((type) => {
                         const typeCleanups = cleanups[type];
 
-                        const typeCleanupsLength = typeCleanups.length;
-
-                        while (typeCleanupsLength) {
+                        while (typeCleanups.length) {
                             typeCleanups.shift()();
                         }
                     });
