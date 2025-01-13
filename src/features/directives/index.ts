@@ -5,6 +5,7 @@ import { forDirective } from './for';
 import { htmlDirective } from './html';
 import { showDirective } from './show';
 import { textDirective } from './text';
+import { cloakDirective } from './cloak';
 import { stateDirective } from './state';
 import { modelDirective } from './model';
 import { WickedStateDirectiveContract } from '../../utils/contracts';
@@ -13,6 +14,7 @@ import { WickedStateDirectiveContract } from '../../utils/contracts';
  * List of directives.
  */
 export const directives: WickedStateDirectiveContract[] = [
+  cloakDirective,
   stateDirective,
   ifDirective,
   forDirective,

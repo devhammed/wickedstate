@@ -107,7 +107,7 @@ export async function domRenderer(root: any): Promise<void> {
 
             const name = directive.groups.name ?? null;
 
-            if ( ! name || name === 'cloak') {
+            if ( ! name) {
                 continue;
             }
 

@@ -366,7 +366,7 @@ Sets the inner HTML of an element (Only use on trusted content and never on user
 Toggle the visibility of an element based on the truthiness of an expression.
 
 ```html
-<div *state="{ open: false}">
+<div *state="{ open: false }">
     <div *show="open">This is a hidden content</div>
     <button *on[click]="open = !open" type="button">Toggle</button>
 </div>
@@ -446,6 +446,23 @@ Instruct the library to skip processing a node and all of its children.
 ```
 
 You can use the `self` modifier to skip the element but process its children.
+
+### `cloak`
+
+You can use this directive in conjunction with CSS to hide an element until it is ready to be processed by the library to prevent UI flashes.
+
+```html
+<style>
+    [\*cloak] {
+        display: none !important;
+    }
+</style>
+
+<div *state="{ open: false }">
+    <div *cloak *show="open">This is a hidden content</div>
+    <button *on[click]="open = !open" type="button">Toggle</button>
+</div>
+```
 
 ## Magics
 
