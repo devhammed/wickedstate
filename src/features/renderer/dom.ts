@@ -19,6 +19,46 @@ function getStateRoot(element: WickedStateElementContract): WickedStateElementCo
 }
 
 /**
+ * Get cleanups array.
+ */
+function getCleanups(node: WickedStateElementContract, type: string): Function[] {
+    if ( ! node.__wickedStateCleanups) {
+        node.__wickedStateCleanups = {};
+    }
+
+    if ( ! node.__wickedStateCleanups[type]) {
+        node.__wickedStateCleanups[type] = [];
+    }
+
+    return node.__wickedStateCleanups[type];
+}
+
+/**
+ * Whether to not process a node.
+ */
+function shouldIgnore(node: WickedStateElementContract): boolean {
+    if (
+        node.__wickedStateCleanups
+        || node.hasAttribute('*ignore')
+        || node.hasAttribute('*ignore.self')
+    ) {
+        return true;
+    }
+
+    let parent = node.parentElement;
+
+    while (parent) {
+        if (parent.hasAttribute('*ignore')) {
+            return true;
+        }
+
+        parent = parent.parentElement;
+    }
+
+    return false;
+}
+
+/**
  * DOM renderer.
  *
  * This function is responsible for applying directives to the DOM elements starting from `root`.
@@ -46,7 +86,7 @@ export async function domRenderer(root: any): Promise<void> {
 
         const castedNode = node as WickedStateElementContract;
 
-        if (castedNode.__wickedStateDisconnect) {
+        if (shouldIgnore(castedNode)) {
             continue;
         }
 
@@ -61,19 +101,19 @@ export async function domRenderer(root: any): Promise<void> {
 
             const directive = directiveRegex.exec(attribute.name);
 
-            if (!directive) {
+            if ( ! directive) {
                 continue;
             }
 
             const name = directive.groups.name ?? null;
 
-            if (!name) {
+            if ( ! name) {
                 continue;
             }
 
             const registeredDirective = directives.find((directive) => directive.name === name);
 
-            if (!registeredDirective) {
+            if ( ! registeredDirective) {
                 throw new Error(`Directive ${name} is not registered.`);
             }
 
@@ -108,6 +148,8 @@ export async function domRenderer(root: any): Promise<void> {
 
         const bindingsLength = bindings.length;
 
+        const bindingsCleanups = getCleanups(castedNode, 'bindings');
+
         for (let i = 0; i < bindingsLength; i++) {
             const binding = bindings[i];
 
@@ -115,16 +157,8 @@ export async function domRenderer(root: any): Promise<void> {
 
             const state = stateRoot?.__wickedStateObject;
 
-            castedNode.__wickedStateDisconnect = reactivity.effect(() => {
-                if (! castedNode.__wickedStateCleanups) {
-                    castedNode.__wickedStateCleanups = {};
-                }
-
-                if ( ! castedNode.__wickedStateCleanups[binding.type]) {
-                    castedNode.__wickedStateCleanups[binding.type] = [];
-                }
-
-                const cleanups = castedNode.__wickedStateCleanups[binding.type];
+            const stopEffect = reactivity.effect(() => {
+                const cleanups = getCleanups(castedNode, binding.type);
 
                 if (stateRoot) {
                     stateRoot.__wickedStateCurrentElement = castedNode;
@@ -148,10 +182,12 @@ export async function domRenderer(root: any): Promise<void> {
                     cleanups.push(cleanup as Function);
                 }
             });
+
+            bindingsCleanups.push(stopEffect);
         }
     }
 
-    if (!root.__wickedObserved && !root.__wickedStateDisconnect) {
+    if ( ! root.__wickedObserved) {
         const observer = new MutationObserver((mutations) => {
             const nodes = mutations.reduce((acc, mutation) => {
                 acc.removed.push.apply(
@@ -178,19 +214,15 @@ export async function domRenderer(root: any): Promise<void> {
                     destroyHandler.call(elementState);
                 }
 
-                const disconnectHandler = element.__wickedStateDisconnect;
-
-                if (isFunction(disconnectHandler)) {
-                    disconnectHandler.call(element);
-                }
-
                 const cleanups = element.__wickedStateCleanups;
 
                 if (isObject(cleanups)) {
                     Object.keys(cleanups).forEach((type) => {
                         const typeCleanups = cleanups[type];
 
-                        while (typeCleanups.length) {
+                        const typeCleanupsLength = typeCleanups.length;
+
+                        while (typeCleanupsLength) {
                             typeCleanups.shift()();
                         }
                     });
@@ -203,10 +235,6 @@ export async function domRenderer(root: any): Promise<void> {
                 delete element.__wickedStateCleanups;
 
                 delete element.__wickedStateRefs;
-
-                delete element.__wickedStatePlaceholder;
-
-                delete element.__wickedStateDisconnect;
 
                 delete element.__wickedStateWhenElement;
 

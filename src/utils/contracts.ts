@@ -2,43 +2,64 @@
  * A wicked state object contract.
  *
  * This is the object that is used to manage the state of the application.
- *
- * The `init` function is called when the object is created.
- *
- * The `destroy` function is called when the object is destroyed.
- *
- * The `$el` property holds reference to the current element being processed.
- *
- * The `$root` property holds reference to the root element.
- *
- * The `$data` property holds reference to the data object.
- *
- * The `$parent` property holds reference to the parent state object (if any).
- *
- * The `$effect` property is used to create a reactive effect.
- *
- * The `$watch` property is used to watch a property for changes.
- *
- * The `$refs` property holds reference to the elements with the `ref` attribute.
- *
- * The `$set` property is used to set a value in the data object using dot notation.
- *
- * The `$get` property is used to get a value from the data object using dot notation.
  */
 export interface WickedStateObjectContract extends Object {
+  /**
+   * The init function is called when the object is created.
+   */
   init?: Function;
+
+  /**
+   * The destroy function is called when the object is destroyed.
+   */
   destroy?: Function;
+
+  /**
+   * The $el property holds reference to the current element being processed.
+   */
   $el?: WickedStateElementContract | null;
+
+  /**
+   * The $root property holds reference to the root element.
+   */
   $root?: WickedStateElementContract | null;
+
+  /**
+   * The $data property holds reference to the data object.
+   */
   $data?: WickedStateObjectContract | null;
+
+  /**
+   * The $parent property holds reference to the parent state object (if any).
+   */
   $parent?: WickedStateElementContract | null;
+
+  /**
+   * The $effect property is used to create a reactive effect.
+   */
   $effect?: WickedStateEffectContract;
+
+  /**
+   * The $watch property is used to watch a property for changes.
+   */
   $watch?: <T>(
       selector: string,
       fn: (value: T, oldValue: T) => void,
   ) => void;
+
+  /**
+   * The $refs property holds reference to the elements with the `ref` attribute
+   */
   $refs?: Record<string, HTMLElement>;
+
+  /**
+   * The $set property is used to set a value in the data object using dot notation.
+   */
   $set?: <T>(path: string, value: T) => void;
+
+  /**
+   * The $get property is used to get a value from the data object using dot notation.
+   */
   $get?: <T>(path: string, defaultValue?: T | null) => T;
 }
 
@@ -52,10 +73,6 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateCurrentElement?: WickedStateElementContract;
   __wickedStateCleanups?: Record<string, Function[]>;
   __wickedStateRefs?: Record<string, WickedStateElementContract>;
-  __wickedStatePlaceholder?: {
-    el: WickedStateElementContract,
-    previousDisplay: string,
-  };
   __wickedStateDisconnect?: () => void;
   __wickedStateWhenElement?: WickedStateElementContract;
   __wickedStateInLoop?: boolean;
