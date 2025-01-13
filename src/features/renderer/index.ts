@@ -7,6 +7,11 @@ import {WickedStateRendererContract} from '../../utils/contracts';
 export let render: WickedStateRendererContract = domRenderer;
 
 /**
+ * The prefix used to identify the directives.
+ */
+export let prefix: string = '*';
+
+/**
  * Set the renderer to use.
  *
  * @example
@@ -24,4 +29,22 @@ export function setRenderer(renderer: WickedStateRendererContract): WickedStateR
     render = renderer;
 
     return previousRenderer;
+}
+
+/**
+ * Set the prefix to use.
+ *
+ * @example
+ * ```ts
+ * import { setPrefix } from 'wickedstate';
+ *
+ * setPrefix('data-');
+ * ```
+ */
+export function setPrefix(newPrefix: string): string {
+    const previousPrefix = prefix;
+
+    prefix = newPrefix;
+
+    return previousPrefix;
 }

@@ -4,7 +4,7 @@ export { data } from './features/datas';
 
 export { directive } from './features/directives';
 
-export { render, setRenderer } from './features/renderer';
+export { render, prefix, setPrefix, setRenderer } from './features/renderer';
 
 export { evaluator, setEvaluator } from './features/evaluator';
 

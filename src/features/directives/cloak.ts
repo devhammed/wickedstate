@@ -1,9 +1,10 @@
-import { WickedStateDirectiveContract } from '../../utils/contracts';
+import {prefix} from '../renderer';
+import {WickedStateDirectiveContract} from '../../utils/contracts';
 
 export const cloakDirective: WickedStateDirectiveContract = {
   name: 'cloak',
   priority: -1,
   handler({ node }): void {
-    node.removeAttribute('*cloak');
+    node.removeAttribute(`${prefix}cloak`);
   },
 };

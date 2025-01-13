@@ -1,3 +1,4 @@
+import {prefix} from './index';
 import {reactivity} from '../reactivity';
 import {directives} from '../directives';
 import {isFunction, isObject} from '../../utils/checkers';
@@ -64,7 +65,7 @@ function shouldIgnore(node: WickedStateElementContract): boolean {
  * This function is responsible for applying directives to the DOM elements starting from `root`.
  */
 export async function domRenderer(root: any): Promise<void> {
-    const directiveRegex = /\*(?<name>[\w-]+)(?:\[(?<type>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
+    const directiveRegex = /(?<name>[\w-]+)(?:\[(?<type>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
 
     const modifiersRegex = /(?<name>[\w-]+)(?:\[(?<args>[^\]]*)])?/;
 
@@ -99,7 +100,13 @@ export async function domRenderer(root: any): Promise<void> {
         for (let i = 0; i < attributesLength; i++) {
             const attribute = attributes[i];
 
-            const directive = directiveRegex.exec(attribute.name);
+            if ( ! attribute.name.startsWith(prefix)) {
+                continue;
+            }
+
+            const attributeName = attribute.name.slice(prefix.length);
+
+            const directive = directiveRegex.exec(attributeName);
 
             if ( ! directive) {
                 continue;
