@@ -449,7 +449,7 @@ You can use the `self` modifier to skip the element but process its children.
 
 ### `cloak`
 
-You can use this directive in conjunction with CSS to hide an element until it is ready to be processed by the library to prevent UI flashes.
+You can use this directive in conjunction with CSS to hide an element until it is ready to be processed to prevent UI flashes.
 
 ```html
 <style>
