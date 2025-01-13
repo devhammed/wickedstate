@@ -98,7 +98,8 @@ export async function domRenderer(root: any): Promise<void> {
             const registeredDirective = directives.find((directive) => directive.name === name);
 
             if ( ! registeredDirective) {
-                throw new Error(`Directive ${name} is not registered.`);
+                console.warn(`Directive ${name} is not registered.`);
+                continue;
             }
 
             const type = directive.groups.type ?? name;
