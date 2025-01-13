@@ -437,6 +437,16 @@ Two-way data binding for form elements.
 <p *text="name"></p>
 ```
 
+### `ignore`
+
+Instruct the library to skip processing a node and all of its children.
+
+```html
+<input *ignore type="datetime-local" onload="new Pikaday(this)" />
+```
+
+You can use the `self` modifier to skip the element but process its children.
+
 ## Magics
 
 Magics are special properties that are available in the state object and can be used in expressions.
