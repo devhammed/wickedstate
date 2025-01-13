@@ -126,6 +126,7 @@ export async function domRenderer(root: any): Promise<void> {
                 type,
                 modifiers,
                 value: attribute.value,
+                priority: registeredDirective.priority,
                 handler: (context) => {
                     if (context.node.__wickedStateIgnore || context.node.__wickedStateIgnoreSelf) {
                         return;
@@ -145,6 +146,12 @@ export async function domRenderer(root: any): Promise<void> {
                 },
             });
         }
+
+        console.log('bindings', JSON.stringify(bindings, null, 2));
+
+        bindings.sort((a, b) => a.priority - b.priority);
+
+        console.log('sorted bindings', JSON.stringify(bindings, null, 2));
 
         const bindingsLength = bindings.length;
 

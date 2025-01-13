@@ -57,7 +57,5 @@ export function directive(directive: WickedStateDirectiveContract): WickedStateD
 
   directives.push(directive);
 
-  directives.sort((a, b) => a.priority - b.priority);
-
   return directive;
 }

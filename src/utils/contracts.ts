@@ -118,6 +118,7 @@ export interface WickedStateDirectiveBindingContract {
   name: string;
   type: string;
   value: string;
+  priority: number;
   modifiers: Record<string, any>;
   handler: WickedStateDirectiveHandlerContract;
 }
