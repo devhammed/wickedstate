@@ -35,31 +35,6 @@ function getCleanups(node: WickedStateElementContract, type: string): Function[]
 }
 
 /**
- * Whether to not process a node.
- */
-function shouldIgnore(node: WickedStateElementContract): boolean {
-    if (
-        node.__wickedStateCleanups
-        || node.hasAttribute('*ignore')
-        || node.hasAttribute('*ignore.self')
-    ) {
-        return true;
-    }
-
-    let parent = node.parentElement;
-
-    while (parent) {
-        if (parent.hasAttribute('*ignore')) {
-            return true;
-        }
-
-        parent = parent.parentElement;
-    }
-
-    return false;
-}
-
-/**
  * DOM renderer.
  *
  * This function is responsible for applying directives to the DOM elements starting from `root`.
@@ -89,7 +64,7 @@ export async function domRenderer(root: any): Promise<void> {
 
         const castedNode = node as WickedStateElementContract;
 
-        if (shouldIgnore(castedNode)) {
+        if (castedNode.__wickedStateProcessed) {
             continue;
         }
 
@@ -151,7 +126,23 @@ export async function domRenderer(root: any): Promise<void> {
                 type,
                 modifiers,
                 value: attribute.value,
-                handler: registeredDirective.handler,
+                handler: (context) => {
+                    if (context.node.__wickedStateIgnore || context.node.__wickedStateIgnoreSelf) {
+                        return;
+                    }
+
+                    let parent = context.node.parentElement as WickedStateElementContract;
+
+                    while (parent) {
+                        if (parent.__wickedStateIgnore) {
+                            return;
+                        }
+
+                        parent = parent.parentElement;
+                    }
+
+                    return registeredDirective.handler(context);
+                },
             });
         }
 
@@ -194,6 +185,8 @@ export async function domRenderer(root: any): Promise<void> {
 
             bindingsCleanups.push(stopEffect);
         }
+
+        castedNode.__wickedStateProcessed = true;
     }
 
     if ( ! root.__wickedObserved) {
@@ -248,6 +241,12 @@ export async function domRenderer(root: any): Promise<void> {
                 delete element.__wickedStateInLoop;
 
                 delete element.__wickedStateLoopItems;
+
+                delete element.__wickedStateIgnore;
+
+                delete element.__wickedStateIgnoreSelf;
+
+                delete element.__wickedStateProcessed;
             });
 
             if (nodes.added.length) {

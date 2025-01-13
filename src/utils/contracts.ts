@@ -70,6 +70,7 @@ export interface WickedStateObjectContract extends Object {
  */
 export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
+  __wickedStateProcessed?: boolean;
   __wickedStateCurrentElement?: WickedStateElementContract;
   __wickedStateCleanups?: Record<string, Function[]>;
   __wickedStateRefs?: Record<string, WickedStateElementContract>;
@@ -77,6 +78,8 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateWhenElement?: WickedStateElementContract;
   __wickedStateInLoop?: boolean;
   __wickedStateLoopItems?: Record<any, WickedStateLoopItemContract>;
+  __wickedStateIgnore?: boolean;
+  __wickedStateIgnoreSelf?: boolean;
 }
 
 /**

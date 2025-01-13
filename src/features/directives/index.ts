@@ -8,12 +8,14 @@ import { textDirective } from './text';
 import { cloakDirective } from './cloak';
 import { stateDirective } from './state';
 import { modelDirective } from './model';
+import { ignoreDirective } from './ignore';
 import { WickedStateDirectiveContract } from '../../utils/contracts';
 
 /**
  * List of directives.
  */
 export const directives: WickedStateDirectiveContract[] = [
+  ignoreDirective,
   cloakDirective,
   stateDirective,
   ifDirective,
