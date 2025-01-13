@@ -147,11 +147,7 @@ export async function domRenderer(root: any): Promise<void> {
             });
         }
 
-        console.log('bindings', JSON.stringify(bindings, null, 2));
-
         bindings.sort((a, b) => a.priority - b.priority);
-
-        console.log('sorted bindings', JSON.stringify(bindings, null, 2));
 
         const bindingsLength = bindings.length;
 
