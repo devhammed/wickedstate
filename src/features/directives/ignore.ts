@@ -1,4 +1,3 @@
-import {prefix} from '../renderer';
 import {WickedStateDirectiveContract} from '../../utils/contracts';
 
 export const ignoreDirective: WickedStateDirectiveContract = {
