@@ -106,13 +106,13 @@ export async function domRenderer(root: any): Promise<void> {
             const modifiers = (directive.groups.modifiers ?? '').split('.').reduce((acc, modifier) => {
                 const match = modifiersRegex.exec(modifier);
 
-                if (!match) {
+                if ( ! match) {
                     return acc;
                 }
 
                 const name = match.groups.name ?? null;
 
-                if (!name) {
+                if ( ! name) {
                     return acc;
                 }
 
