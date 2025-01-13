@@ -33,7 +33,7 @@
             <li *text="log.text"></li>
         </template>
     </ul>
-    <div *on[click].away="open = false" *state="{ open: false }">
+    <div *test-missing *on[click].away="open = false" *state="{ open: false }">
         <button *on[click]="open = ! open" type="button">Toggle</button>
         <div *show="open">This is a dropdown</div>
     </div>
