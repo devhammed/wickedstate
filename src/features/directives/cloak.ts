@@ -5,6 +5,6 @@ export const cloakDirective: WickedStateDirectiveContract = {
   name: 'cloak',
   priority: -1,
   handler({ node }): void {
-    node.removeAttribute(`${prefix}cloak`);
+    node.removeAttribute(prefix('cloak'));
   },
 };

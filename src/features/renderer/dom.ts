@@ -65,6 +65,8 @@ function shouldIgnore(node: WickedStateElementContract): boolean {
  * This function is responsible for applying directives to the DOM elements starting from `root`.
  */
 export async function domRenderer(root: any): Promise<void> {
+    const directivePrefix = prefix();
+
     const directiveRegex = /(?<name>[\w-]+)(?:\[(?<type>[^\]]*)])?.?(?<modifiers>(?:[\w-]+(?:\[[^\]]*])?(?:\.[\w-]+(?:\[[^\]]*])?)*)?)?/;
 
     const modifiersRegex = /(?<name>[\w-]+)(?:\[(?<args>[^\]]*)])?/;
@@ -100,11 +102,11 @@ export async function domRenderer(root: any): Promise<void> {
         for (let i = 0; i < attributesLength; i++) {
             const attribute = attributes[i];
 
-            if ( ! attribute.name.startsWith(prefix)) {
+            if ( ! attribute.name.startsWith(directivePrefix)) {
                 continue;
             }
 
-            const attributeName = attribute.name.slice(prefix.length);
+            const attributeName = attribute.name.slice(directivePrefix.length);
 
             const directive = directiveRegex.exec(attributeName);
 

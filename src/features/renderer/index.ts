@@ -2,14 +2,14 @@ import {domRenderer} from './dom';
 import {WickedStateRendererContract} from '../../utils/contracts';
 
 /**
+ * The prefix used to identify the directives.
+ */
+let prefixAsString: string = '*';
+
+/**
  * The renderer used to render the state.
  */
 export let render: WickedStateRendererContract = domRenderer;
-
-/**
- * The prefix used to identify the directives.
- */
-export let prefix: string = '*';
 
 /**
  * Set the renderer to use.
@@ -42,9 +42,25 @@ export function setRenderer(renderer: WickedStateRendererContract): WickedStateR
  * ```
  */
 export function setPrefix(newPrefix: string): string {
-    const previousPrefix = prefix;
+    const previousPrefix = prefixAsString;
 
-    prefix = newPrefix;
+    prefixAsString = newPrefix;
 
     return previousPrefix;
+}
+
+/**
+ * Get the prefix used.
+ *
+ * @example
+ * ```ts
+ * import { prefix } from 'wickedstate';
+ *
+ * console.log(prefix()); // '*'
+ *
+ * console.log(prefix('cloak')); // '*cloak'
+ * ```
+ */
+export function prefix(append: string = ''): string {
+    return prefixAsString + append;
 }
