@@ -86,7 +86,7 @@ export interface WickedStateElementContract extends HTMLElement {
  * The loop item contract.
  */
 export interface WickedStateLoopItemContract {
-  key: any;
+  key: PropertyKey;
   value: any;
   el: WickedStateElementContract;
 }

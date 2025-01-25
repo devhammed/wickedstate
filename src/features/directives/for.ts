@@ -3,7 +3,7 @@ import {
     WickedStateElementContract, WickedStateLoopItemContract
 } from '../../utils/contracts';
 import {evaluator} from '../evaluator';
-import {count, isArray, isObject} from '../../utils/checkers';
+import {count, isArray, isNumber, isObject, isString, isSymbol} from '../../utils/checkers';
 
 const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)(?:\s*:\s*(?<itemKey>[\w.]+))?/;
 
@@ -61,9 +61,9 @@ export const forDirective: WickedStateDirectiveContract = {
             template.__wickedStateLoopItems = [];
         }
 
-        const newLoopItems = [];
+        const newLoopItems: WickedStateLoopItemContract[] = [];
 
-        const existingLoopItems = template.__wickedStateLoopItems.reduce(
+        const existingLoopItems: Record<PropertyKey, WickedStateLoopItemContract> = template.__wickedStateLoopItems.reduce(
             (acc, item) => {
                 acc[item.key] = item;
 
@@ -84,6 +84,12 @@ export const forDirective: WickedStateDirectiveContract = {
             }
 
             const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
+
+            if ( ! isString(uniqueKey) || ! isNumber(uniqueKey) || ! isSymbol(uniqueKey)) {
+                throw new Error(
+                    '[WickedState] `for` directive item key must be a string or number or symbol.',
+                );
+            }
 
             const existingItem = existingLoopItems[uniqueKey] ?? null;
 
@@ -141,7 +147,7 @@ export const forDirective: WickedStateDirectiveContract = {
         });
 
         // Remove the elements that are no longer in the loop.
-        Object.values(existingLoopItems).forEach((item: WickedStateLoopItemContract) => {
+        Object.values(existingLoopItems).forEach((item) => {
             item.el.remove();
         });
 
