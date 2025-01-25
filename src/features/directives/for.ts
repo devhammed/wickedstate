@@ -69,7 +69,7 @@ export const forDirective: WickedStateDirectiveContract = {
             item => existingKeys.set(item.key, item),
         );
 
-        template.__wickedStateLoopLastSibling = template;
+        template.__wickedStateLoopAnchor = template;
 
         Object.keys(iterable).forEach((key) => {
             const value = iterable[key];
@@ -90,11 +90,11 @@ export const forDirective: WickedStateDirectiveContract = {
                 existingKeys.delete(uniqueKey);
 
                 // Reposition the element if it's not in the correct position.
-                if (existingItem.el.previousSibling !== template.__wickedStateLoopLastSibling) {
-                    template.__wickedStateLoopLastSibling.after(existingItem.el);
+                if (existingItem.el.previousSibling !== template.__wickedStateLoopAnchor) {
+                    template.__wickedStateLoopAnchor.after(existingItem.el);
                 }
 
-                template.__wickedStateLoopLastSibling = existingItem.el;
+                template.__wickedStateLoopAnchor = existingItem.el;
 
                 return;
             }
@@ -132,14 +132,16 @@ export const forDirective: WickedStateDirectiveContract = {
                 value,
             });
 
-            template.__wickedStateLoopLastSibling.after(el);
+            template.__wickedStateLoopAnchor.after(el);
 
-            template.__wickedStateLoopLastSibling = el;
+            template.__wickedStateLoopAnchor = el;
         });
 
         // Remove the elements that are no longer in the loop.
         existingKeys.forEach(item => item.el.remove());
 
         template.__wickedStateLoopItems = newLoopItems;
+
+        template.__wickedStateLoopAnchor = null;
     },
 };
