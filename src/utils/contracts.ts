@@ -77,7 +77,7 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateDisconnect?: () => void;
   __wickedStateWhenElement?: WickedStateElementContract;
   __wickedStateInLoop?: boolean;
-  __wickedStateLoopItems?: Record<any, WickedStateLoopItemContract>;
+  __wickedStateLoopItems?: WickedStateLoopItemContract[];
   __wickedStateIgnore?: boolean;
   __wickedStateIgnoreSelf?: boolean;
 }

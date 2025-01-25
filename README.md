@@ -418,14 +418,6 @@ You can also get the index of the current item by using the following syntax:
 </template>
 ```
 
-It is also important to specify a unique key for each item in the list to help the library keep track of the items and update the DOM efficiently. You can do this by adding a colon `:` after the `in` keyword followed by the key expression.
-
-```html
-<template *for="post in posts : post.id">
-  <h2 *text="post.title"></h2>
-</template>
-```
-
 NOTE: `*for` MUST be declared on a `<template>` element and that `<template>` element MUST contain only one root element.
 
 ### `model`

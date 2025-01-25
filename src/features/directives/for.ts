@@ -6,7 +6,7 @@ import {evaluator} from '../evaluator';
 import {count, isArray, isObject, isString} from '../../utils/checkers';
 import {reactivity} from '../reactivity';
 
-const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)(\s+:\s+(?<itemKey>.*))?/;
+const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)/;
 
 const EXPRESSION_REGEX = /\((?<value>[^,]+),\s*(?<index>[^)]+)\)|(?<valueOnly>\w+)/;
 
@@ -40,7 +40,7 @@ export const forDirective: WickedStateDirectiveContract = {
             );
         }
 
-        const { expression, iterableKey, itemKey } = match.groups;
+        const { expression, iterableKey } = match.groups;
 
         const expressionMatch = expression.match(EXPRESSION_REGEX);
 
@@ -56,10 +56,6 @@ export const forDirective: WickedStateDirectiveContract = {
 
         const iterable = state.$get(iterableKey);
 
-        const previousValue = state.$get(valueKey);
-
-        const previousIndex = indexKey ? state.$get(indexKey) : null;
-
         if ( ! isArray(iterable) && ! isObject(iterable)) {
             throw new Error(
                 '[WickedState] `for` directive iterable must be an array or an object.',
@@ -69,12 +65,12 @@ export const forDirective: WickedStateDirectiveContract = {
         template.__wickedStateInLoop = true;
 
         if ( ! template.__wickedStateLoopItems) {
-            template.__wickedStateLoopItems = {};
+            template.__wickedStateLoopItems = [];
         }
 
-        const newKeys = [];
-
-        const previousKeys = Object.keys(template.__wickedStateLoopItems);
+        while (template.__wickedStateLoopItems.length) {
+            template.__wickedStateLoopItems.pop().el.remove();
+        }
 
         Object.keys(iterable).forEach((key, index) => {
             const value = iterable[key];
@@ -83,16 +79,6 @@ export const forDirective: WickedStateDirectiveContract = {
 
             if (indexKey) {
                 itemState[indexKey] = key;
-            }
-
-            const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : index;
-
-            const previousItem = template.__wickedStateLoopItems[uniqueKey] ?? null;
-
-            newKeys.push(uniqueKey);
-
-            if (previousItem && JSON.stringify(previousItem.value) === JSON.stringify(value)) {
-                return;
             }
 
             const clone = template.content.cloneNode(true) as DocumentFragment;
@@ -122,33 +108,21 @@ export const forDirective: WickedStateDirectiveContract = {
                 },
             });
 
-            template.__wickedStateLoopItems[uniqueKey] = {
+            template.__wickedStateLoopItems.push({
                 el,
                 key,
                 value,
-            };
+            });
 
-            const previousSiblingKey = newKeys[index - 1];
-
-            const previousSibling = previousSiblingKey ? template.__wickedStateLoopItems[previousSiblingKey].el : null;
+            const previousSibling = template.__wickedStateLoopItems[index - 1] ?? null;
 
             if (previousSibling) {
-                previousSibling.after(el);
+                previousSibling.el.after(el);
             } else {
                 template.after(el);
             }
         });
 
         template.__wickedStateInLoop = false;
-
-        previousKeys.forEach(key => {
-            if ( ! newKeys.includes(key)) {
-                const item = template.__wickedStateLoopItems[key];
-
-                item.el.remove();
-
-                delete template.__wickedStateLoopItems[key];
-            }
-        });
     },
 };

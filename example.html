@@ -28,9 +28,9 @@
     <button *on[click]="navigator.clipboard.writeText($refs.count.textContent)" type="button">
         Click to Copy
     </button>
-    <ul>
-        <template *for="log in history : log.id">
-            <li *text="log.text"></li>
+    <ul style="list-style: none">
+        <template *for="(log, index) in history">
+            <li *text="`${index}. ${log.text}`"></li>
         </template>
     </ul>
     <div *test-missing *on[click].away="open = false" *state="{ open: false }">
