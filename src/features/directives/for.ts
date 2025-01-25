@@ -1,6 +1,6 @@
 import {
     WickedStateDirectiveContract,
-    WickedStateElementContract
+    WickedStateElementContract, WickedStateLoopItemContract
 } from '../../utils/contracts';
 import {evaluator} from '../evaluator';
 import {count, isArray, isObject} from '../../utils/checkers';
@@ -63,10 +63,13 @@ export const forDirective: WickedStateDirectiveContract = {
 
         const newLoopItems = [];
 
-        const existingLoopItems = new Map();
+        const existingLoopItems = template.__wickedStateLoopItems.reduce(
+            (acc, item) => {
+                acc[item.key] = item;
 
-        template.__wickedStateLoopItems.forEach(
-            item => existingLoopItems.set(item.key, item),
+                return acc;
+            },
+            {},
         );
 
         template.__wickedStateLoopAnchor = template;
@@ -82,12 +85,12 @@ export const forDirective: WickedStateDirectiveContract = {
 
             const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
 
-            const existingItem = existingLoopItems.get(uniqueKey);
+            const existingItem = existingLoopItems[uniqueKey] ?? null;
 
             if (existingItem) {
                 newLoopItems.push(existingItem);
 
-                existingLoopItems.delete(uniqueKey);
+                delete existingLoopItems[uniqueKey];
 
                 // Reposition the element if it's not in the correct position.
                 if (existingItem.el.previousSibling !== template.__wickedStateLoopAnchor) {
@@ -138,7 +141,9 @@ export const forDirective: WickedStateDirectiveContract = {
         });
 
         // Remove the elements that are no longer in the loop.
-        existingLoopItems.forEach(item => item.el.remove());
+        Object.values(existingLoopItems).forEach((item: WickedStateLoopItemContract) => {
+            item.el.remove();
+        });
 
         template.__wickedStateLoopItems = newLoopItems;
 
