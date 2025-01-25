@@ -58,7 +58,7 @@ export async function domRenderer(root: any): Promise<void> {
             );
         }
 
-        if (!(node instanceof HTMLElement)) {
+        if ( ! (node instanceof HTMLElement)) {
             continue;
         }
 
