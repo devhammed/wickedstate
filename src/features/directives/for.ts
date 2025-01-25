@@ -2,9 +2,7 @@ import {
     WickedStateDirectiveContract,
     WickedStateElementContract
 } from '../../utils/contracts';
-import {evaluator} from '../evaluator';
-import {count, isArray, isObject, isString} from '../../utils/checkers';
-import {reactivity} from '../reactivity';
+import {count, isArray, isObject} from '../../utils/checkers';
 
 const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)/;
 
