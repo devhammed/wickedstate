@@ -85,7 +85,7 @@ export const forDirective: WickedStateDirectiveContract = {
 
             const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
 
-            if ( ! isString(uniqueKey) || ! isNumber(uniqueKey) || ! isSymbol(uniqueKey)) {
+            if ( ! isString(uniqueKey) && ! isNumber(uniqueKey) && ! isSymbol(uniqueKey)) {
                 throw new Error(
                     '[WickedState] `for` directive item key must be a string or number or symbol.',
                 );
