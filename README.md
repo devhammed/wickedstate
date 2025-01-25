@@ -410,11 +410,27 @@ Loop over an array or object and render a template for each item.
 </template>
 ```
 
-You can also get the index of the current item by using the following syntax:
+You can also get the index/object key of the current item by using the following syntax:
 
 ```html
 <template *for="(post, index) in posts">
   <h2 *text="index + 1 + '. ' + post.title"></h2>
+</template>
+```
+
+But keep it in mind that when dealing with objects, you probably want to use bracket access syntax to enable reactivity because JavaScript loses access to object internal state when destructuring:
+
+```html
+<template *for="(_, key) in user">
+    <li *text="`${key.toUpperCase()}: ${user[key]}`"></li>
+</template>
+```
+
+It is also important to specify a unique key for each item in the list to help the library keep track of the items and update the DOM efficiently. You can do this by adding a colon `:` after the `in` keyword followed by the key expression.
+
+```html
+<template *for="post in posts : post.id">
+  <h2 *text="post.title"></h2>
 </template>
 ```
 

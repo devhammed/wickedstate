@@ -78,6 +78,7 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateWhenElement?: WickedStateElementContract;
   __wickedStateInLoop?: boolean;
   __wickedStateLoopItems?: WickedStateLoopItemContract[];
+  __wickedStateLoopLastSibling?: WickedStateElementContract;
   __wickedStateIgnore?: boolean;
   __wickedStateIgnoreSelf?: boolean;
 }

@@ -2,9 +2,10 @@ import {
     WickedStateDirectiveContract,
     WickedStateElementContract
 } from '../../utils/contracts';
+import {evaluator} from '../evaluator';
 import {count, isArray, isObject} from '../../utils/checkers';
 
-const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)/;
+const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)(?:\s*:\s*(?<itemKey>[\w.]+))?/;
 
 const EXPRESSION_REGEX = /\((?<value>[^,]+),\s*(?<index>[^)]+)\)|(?<valueOnly>\w+)/;
 
@@ -26,10 +27,6 @@ export const forDirective: WickedStateDirectiveContract = {
 
         const template = node as HTMLTemplateElement & WickedStateElementContract;
 
-        if (template.__wickedStateInLoop) {
-            return;
-        }
-
         const match = value.match(DIRECTIVE_VALUE_REGEX);
 
         if ( ! match) {
@@ -38,7 +35,7 @@ export const forDirective: WickedStateDirectiveContract = {
             );
         }
 
-        const { expression, iterableKey } = match.groups;
+        const { expression, iterableKey, itemKey } = match.groups;
 
         const expressionMatch = expression.match(EXPRESSION_REGEX);
 
@@ -60,23 +57,46 @@ export const forDirective: WickedStateDirectiveContract = {
             );
         }
 
-        template.__wickedStateInLoop = true;
-
         if ( ! template.__wickedStateLoopItems) {
             template.__wickedStateLoopItems = [];
         }
 
-        while (template.__wickedStateLoopItems.length) {
-            template.__wickedStateLoopItems.pop().el.remove();
-        }
+        const newLoopItems = [];
 
-        Object.keys(iterable).forEach((key, index) => {
+        const existingKeys = new Map();
+
+        template.__wickedStateLoopItems.forEach(
+            item => existingKeys.set(item.key, item),
+        );
+
+        template.__wickedStateLoopLastSibling = template;
+
+        Object.keys(iterable).forEach((key) => {
             const value = iterable[key];
 
             const itemState = { [valueKey]: value };
 
             if (indexKey) {
                 itemState[indexKey] = key;
+            }
+
+            const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
+
+            const existingItem = existingKeys.get(uniqueKey);
+
+            if (existingItem) {
+                newLoopItems.push(existingItem);
+
+                existingKeys.delete(uniqueKey);
+
+                // Reposition the element if it's not in the correct position.
+                if (existingItem.el.previousSibling !== template.__wickedStateLoopLastSibling) {
+                    template.__wickedStateLoopLastSibling.after(existingItem.el);
+                }
+
+                template.__wickedStateLoopLastSibling = existingItem.el;
+
+                return;
             }
 
             const clone = template.content.cloneNode(true) as DocumentFragment;
@@ -99,28 +119,27 @@ export const forDirective: WickedStateDirectiveContract = {
                 },
                 set(_, prop, value, receiver) {
                     if (prop === valueKey || prop === indexKey) {
-                       return false;
+                        return false;
                     }
 
                     return Reflect.set(state, prop, value, receiver);
                 },
             });
 
-            template.__wickedStateLoopItems.push({
+            newLoopItems.push({
                 el,
-                key,
+                key: uniqueKey,
                 value,
             });
 
-            const previousSibling = template.__wickedStateLoopItems[index - 1] ?? null;
+            template.__wickedStateLoopLastSibling.after(el);
 
-            if (previousSibling) {
-                previousSibling.el.after(el);
-            } else {
-                template.after(el);
-            }
+            template.__wickedStateLoopLastSibling = el;
         });
 
-        template.__wickedStateInLoop = false;
+        // Remove the elements that are no longer in the loop.
+        existingKeys.forEach(item => item.el.remove());
+
+        template.__wickedStateLoopItems = newLoopItems;
     },
 };

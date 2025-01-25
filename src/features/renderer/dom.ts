@@ -198,12 +198,12 @@ export async function domRenderer(root: any): Promise<void> {
             const nodes = mutations.reduce((acc, mutation) => {
                 acc.removed.push.apply(
                     acc.removed,
-                    [].slice.call(mutation.removedNodes).filter((node: Node) => node instanceof HTMLElement),
+                    [].slice.call(mutation.removedNodes),
                 );
 
                 acc.added.push.apply(
                     acc.added,
-                    [].slice.call(mutation.addedNodes).filter((node: Node) => node instanceof HTMLElement),
+                    [].slice.call(mutation.addedNodes),
                 );
 
                 return acc;

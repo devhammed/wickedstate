@@ -28,8 +28,8 @@
     <button *on[click]="navigator.clipboard.writeText($refs.count.textContent)" type="button">
         Click to Copy
     </button>
-    <ul style="list-style: none">
-        <template *for="(log, index) in history">
+    <ul style="list-style: none; padding-inline-start: 0;">
+        <template *for="(log, index) in history : log.id">
             <li *text="`${index}. ${log.text}`"></li>
         </template>
     </ul>
@@ -62,7 +62,7 @@
             Count: <span *text="count"></span>
         </h1>
     </div>
-    <div *state="{ user: { name: 'John Doe' } }">
+    <div *state="{ user: { name: 'John Doe', age: 50 } }">
         <input
                 type="text"
                 *ref="nameInput"
@@ -80,7 +80,11 @@
                 $el.focus();
             }"
         />
-        <p *text="user.name"></p>
+        <ul>
+            <template *for="(_, key) in user">
+                <li *text="`${key.toUpperCase()}: ${user[key]}`"></li>
+            </template>
+        </ul>
         <button *on[click]="$set('user.name', 'Jane Doe')" type="button">Update Name</button>
     </div>
     <div
