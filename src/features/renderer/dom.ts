@@ -37,7 +37,7 @@ function shouldIgnoreElement(element: WickedStateElementContract): boolean {
         parent = parent.parentElement;
     }
 
-    return false;
+    return !!element.__wickedStateProcessed;
 }
 
 /**
@@ -70,7 +70,7 @@ export async function domRenderer(root: any): Promise<void> {
 
         const castedNode = node as WickedStateElementContract;
 
-        if (castedNode.__wickedStateProcessed) {
+        if (shouldIgnoreElement(castedNode)) {
             continue;
         }
 
@@ -148,10 +148,6 @@ export async function domRenderer(root: any): Promise<void> {
             const stateRoot = getStateRoot(castedNode);
 
             const state = stateRoot?.__wickedStateObject;
-
-            if (shouldIgnoreElement(castedNode)) {
-                continue;
-            }
 
             if (stateRoot) {
                 stateRoot.__wickedStateCurrentElement = castedNode;
