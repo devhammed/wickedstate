@@ -160,13 +160,15 @@ export const forDirective: WickedStateDirectiveContract = {
         cleanup(() => {
             stopEffect();
 
-            template.__wickedStateLoopItems.forEach((item) => {
-                item.el.remove();
-            });
+            if (isArray(template.__wickedStateLoopItems)) {
+                template.__wickedStateLoopItems.forEach((item) => {
+                    item.el.remove();
+                });
+            }
 
-            template.__wickedStateLoopItems = [];
+            delete template.__wickedStateLoopItems;
 
-            template.__wickedStateLoopAnchor = null;
+            delete template.__wickedStateLoopAnchor;
         });
     },
 };
