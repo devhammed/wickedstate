@@ -12,7 +12,7 @@
     <template *if="count > 5">
         <p *state="{ init() { console.log('in DOM') }, destroy() { console.log('removed') } }" *text="'Count is greater than 5, so it is ' + $parent?.count"></p>
     </template>
-    <div *cloak *show="count < 0">
+    <div *cloak *show="count < 0" style="color:red;">
         <p>So much negativity??</p>
     </div>
     <button *on[click]="increment" type="button">Increment</button>
@@ -33,7 +33,7 @@
             <li *text="`${index}. ${log.text}`"></li>
         </template>
     </ul>
-    <div *test-missing *on[click].away="open = false" *state="{ open: false }">
+    <div *test-missing *state="{ open: false }" *on[click].away="open = false">
         <button *on[click]="open = ! open" type="button">Toggle</button>
         <div *show="open">This is a dropdown</div>
     </div>
@@ -58,9 +58,15 @@
         }
     }"
     >
-        <h1 *ignore.self>
-            Count: <span *text="count"></span>
-        </h1>
+        <header *ignore.self>
+            <h1>
+                Count: <span *text="count">0</span>
+            </h1>
+
+            <h2 *ignore>
+                This is ignored: <span *text="count">0</span>
+            </h2>
+        </header>
     </div>
     <div *state="{ user: { name: 'John Doe', age: 50 } }">
         <input
@@ -112,7 +118,7 @@
     }
 </style>
 <script type="module">
-    import {data, render} from './src/index.ts';
+    import { data, render } from './src/index.ts';
 
     data('counter', () => ({
         count: 0,

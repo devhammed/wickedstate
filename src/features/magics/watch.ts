@@ -1,7 +1,6 @@
-import {reactivity} from '../reactivity';
 import {WickedStateMagicContextContract} from '../../utils/contracts';
 
-export function watchMagic<T>({ state, cleanup }: WickedStateMagicContextContract): (
+export function watchMagic<T>({ state, effect, cleanup }: WickedStateMagicContextContract): (
     selector: string,
     fn: (value: T, oldValue: T) => void,
 ) => void {
@@ -9,15 +8,15 @@ export function watchMagic<T>({ state, cleanup }: WickedStateMagicContextContrac
       selector: string,
       fn: (value: T, oldValue: T) => void,
   ): void {
-    let value = state.$get(selector);
+    let currentValue = state.$get(selector);
 
-    let stopWatch = reactivity.effect(() => {
+    let stopWatch = effect(() => {
       let newValue = state.$get(selector);
 
-      if (value !== newValue) {
-        fn.call(state, newValue, value);
+      if (currentValue !== newValue) {
+        fn.call(state, newValue, currentValue);
 
-        value = newValue;
+        currentValue = newValue;
       }
     });
 

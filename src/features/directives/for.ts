@@ -2,8 +2,8 @@ import {
     WickedStateDirectiveContract,
     WickedStateElementContract, WickedStateLoopItemContract
 } from '../../utils/contracts';
-import {evaluator} from '../evaluator';
-import {count, isArray, isNumber, isObject, isString, isSymbol} from '../../utils/checkers';
+import { evaluator } from '../evaluator';
+import { count, isArray, isNumber, isObject, isString, isSymbol } from '../../utils/checkers';
 
 const DIRECTIVE_VALUE_REGEX = /(?<expression>\([^)]+\)|\w+)\s+in\s+(?<iterableKey>\w+)(?:\s*:\s*(?<itemKey>[\w.]+))?/;
 
@@ -12,7 +12,7 @@ const EXPRESSION_REGEX = /\((?<value>[^,]+),\s*(?<index>[^)]+)\)|(?<valueOnly>\w
 export const forDirective: WickedStateDirectiveContract = {
     name: 'for',
     priority: 1,
-    handler({ node, state, value, bindings }): void {
+    handler({ node, state, value, bindings, effect, cleanup }): void {
         if ( ! (node instanceof HTMLTemplateElement)) {
             throw new Error(
                 '[WickedState] For directive can only be used on <template> elements.',
@@ -49,110 +49,124 @@ export const forDirective: WickedStateDirectiveContract = {
 
         const indexKey = expressionMatch.groups.index || null;
 
-        const iterable = state.$get(iterableKey);
+        const stopEffect = effect(() => {
+            const iterable = evaluator(iterableKey, state);
 
-        if ( ! isArray(iterable) && ! isObject(iterable)) {
-            throw new Error(
-                '[WickedState] `for` directive iterable must be an array or an object.',
-            );
-        }
-
-        if ( ! template.__wickedStateLoopItems) {
-            template.__wickedStateLoopItems = [];
-        }
-
-        const newLoopItems: WickedStateLoopItemContract[] = [];
-
-        const existingLoopItems: Record<PropertyKey, WickedStateLoopItemContract> = template.__wickedStateLoopItems.reduce(
-            (acc, item) => {
-                acc[item.key] = item;
-
-                return acc;
-            },
-            {},
-        );
-
-        template.__wickedStateLoopAnchor = template;
-
-        Object.keys(iterable).forEach((key) => {
-            const value = iterable[key];
-
-            const itemState = { [valueKey]: value };
-
-            if (indexKey) {
-                itemState[indexKey] = key;
-            }
-
-            const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
-
-            if ( ! isString(uniqueKey) && ! isNumber(uniqueKey) && ! isSymbol(uniqueKey)) {
+            if ( ! isArray(iterable) && ! isObject(iterable)) {
                 throw new Error(
-                    '[WickedState] `for` directive item key must be a string or number or symbol.',
+                    '[WickedState] `for` directive iterable must be an array or an object.',
                 );
             }
 
-            const existingItem = existingLoopItems[uniqueKey] ?? null;
+            if ( ! template.__wickedStateLoopItems) {
+                template.__wickedStateLoopItems = [];
+            }
 
-            if (existingItem) {
-                newLoopItems.push(existingItem);
+            const newLoopItems: WickedStateLoopItemContract[] = [];
 
-                delete existingLoopItems[uniqueKey];
+            const existingLoopItems: Record<PropertyKey, WickedStateLoopItemContract> = template.__wickedStateLoopItems.reduce(
+                (acc, item) => {
+                    acc[item.key] = item;
 
-                // Reposition the element if it's not in the correct position.
-                if (existingItem.el.previousSibling !== template.__wickedStateLoopAnchor) {
-                    template.__wickedStateLoopAnchor.after(existingItem.el);
+                    return acc;
+                },
+                {},
+            );
+
+            template.__wickedStateLoopAnchor = template;
+
+            Object.keys(iterable).forEach((key) => {
+                const value = iterable[key];
+
+                const itemState = { [valueKey]: value };
+
+                if (indexKey) {
+                    itemState[indexKey] = key;
                 }
 
-                template.__wickedStateLoopAnchor = existingItem.el;
+                const uniqueKey = itemKey ? evaluator(itemKey, state, itemState) : key;
 
-                return;
-            }
+                if ( ! isString(uniqueKey) && ! isNumber(uniqueKey) && ! isSymbol(uniqueKey)) {
+                    throw new Error(
+                        '[WickedState] `for` directive item key must be a string or number or symbol.',
+                    );
+                }
 
-            const clone = template.content.cloneNode(true) as DocumentFragment;
+                const existingItem = existingLoopItems[uniqueKey] ?? null;
 
-            const el = clone.firstElementChild as WickedStateElementContract;
+                if (existingItem) {
+                    newLoopItems.push(existingItem);
 
-            if ( ! el) {
-                throw new Error(
-                    '[WickedState] `for` directive template must have a single root element.',
-                );
-            }
+                    delete existingLoopItems[uniqueKey];
 
-            el.__wickedStateObject = new Proxy({ ...state, ...itemState }, {
-                get(_, prop, receiver) {
-                    if (prop === valueKey || prop === indexKey) {
-                        return itemState[prop];
+                    // Reposition the element if it's not in the correct position.
+                    if (existingItem.el.previousSibling !== template.__wickedStateLoopAnchor) {
+                        template.__wickedStateLoopAnchor.after(existingItem.el);
                     }
 
-                    return Reflect.get(state, prop, receiver);
-                },
-                set(_, prop, value, receiver) {
-                    if (prop === valueKey || prop === indexKey) {
-                        return false;
-                    }
+                    template.__wickedStateLoopAnchor = existingItem.el;
 
-                    return Reflect.set(state, prop, value, receiver);
-                },
+                    return;
+                }
+
+                const clone = template.content.cloneNode(true) as DocumentFragment;
+
+                const el = clone.firstElementChild as WickedStateElementContract;
+
+                if ( ! el) {
+                    throw new Error(
+                        '[WickedState] `for` directive template must have a single root element.',
+                    );
+                }
+
+                el.__wickedStateObject = new Proxy({ ...state, ...itemState }, {
+                    get(_, prop, receiver) {
+                        if (prop === valueKey || prop === indexKey) {
+                            return itemState[prop];
+                        }
+
+                        return Reflect.get(state, prop, receiver);
+                    },
+                    set(_, prop, value, receiver) {
+                        if (prop === valueKey || prop === indexKey) {
+                            return false;
+                        }
+
+                        return Reflect.set(state, prop, value, receiver);
+                    },
+                });
+
+                newLoopItems.push({
+                    el,
+                    key: uniqueKey,
+                    value,
+                });
+
+                template.__wickedStateLoopAnchor.after(el);
+
+                template.__wickedStateLoopAnchor = el;
             });
 
-            newLoopItems.push({
-                el,
-                key: uniqueKey,
-                value,
+            // Remove the elements that are no longer in the loop.
+            Object.values(existingLoopItems).forEach((item) => {
+                item.el.remove();
             });
 
-            template.__wickedStateLoopAnchor.after(el);
+            template.__wickedStateLoopItems = newLoopItems;
 
-            template.__wickedStateLoopAnchor = el;
+            template.__wickedStateLoopAnchor = null;
         });
 
-        // Remove the elements that are no longer in the loop.
-        Object.values(existingLoopItems).forEach((item) => {
-            item.el.remove();
+        cleanup(() => {
+            stopEffect();
+
+            template.__wickedStateLoopItems.forEach((item) => {
+                item.el.remove();
+            });
+
+            template.__wickedStateLoopItems = [];
+
+            template.__wickedStateLoopAnchor = null;
         });
-
-        template.__wickedStateLoopItems = newLoopItems;
-
-        template.__wickedStateLoopAnchor = null;
     },
 };

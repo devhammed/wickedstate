@@ -20,18 +20,24 @@ function getStateRoot(element: WickedStateElementContract): WickedStateElementCo
 }
 
 /**
- * Get cleanups array.
+ * Check to should ignore the element.
  */
-function getCleanups(node: WickedStateElementContract, type: string): Function[] {
-    if ( ! node.__wickedStateCleanups) {
-        node.__wickedStateCleanups = {};
+function shouldIgnoreElement(element: WickedStateElementContract): boolean {
+    if (element.__wickedStateIgnore || element.__wickedStateIgnoreSelf) {
+        return true;
     }
 
-    if ( ! node.__wickedStateCleanups[type]) {
-        node.__wickedStateCleanups[type] = [];
+    let parent = element.parentElement as WickedStateElementContract;
+
+    while (parent) {
+        if (parent.__wickedStateIgnore) {
+            return true;
+        }
+
+        parent = parent.parentElement;
     }
 
-    return node.__wickedStateCleanups[type];
+    return false;
 }
 
 /**
@@ -128,31 +134,13 @@ export async function domRenderer(root: any): Promise<void> {
                 modifiers,
                 value: attribute.value,
                 priority: registeredDirective.priority,
-                handler: (context) => {
-                    if (context.node.__wickedStateIgnore || context.node.__wickedStateIgnoreSelf) {
-                        return;
-                    }
-
-                    let parent = context.node.parentElement as WickedStateElementContract;
-
-                    while (parent) {
-                        if (parent.__wickedStateIgnore) {
-                            return;
-                        }
-
-                        parent = parent.parentElement;
-                    }
-
-                    return registeredDirective.handler(context);
-                },
+                handler: registeredDirective.handler,
             });
         }
 
         bindings.sort((a, b) => a.priority - b.priority);
 
         const bindingsLength = bindings.length;
-
-        const bindingsCleanups = getCleanups(castedNode, 'bindings');
 
         for (let i = 0; i < bindingsLength; i++) {
             const binding = bindings[i];
@@ -161,33 +149,31 @@ export async function domRenderer(root: any): Promise<void> {
 
             const state = stateRoot?.__wickedStateObject;
 
-            const stopEffect = reactivity.effect(() => {
-                const cleanups = getCleanups(castedNode, binding.type);
+            if (shouldIgnoreElement(castedNode)) {
+                continue;
+            }
 
-                if (stateRoot) {
-                    stateRoot.__wickedStateCurrentElement = castedNode;
-                }
+            if (stateRoot) {
+                stateRoot.__wickedStateCurrentElement = castedNode;
+            }
 
-                while (cleanups.length) {
-                    cleanups.shift()();
-                }
+            binding.handler({
+                bindings,
+                state,
+                node: castedNode,
+                root: stateRoot,
+                type: binding.type,
+                value: binding.value,
+                modifiers: binding.modifiers,
+                effect: reactivity.effect,
+                cleanup: (fn) => {
+                    if ( ! castedNode.__wickedStateCleanups) {
+                        castedNode.__wickedStateCleanups = [];
+                    }
 
-                const cleanup = binding.handler({
-                    bindings,
-                    state,
-                    node: castedNode,
-                    root: stateRoot,
-                    type: binding.type,
-                    value: binding.value,
-                    modifiers: binding.modifiers,
-                });
-
-                if (isFunction(cleanup)) {
-                    cleanups.push(cleanup as Function);
-                }
+                    castedNode.__wickedStateCleanups.push(fn);
+                },
             });
-
-            bindingsCleanups.push(stopEffect);
         }
 
         castedNode.__wickedStateProcessed = true;
@@ -220,16 +206,10 @@ export async function domRenderer(root: any): Promise<void> {
                     destroyHandler.call(elementState);
                 }
 
-                const cleanups = element.__wickedStateCleanups;
+                const cleanups = element.__wickedStateCleanups ?? [];
 
-                if (isObject(cleanups)) {
-                    Object.keys(cleanups).forEach((type) => {
-                        const typeCleanups = cleanups[type];
-
-                        while (typeCleanups.length) {
-                            typeCleanups.shift()();
-                        }
-                    });
+                while (cleanups.length) {
+                   cleanups.shift()();
                 }
 
                 delete element.__wickedStateObject;

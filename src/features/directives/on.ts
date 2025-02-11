@@ -1,7 +1,7 @@
-import {evaluator} from '../evaluator';
-import {WickedStateDirectiveContract, WickedStateElementContract} from '../../utils/contracts';
+import { evaluator } from '../evaluator';
+import { WickedStateDirectiveContract, WickedStateElementContract } from '../../utils/contracts';
 
-function addMiddleware(callback: EventListener, wrapper: (cb: EventListener, e: Event) => any): EventListener {
+function wrap(callback: EventListener, wrapper: (cb: EventListener, e: Event) => any): EventListener {
   return function(e: Event): any {
     return wrapper(callback, e);
   };
@@ -62,7 +62,7 @@ function throttle(func: EventListener, limit: number): EventListener {
 export const onDirective: WickedStateDirectiveContract = {
   name: 'on',
   priority: 2,
-  handler({ root, node, value, state, modifiers, type }): () => void {
+  handler({ root, node, value, state, modifiers, type, cleanup }) {
     let target: WickedStateElementContract|Window|Document = node;
 
     let options: AddEventListenerOptions = {};
@@ -84,7 +84,7 @@ export const onDirective: WickedStateDirectiveContract = {
     };
 
     if (modifiers.once) {
-      eventHandler = addMiddleware(eventHandler, (callback, e) => {
+      eventHandler = wrap(eventHandler, (callback, e) => {
         try {
           return callback(e);
         } finally {
@@ -94,7 +94,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.prevent) {
-      eventHandler = addMiddleware(eventHandler, (callback, e) => {
+      eventHandler = wrap(eventHandler, (callback, e) => {
         e.preventDefault();
 
         return callback(e);
@@ -102,7 +102,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.stop) {
-      eventHandler = addMiddleware(eventHandler, (callback, e) => {
+      eventHandler = wrap(eventHandler, (callback, e) => {
         e.stopPropagation();
 
         return callback(e);
@@ -118,7 +118,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.self) {
-      eventHandler = addMiddleware(eventHandler, (callback, e) => {
+      eventHandler = wrap(eventHandler, (callback, e) => {
         if (e.target === node) {
           return callback(e);
         }
@@ -144,27 +144,27 @@ export const onDirective: WickedStateDirectiveContract = {
     if (modifiers.away) {
       target = document;
 
-      eventHandler = addMiddleware(eventHandler, (callback, e) => {
-        const eventTarget = e.target as Node;
+      eventHandler = wrap(eventHandler, (callback, e) => {
+          const eventTarget = e.target as Node;
 
-        if (node.contains(eventTarget)) {
-          return;
-        }
+          if (node.contains(eventTarget)) {
+              return;
+          }
 
-        if (! eventTarget.isConnected) {
-          return;
-        }
+          if (! eventTarget.isConnected) {
+              return;
+          }
 
-        if (node.style.display === 'none') {
-          return;
-        }
+          if (node.style.display === 'none') {
+              return;
+          }
 
-        return callback(e);
+          return callback(e);
       });
     }
 
     if (modifiers.esc) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'Escape') {
               return callback(e);
             }
@@ -172,7 +172,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.enter) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'Enter') {
               return callback(e);
             }
@@ -180,7 +180,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.space) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === ' ') {
               return callback(e);
             }
@@ -188,7 +188,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.tab) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'Tab') {
               return callback(e);
             }
@@ -196,7 +196,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.meta || modifiers.cmd || modifiers.super) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.metaKey) {
               return callback(e);
             }
@@ -204,7 +204,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.ctrl) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.ctrlKey) {
               return callback(e);
             }
@@ -212,7 +212,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.alt) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.altKey) {
               return callback(e);
             }
@@ -220,7 +220,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.shift) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.shiftKey) {
               return callback(e);
             }
@@ -228,7 +228,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.backspace) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'Backspace') {
               return callback(e);
             }
@@ -236,7 +236,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.delete) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'Delete') {
               return callback(e);
             }
@@ -244,7 +244,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.caps) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'CapsLock') {
               return callback(e);
             }
@@ -252,7 +252,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.slash) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === '/') {
               return callback(e);
             }
@@ -260,7 +260,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.period) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === '.') {
               return callback(e);
             }
@@ -268,7 +268,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.equal) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === '=') {
               return callback(e);
             }
@@ -276,7 +276,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.comma) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === ',') {
               return callback(e);
             }
@@ -284,7 +284,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.up) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'ArrowUp') {
               return callback(e);
             }
@@ -292,7 +292,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.down) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'ArrowDown') {
               return callback(e);
             }
@@ -300,7 +300,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.left) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'ArrowLeft') {
               return callback(e);
             }
@@ -308,7 +308,7 @@ export const onDirective: WickedStateDirectiveContract = {
     }
 
     if (modifiers.right) {
-        eventHandler = addMiddleware(eventHandler, (callback, e) => {
+        eventHandler = wrap(eventHandler, (callback, e) => {
             if (e instanceof KeyboardEvent && e.key === 'ArrowRight') {
               return callback(e);
             }
@@ -317,8 +317,8 @@ export const onDirective: WickedStateDirectiveContract = {
 
     target.addEventListener(type, eventHandler, options);
 
-    return () => {
+    cleanup(() => {
         target.removeEventListener(type, eventHandler, options);
-    };
+    });
   },
 };

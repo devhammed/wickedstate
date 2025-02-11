@@ -2,13 +2,12 @@ import {
   WickedStateDirectiveContract,
   WickedStateElementContract,
 } from '../../utils/contracts';
-import {reactivity} from '../reactivity';
 import { isArray } from '../../utils/checkers';
 
 export const modelDirective: WickedStateDirectiveContract = {
   name: 'model',
   priority: 2,
-  handler({ node, value, state }): () => void {
+  handler({ node, value, state, effect, cleanup }) {
     const target = node as ((HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) & WickedStateElementContract);
 
     const isInput = target instanceof HTMLInputElement;
@@ -25,7 +24,7 @@ export const modelDirective: WickedStateDirectiveContract = {
             ? 'input'
             : 'change';
 
-    const unsubscribeFromState = reactivity.effect(() => {
+    const unsubscribeFromState = effect(() => {
       const stateValue = state.$get(value);
 
       if (isRadio) {
@@ -93,9 +92,10 @@ export const modelDirective: WickedStateDirectiveContract = {
 
     node.addEventListener(eventName, eventHandler);
 
-    return () => {
+    cleanup(() => {
       unsubscribeFromState();
+
       node.removeEventListener(eventName, eventHandler);
-    };
+    });
   },
 };

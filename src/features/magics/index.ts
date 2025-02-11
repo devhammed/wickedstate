@@ -12,6 +12,7 @@ import { refsMagic } from './refs';
 import { setMagic } from './set';
 import { getMagic } from './get';
 import { elMagic } from './el';
+import {reactivity} from "../reactivity";
 
 /**
  * The available magics.
@@ -38,18 +39,13 @@ export function decorateWithMagics(state: WickedStateObjectContract, root: Wicke
       get: (): any => magics[magicName]({
         state,
         root,
+        effect: reactivity.effect,
         cleanup(fn: Function): void {
-          const cleanupKey = '_magic_cleanups';
-
           if ( ! root.__wickedStateCleanups) {
-            root.__wickedStateCleanups = {};
+            root.__wickedStateCleanups = [];
           }
 
-          if ( ! root.__wickedStateCleanups[cleanupKey]) {
-            root.__wickedStateCleanups[cleanupKey] = [];
-          }
-
-          root.__wickedStateCleanups[cleanupKey].push(fn);
+          root.__wickedStateCleanups.push(fn);
         },
       }),
     });

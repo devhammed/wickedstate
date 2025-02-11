@@ -72,7 +72,7 @@ export interface WickedStateElementContract extends HTMLElement {
   __wickedStateObject?: WickedStateObjectContract;
   __wickedStateProcessed?: boolean;
   __wickedStateCurrentElement?: WickedStateElementContract;
-  __wickedStateCleanups?: Record<string, Function[]>;
+  __wickedStateCleanups?: Function[];
   __wickedStateRefs?: Record<string, WickedStateElementContract>;
   __wickedStateDisconnect?: () => void;
   __wickedStateWhenElement?: WickedStateElementContract;
@@ -100,6 +100,7 @@ export interface WickedStateMagicContextContract {
   state: WickedStateObjectContract;
   root: WickedStateElementContract;
   cleanup: (fn: Function) => void;
+  effect: WickedStateEffectContract;
 }
 
 /**
@@ -131,6 +132,8 @@ export interface WickedStateDirectiveContextContract {
   state: WickedStateObjectContract;
   node: WickedStateElementContract;
   root: WickedStateElementContract;
+  cleanup: (fn: Function) => void;
+  effect: WickedStateEffectContract;
   modifiers: Record<string, any>;
   type: string;
   value: string;
@@ -153,7 +156,7 @@ export interface WickedStateMagicHandlerContract<T> {
  * You can return a cleanup function to be called when the directive is removed from the DOM.
  */
 export interface WickedStateDirectiveHandlerContract {
-  (context: WickedStateDirectiveContextContract): Function | void;
+  (context: WickedStateDirectiveContextContract): void;
 }
 
 /**

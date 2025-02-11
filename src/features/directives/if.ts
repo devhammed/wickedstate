@@ -8,7 +8,7 @@ import {count} from '../../utils/checkers';
 export const ifDirective: WickedStateDirectiveContract = {
   name: 'if',
   priority: 1,
-  handler({ value, node, bindings, state }) {
+  handler({ value, node, bindings, state, effect, cleanup }) {
     if ( ! (node instanceof HTMLTemplateElement)) {
       throw new Error(
           '[WickedState] If directive can only be used on <template> elements.',
@@ -21,36 +21,46 @@ export const ifDirective: WickedStateDirectiveContract = {
       );
     }
 
-    const evaluatedValue = evaluator(value, state);
-
     const template = node as WickedStateElementContract & HTMLTemplateElement;
 
-    if ( ! evaluatedValue) {
-      const whenElement = template.__wickedStateWhenElement;
+    const stopEffect = effect(() => {
+      const evaluatedValue = evaluator(value, state);
 
-      if (whenElement) {
-        whenElement.remove();
+      if ( ! evaluatedValue) {
+        const whenElement = template.__wickedStateWhenElement;
 
-        delete template.__wickedStateWhenElement;
+        if (whenElement) {
+          whenElement.remove();
+
+          delete template.__wickedStateWhenElement;
+        }
+
+        return;
       }
 
-      return;
-    }
+      if ( ! template.__wickedStateWhenElement) {
+        const clone = template.content.cloneNode(true) as DocumentFragment;
 
-    if ( ! template.__wickedStateWhenElement) {
-      const clone = template.content.cloneNode(true) as DocumentFragment;
+        const firstElementChild = clone.firstElementChild as WickedStateElementContract;
 
-      const firstElementChild = clone.firstElementChild as WickedStateElementContract;
+        if ( ! firstElementChild) {
+          throw new Error(
+              '[WickedState] When directive requires a child element.',
+          );
+        }
 
-      if ( ! firstElementChild) {
-        throw new Error(
-            '[WickedState] When directive requires a child element.',
-        );
+        template.after(firstElementChild);
+
+        template.__wickedStateWhenElement = firstElementChild;
       }
+    });
 
-      template.after(firstElementChild);
+    cleanup(() => {
+      stopEffect();
 
-      template.__wickedStateWhenElement = firstElementChild;
-    }
+      template.__wickedStateWhenElement?.remove();
+
+      delete template.__wickedStateWhenElement;
+    });
   },
 };

@@ -9,10 +9,6 @@ export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
     priority: 0,
     handler({node, value}): void {
-        if (node.__wickedStateProcessed) {
-            return;
-        }
-
         const expression = value === '' ? '{}' : value;
 
         const magicContext = decorateWithMagics({}, (node.__wickedStateCurrentElement = node));
