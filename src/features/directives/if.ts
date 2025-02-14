@@ -58,7 +58,9 @@ export const ifDirective: WickedStateDirectiveContract = {
     cleanup(() => {
       stopEffect();
 
-      template.__wickedStateWhenElement?.remove();
+      if (template.__wickedStateWhenElement) {
+        template.__wickedStateWhenElement.remove();
+      }
 
       delete template.__wickedStateWhenElement;
     });

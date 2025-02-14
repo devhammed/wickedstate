@@ -73,11 +73,19 @@ export const onDirective: WickedStateDirectiveContract = {
       try {
           root.__wickedStateCurrentElement = node;
 
-          const evaluatedValue = evaluator(value, state, { $event: e });
+          const execute = () => {
+              const evaluatedValue = evaluator(value, state, { $event: e });
 
-          return evaluatedValue instanceof Function
-              ? evaluatedValue.call(state, e)
-              : evaluatedValue;
+              return evaluatedValue instanceof Function
+                  ? evaluatedValue.call(state, e)
+                  : evaluatedValue;
+          };
+
+          if (node.__wickedStateConfirm) {
+              return node.__wickedStateConfirm(execute, e.stopImmediatePropagation);
+          } else {
+              return execute();
+          }
       } finally {
           root.__wickedStateCurrentElement = previousElement;
       }

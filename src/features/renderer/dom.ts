@@ -194,37 +194,13 @@ export async function domRenderer(root: any): Promise<void> {
             nodes.removed.forEach((node) => {
                 const element = node as WickedStateElementContract;
 
-                const elementState = element.__wickedStateObject;
-
-                const destroyHandler = elementState?.destroy;
-
-                if (isFunction(destroyHandler)) {
-                    destroyHandler.call(elementState);
-                }
-
                 const cleanups = element.__wickedStateCleanups ?? [];
 
                 while (cleanups.length) {
                    cleanups.shift()();
                 }
 
-                delete element.__wickedStateObject;
-
-                delete element.__wickedStateCurrentElement;
-
                 delete element.__wickedStateCleanups;
-
-                delete element.__wickedStateRefs;
-
-                delete element.__wickedStateWhenElement;
-
-                delete element.__wickedStateLoopItems;
-
-                delete element.__wickedStateLoopAnchor;
-
-                delete element.__wickedStateIgnore;
-
-                delete element.__wickedStateIgnoreSelf;
 
                 delete element.__wickedStateProcessed;
             });

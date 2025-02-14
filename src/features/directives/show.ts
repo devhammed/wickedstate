@@ -5,11 +5,13 @@ export const showDirective: WickedStateDirectiveContract = {
   name: 'show',
   priority: 2,
   handler({ value, node, state, effect, cleanup }) {
+    const originalDisplay = node.style.display;
+
     const stopEffect = effect(() => {
        const evaluatedValue = evaluator(value, state);
 
        if (evaluatedValue) {
-         node.style.display = '';
+         node.style.display = originalDisplay;
        } else {
          node.style.display = 'none';
        }
@@ -19,6 +21,10 @@ export const showDirective: WickedStateDirectiveContract = {
        }
     });
 
-    cleanup(stopEffect);
+    cleanup(() => {
+        stopEffect();
+
+        node.style.display = originalDisplay;
+    });
   },
 };

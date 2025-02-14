@@ -8,7 +8,7 @@ import {decorateWithDatas} from "../datas";
 export const stateDirective: WickedStateDirectiveContract = {
     name: 'state',
     priority: 0,
-    handler({node, value}): void {
+    handler({node, value, cleanup}): void {
         const expression = value === '' ? '{}' : value;
 
         const magicContext = decorateWithMagics({}, (node.__wickedStateCurrentElement = node));
@@ -29,5 +29,17 @@ export const stateDirective: WickedStateDirectiveContract = {
         if (isFunction(init)) {
             init.call(node.__wickedStateObject);
         }
+
+        cleanup(() => {
+            const destroy = node.__wickedStateObject?.destroy ?? null;
+
+            if (isFunction(destroy)) {
+                destroy.call(node.__wickedStateObject);
+            }
+
+            delete node.__wickedStateObject;
+
+            delete node.__wickedStateCurrentElement;
+        });
     },
 };
