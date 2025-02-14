@@ -209,7 +209,7 @@ export async function domRenderer(root: any): Promise<void> {
             }
         });
 
-        observer.observe(root, { childList: true, subtree: true });
+        observer.observe(root, { attributes: true, childList: true, subtree: true });
 
         root.__wickedObserved = true;
     }
