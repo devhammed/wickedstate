@@ -31,7 +31,7 @@ export const stateDirective: WickedStateDirectiveContract = {
         }
 
         cleanup(() => {
-            const destroy = node.__wickedStateObject?.destroy ?? null;
+            const destroy = node.__wickedStateObject.destroy ?? null;
 
             if (isFunction(destroy)) {
                 destroy.call(node.__wickedStateObject);

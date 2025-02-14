@@ -472,6 +472,34 @@ You can use this directive in conjunction with CSS to hide an element until it i
 </div>
 ```
 
+### `confirm`
+
+Prompt the user with a confirmation dialog before executing the attached event listeners.
+
+```html
+<div *state="{authed: false}">
+    <template *if="!authed">
+        <div>
+            <p>You are not logged in!</p>
+
+            <button *on[click]="authed = true" type="button">Login</button>
+        </div>
+    </template>
+
+    <template *if="authed">
+        <div>
+            <p>Welcome back!</p>
+
+            <button *on[click]="authed = false" *confirm="Are you sure you want to logout?" type="button">Logout</button>
+
+            <button *on[click]="authed = false" *confirm.prompt="Type 'DELETE' to remove your account|DELETE" type="button">Delete Account</button>
+        </div>
+    </template>
+</div>
+```
+
+You can use the `.prompt` modifier to prompt the user to enter a specific value, you need to separate the message and the expected value with a pipe `|`.
+
 ## Magics
 
 Magics are special properties that are available in the state object and can be used in expressions.

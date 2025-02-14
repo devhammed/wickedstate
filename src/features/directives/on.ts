@@ -68,27 +68,30 @@ export const onDirective: WickedStateDirectiveContract = {
     let options: AddEventListenerOptions = {};
 
     let eventHandler: EventListener = function(e: Event): any {
-      const previousElement = root.__wickedStateCurrentElement;
+       const execute = () => {
+          const previousElement = root.__wickedStateCurrentElement;
 
-      try {
           root.__wickedStateCurrentElement = node;
 
-          const execute = () => {
+          try {
               const evaluatedValue = evaluator(value, state, { $event: e });
 
               return evaluatedValue instanceof Function
                   ? evaluatedValue.call(state, e)
                   : evaluatedValue;
-          };
-
-          if (node.__wickedStateConfirm) {
-              return node.__wickedStateConfirm(execute, e.stopImmediatePropagation);
-          } else {
-              return execute();
+          } finally {
+                root.__wickedStateCurrentElement = previousElement;
           }
-      } finally {
-          root.__wickedStateCurrentElement = previousElement;
-      }
+       };
+
+       if (node.__wickedStateConfirm) {
+          return node.__wickedStateConfirm(
+              () => execute(),
+              () => e.stopImmediatePropagation(),
+          );
+       } else {
+          return execute();
+       }
     };
 
     if (modifiers.once) {

@@ -109,6 +109,26 @@
             Double Increment
         </button>
     </div>
+
+    <div *state="{authed: false}">
+        <template *if="!authed">
+            <div>
+                <p>You are not logged in!</p>
+
+                <button *on[click]="authed = true" type="button">Login</button>
+            </div>
+        </template>
+
+        <template *if="authed">
+            <div>
+                <p>Welcome back!</p>
+
+                <button *on[click]="authed = false" *confirm="Are you sure you want to logout?" type="button">Logout</button>
+
+                <button *on[click]="authed = false" *confirm.prompt="Type 'DELETE' to remove your account|DELETE" type="button">Delete Account</button>
+            </div>
+        </template>
+    </div>
     <footer *text="'Copyright &copy; ' + new Date().getFullYear()">
     </footer>
 </div>

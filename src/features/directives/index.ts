@@ -8,6 +8,7 @@ import { textDirective } from './text';
 import { cloakDirective } from './cloak';
 import { stateDirective } from './state';
 import { modelDirective } from './model';
+import {confirmDirective} from './confirm';
 import { ignoreDirective } from './ignore';
 import { WickedStateDirectiveContract } from '../../utils/contracts';
 
@@ -17,6 +18,7 @@ import { WickedStateDirectiveContract } from '../../utils/contracts';
 export const directives: WickedStateDirectiveContract[] = [
   ignoreDirective,
   cloakDirective,
+  confirmDirective,
   stateDirective,
   ifDirective,
   forDirective,
