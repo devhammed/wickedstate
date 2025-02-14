@@ -34,7 +34,7 @@ export const modelDirective: WickedStateDirectiveContract = {
 
       if (isCheckbox) {
         (target as any).checked = isArray(stateValue)
-            ? (stateValue as Array<any>).indexOf(target.value) > -1
+            ? stateValue.indexOf(target.value) > -1
             : !! stateValue;
 
         return;
@@ -44,7 +44,7 @@ export const modelDirective: WickedStateDirectiveContract = {
         target.selectedIndex = 0;
 
         [].slice.call(target.options).forEach((option: HTMLOptionElement) => {
-          option.selected = (stateValue as Array<any>).indexOf(
+          option.selected = stateValue.indexOf(
               option.value || option.text) > -1;
         });
 
