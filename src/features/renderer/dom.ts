@@ -1,7 +1,6 @@
 import {prefix} from './index';
 import {reactivity} from '../reactivity';
 import {directives} from '../directives';
-import {isFunction, isObject} from '../../utils/checkers';
 import {WickedStateDirectiveBindingContract, WickedStateElementContract} from '../../utils/contracts';
 
 /**
